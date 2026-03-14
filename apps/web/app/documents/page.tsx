@@ -2,25 +2,26 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-interface Document {
-  id: string;
-  filename: string;
-  created_at: string;
-}
+import { DocumentSummary, listDocuments } from "@/lib/document-agent-api";
 
 export default function DocumentListPage() {
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<DocumentSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = await fetch("https://document-agent-api-production.up.railway.app/documents/");
-        const data = await response.json();
-        setDocuments(data);
+        const data = await listDocuments();
+        setDocuments(data.items);
+        setErrorMessage(null);
       } catch (error) {
         console.error(error);
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage("문서 목록을 불러오지 못했습니다.");
+        }
       } finally {
         setLoading(false);
       }
@@ -29,6 +30,9 @@ export default function DocumentListPage() {
   }, []);
 
   if (loading) return <div className="text-center py-20">목록을 불러오는 중...</div>;
+  if (errorMessage) {
+    return <div className="text-center py-20 text-red-600 dark:text-red-400">{errorMessage}</div>;
+  }
 
   return (
     <div className="space-y-8">
@@ -51,7 +55,9 @@ export default function DocumentListPage() {
                 <span className="text-2xl">📄</span>
                 <div>
                   <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">{doc.filename}</h3>
-                  <p className="text-sm text-zinc-500">{new Date(doc.created_at).toLocaleDateString()} 업로드됨</p>
+                  <p className="text-sm text-zinc-500">
+                    {new Date(doc.createdAt).toLocaleDateString()} 업로드됨
+                  </p>
                 </div>
               </div>
               <span className="text-zinc-400 group-hover:translate-x-1 transition-transform">→</span>

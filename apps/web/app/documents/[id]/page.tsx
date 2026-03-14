@@ -3,58 +3,72 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-
-interface DocumentDetail {
-  id: string;
-  filename: string;
-  created_at: string;
-  content_preview?: string; // 예시: API가 내용 미리보기를 제공할 경우
-}
+import {
+  deleteDocument,
+  DocumentSummary,
+  getDocumentResult,
+  getDownloadUrl,
+  ParseResult,
+} from "@/lib/document-agent-api";
 
 export default function DocumentDetailPage() {
-  const { id } = useParams();
+  const params = useParams<{ id: string }>();
+  const documentId = Array.isArray(params.id) ? params.id[0] : params.id;
   const router = useRouter();
-  const [doc, setDoc] = useState<DocumentDetail | null>(null);
+  const [doc, setDoc] = useState<DocumentSummary | null>(null);
+  const [result, setResult] = useState<ParseResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDocDetail = async () => {
+      if (!documentId) {
+        setErrorMessage("유효하지 않은 문서 ID입니다.");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(`https://document-agent-api-production.up.railway.app/documents/${id}`);
-        if (!response.ok) throw new Error("문서를 불러올 수 없습니다.");
-        const data = await response.json();
-        setDoc(data);
+        const data = await getDocumentResult(documentId);
+        setDoc(data.document);
+        setResult(data.result);
+        setErrorMessage(null);
       } catch (error) {
         console.error(error);
-        alert("문서를 불러오는 중 오류가 발생했습니다.");
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage("문서를 불러오는 중 오류가 발생했습니다.");
+        }
       } finally {
         setLoading(false);
       }
     };
-    if (id) fetchDocDetail();
-  }, [id]);
+    fetchDocDetail();
+  }, [documentId]);
 
   const handleDelete = async () => {
+    if (!documentId) return;
     if (!confirm("정말 이 문서를 삭제하시겠습니까?")) return;
 
     try {
-      const response = await fetch(`https://document-agent-api-production.up.railway.app/documents/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        alert("삭제되었습니다.");
-        router.push("/documents");
-      } else {
-        alert("삭제에 실패했습니다.");
-      }
+      await deleteDocument(documentId);
+      router.push("/documents");
     } catch (error) {
       console.error(error);
-      alert("오류가 발생했습니다.");
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("삭제 중 오류가 발생했습니다.");
+      }
     }
   };
 
   if (loading) return <div className="text-center py-20">문서 정보를 불러오는 중...</div>;
-  if (!doc) return <div className="text-center py-20">문서를 찾을 수 없습니다.</div>;
+  if (errorMessage) {
+    return <div className="text-center py-20 text-red-600 dark:text-red-400">{errorMessage}</div>;
+  }
+  if (!doc || !result) return <div className="text-center py-20">문서를 찾을 수 없습니다.</div>;
 
   return (
     <div className="space-y-8">
@@ -66,7 +80,7 @@ export default function DocumentDetailPage() {
         <div className="flex justify-between items-start">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">{doc.filename}</h1>
-            <p className="text-zinc-500">ID: {doc.id} · {new Date(doc.created_at).toLocaleString()} 업로드됨</p>
+            <p className="text-zinc-500">ID: {doc.id} · {new Date(doc.createdAt).toLocaleString()} 업로드됨</p>
           </div>
           <button
             onClick={handleDelete}
@@ -77,9 +91,38 @@ export default function DocumentDetailPage() {
         </div>
 
         <div className="pt-8 border-t border-zinc-100 dark:border-zinc-800">
-          <h3 className="text-lg font-semibold mb-4">문서 미리보기</h3>
-          <div className="bg-zinc-50 dark:bg-black rounded-2xl p-6 text-zinc-700 dark:text-zinc-300 min-h-[200px] leading-relaxed">
-            {doc.content_preview || "문서의 내용을 분석 중이거나 미리보기를 지원하지 않는 형식입니다."}
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <h3 className="text-lg font-semibold">결과 다운로드</h3>
+            <div className="flex gap-2">
+              <a
+                href={getDownloadUrl(doc.id, "markdown")}
+                className="px-3 py-1.5 text-xs font-medium rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                Markdown 다운로드
+              </a>
+              <a
+                href={getDownloadUrl(doc.id, "json")}
+                className="px-3 py-1.5 text-xs font-medium rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                JSON 다운로드
+              </a>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <section className="space-y-3">
+              <h4 className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">Markdown 결과</h4>
+              <pre className="bg-zinc-50 dark:bg-black rounded-2xl p-6 text-zinc-700 dark:text-zinc-300 min-h-[320px] leading-relaxed overflow-auto text-sm whitespace-pre-wrap">
+                {result.markdown}
+              </pre>
+            </section>
+
+            <section className="space-y-3">
+              <h4 className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">JSON 결과</h4>
+              <pre className="bg-zinc-50 dark:bg-black rounded-2xl p-6 text-zinc-700 dark:text-zinc-300 min-h-[320px] leading-relaxed overflow-auto text-sm">
+                {JSON.stringify(result.canonicalJson, null, 2)}
+              </pre>
+            </section>
           </div>
         </div>
       </div>

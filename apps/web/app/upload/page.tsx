@@ -2,35 +2,34 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { uploadDocument } from "@/lib/document-agent-api";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) return alert("파일을 선택해 주세요!");
+    if (!file) {
+      setErrorMessage("파일을 선택해 주세요.");
+      return;
+    }
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
+    setErrorMessage(null);
 
     try {
-      const response = await fetch("https://document-agent-api-production.up.railway.app/documents/", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        alert("업로드 성공!");
-        router.push("/documents"); // 업로드 후 리스트 페이지로 이동
-      } else {
-        alert("업로드 실패...");
-      }
+      const parsed = await uploadDocument(file);
+      router.push(`/documents/${parsed.document.id}`);
     } catch (error) {
       console.error(error);
-      alert("오류가 발생했습니다.");
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("업로드 중 오류가 발생했습니다.");
+      }
     } finally {
       setUploading(false);
     }
@@ -61,6 +60,9 @@ export default function UploadPage() {
         >
           {uploading ? "업로드 중..." : "업로드 시작"}
         </button>
+        {errorMessage ? (
+          <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
+        ) : null}
       </form>
     </div>
   );
