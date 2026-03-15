@@ -104,7 +104,7 @@ export default function DocumentDetailPage() {
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">{doc.filename}</h1>
         <p className="text-zinc-400 text-xs">
-          {new Date(doc.createdAt).toLocaleString()} 업로드 • ID: {doc.id}
+          {new Date(doc.createdAt).toLocaleString()} 업로드
         </p>
       </div>
 
@@ -165,7 +165,6 @@ export default function DocumentDetailPage() {
                 <p className="text-zinc-400 text-xs">두 결과를 같은 수준의 산출물로 보고, 탭 전환으로 빠르게 확인합니다.</p>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <Badge variant="outline" className="text-[10px] font-mono border-zinc-200 text-zinc-400 px-1.5 py-0 h-4 bg-white dark:bg-zinc-900">{doc.id}</Badge>
                 <span className="text-[10px] text-zinc-300 font-medium">{new Date(doc.createdAt).toLocaleString()}</span>
               </div>
             </div>

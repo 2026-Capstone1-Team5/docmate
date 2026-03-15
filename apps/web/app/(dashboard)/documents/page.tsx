@@ -127,7 +127,6 @@ export default function DocumentListPage() {
                   <TableCell className="px-10 py-4">
                     <div className="flex flex-col gap-0.5">
                       <span className="font-bold text-zinc-800 dark:text-zinc-200 group-hover:text-primary transition-colors">{doc.filename}</span>
-                      <span className="text-[10px] text-zinc-400 font-mono">{doc.id}</span>
                     </div>
                   </TableCell>
                   <TableCell>

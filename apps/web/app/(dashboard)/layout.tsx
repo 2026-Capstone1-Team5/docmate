@@ -19,10 +19,10 @@ export default async function DashboardLayout({
   return (
     <TooltipProvider>
       <SidebarProvider>
-        <div className="flex min-h-screen w-full bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex h-svh w-full overflow-hidden bg-zinc-50 dark:bg-zinc-950">
           <AppSidebar session={session} />
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b border-zinc-200 bg-white/50 px-4 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/50">
+          <SidebarInset className="h-svh overflow-hidden">
+            <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b border-zinc-200 bg-white/70 px-4 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/70">
               <SidebarTrigger className="-ml-1" />
               <div className="flex h-full items-center gap-2 border-l border-zinc-200 pl-4 dark:border-zinc-800">
                 <h1 className="text-sm font-semibold tracking-tight text-zinc-500">
@@ -30,8 +30,10 @@ export default async function DashboardLayout({
                 </h1>
               </div>
             </header>
-            <main className="flex flex-1 flex-col gap-4 overflow-auto p-6">
-              {children}
+            <main className="min-h-0 flex-1 overflow-y-auto">
+              <div className="flex min-h-full flex-col gap-4 p-6">
+                {children}
+              </div>
             </main>
           </SidebarInset>
         </div>

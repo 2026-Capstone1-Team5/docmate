@@ -40,9 +40,8 @@ const items = [
 const subItems = [
   {
     title: "API Keys",
-    url: "#",
+    url: "/api-keys",
     icon: Key,
-    badge: "Soon",
   },
   {
     title: "Settings",
@@ -127,23 +126,32 @@ export function AppSidebar({ session }: AppSidebarProps) {
         </SidebarGroup>
         <SidebarGroup className="mt-4">
           <SidebarMenu>
-            {subItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton 
-                  render={<Link href={item.url} />} 
-                  tooltip={item.title}
-                  className="h-10 rounded-lg px-4 text-zinc-500 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0!"
-                >
-                  <item.icon className="h-4 w-4 text-zinc-400" />
-                  <span className="flex-1 group-data-[collapsible=icon]:hidden">{item.title}</span>
-                  {item.badge && (
-                    <Badge variant="outline" className="h-4 border-zinc-200 bg-zinc-50 px-1 text-[10px] leading-none text-zinc-500 group-data-[collapsible=icon]:hidden">
-                      {item.badge}
-                    </Badge>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {subItems.map((item) => {
+              const isActive = item.url !== "#" && pathname === item.url
+
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    render={<Link href={item.url} />} 
+                    tooltip={item.title}
+                    className={cn(
+                      "h-10 rounded-lg px-4 transition-colors group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0!",
+                      isActive
+                        ? "bg-white dark:bg-zinc-800 shadow-md text-primary font-bold border border-zinc-100 dark:border-zinc-700"
+                        : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    )}
+                  >
+                    <item.icon className={cn("h-4 w-4", isActive ? "text-primary" : "text-zinc-400")} />
+                    <span className="flex-1 group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    {item.badge && (
+                      <Badge variant="outline" className="h-4 border-zinc-200 bg-zinc-50 px-1 text-[10px] leading-none text-zinc-500 group-data-[collapsible=icon]:hidden">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

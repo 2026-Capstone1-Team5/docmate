@@ -1,3 +1,5 @@
+import { buildApiUrl, requestJson, requestVoid } from "@/lib/api-client";
+
 export type DocumentSummary = {
   id: string;
   filename: string;
@@ -27,55 +29,9 @@ export type DocumentListResponse = {
   offset: number;
 };
 
-type ApiErrorResponse = {
-  error?: {
-    code?: string;
-    message?: string;
-    details?: Record<string, unknown> | null;
-  };
-};
-
 export type DownloadFormat = "markdown" | "json";
 
 const API_ROOT = "/api/documents";
-
-function buildUrl(path: string, query?: URLSearchParams): string {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const base = path === "/" ? API_ROOT : `${API_ROOT}${normalizedPath}`;
-  if (!query) {
-    return base;
-  }
-  const queryString = query.toString();
-  return queryString ? `${base}?${queryString}` : base;
-}
-
-async function buildError(response: Response): Promise<Error> {
-  let message = `API 요청에 실패했습니다. (${response.status})`;
-  try {
-    const body = (await response.json()) as ApiErrorResponse;
-    if (
-      typeof body.error?.message === "string" &&
-      body.error.message.trim() !== ""
-    ) {
-      message = body.error.message;
-    }
-  } catch {
-    // Ignore parse failure and fallback to the default message.
-  }
-  return new Error(message);
-}
-
-async function requestJson<T>(
-  path: string,
-  init?: RequestInit,
-  query?: URLSearchParams,
-): Promise<T> {
-  const response = await fetch(buildUrl(path, query), init);
-  if (!response.ok) {
-    throw await buildError(response);
-  }
-  return (await response.json()) as T;
-}
 
 export async function uploadDocument(
   file: File,
@@ -83,9 +39,14 @@ export async function uploadDocument(
   const formData = new FormData();
   formData.append("file", file);
 
-  return requestJson<DocumentParseResponse>("/", {
-    method: "POST",
-    body: formData,
+  return requestJson<DocumentParseResponse>({
+    apiRoot: API_ROOT,
+    path: "/",
+    init: {
+      method: "POST",
+      body: formData,
+    },
+    fallbackMessage: "API 요청에 실패했습니다.",
   });
 }
 
@@ -105,38 +66,52 @@ export async function listDocuments(params?: {
     query.set("filename", params.filename);
   }
 
-  return requestJson<DocumentListResponse>(
-    "/",
-    {
+  return requestJson<DocumentListResponse>({
+    apiRoot: API_ROOT,
+    path: "/",
+    init: {
       method: "GET",
     },
     query,
-  );
+    fallbackMessage: "API 요청에 실패했습니다.",
+  });
 }
 
 export async function getDocument(
   documentId: string,
 ): Promise<DocumentResponse> {
-  return requestJson<DocumentResponse>(`/${documentId}`, {
-    method: "GET",
+  return requestJson<DocumentResponse>({
+    apiRoot: API_ROOT,
+    path: `/${documentId}`,
+    init: {
+      method: "GET",
+    },
+    fallbackMessage: "API 요청에 실패했습니다.",
   });
 }
 
 export async function getDocumentResult(
   documentId: string,
 ): Promise<DocumentParseResponse> {
-  return requestJson<DocumentParseResponse>(`/${documentId}/result`, {
-    method: "GET",
+  return requestJson<DocumentParseResponse>({
+    apiRoot: API_ROOT,
+    path: `/${documentId}/result`,
+    init: {
+      method: "GET",
+    },
+    fallbackMessage: "API 요청에 실패했습니다.",
   });
 }
 
 export async function deleteDocument(documentId: string): Promise<void> {
-  const response = await fetch(buildUrl(`/${documentId}`), {
-    method: "DELETE",
+  await requestVoid({
+    apiRoot: API_ROOT,
+    path: `/${documentId}`,
+    init: {
+      method: "DELETE",
+    },
+    fallbackMessage: "API 요청에 실패했습니다.",
   });
-  if (!response.ok) {
-    throw await buildError(response);
-  }
 }
 
 export function getDownloadUrl(
@@ -144,5 +119,5 @@ export function getDownloadUrl(
   format: DownloadFormat,
 ): string {
   const query = new URLSearchParams({ format });
-  return buildUrl(`/${documentId}/download`, query);
+  return buildApiUrl(API_ROOT, `/${documentId}/download`, query);
 }
