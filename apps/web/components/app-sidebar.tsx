@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import { Home, FileSearch, Files, Key, Settings, Plus } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
@@ -61,12 +62,18 @@ export function AppSidebar() {
             href="/"
             className="flex min-w-0 items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
-              <span className="text-xl font-bold">D</span>
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
+              <Image
+                src="/brand-logo.svg"
+                alt="DocMate"
+                width={28}
+                height={28}
+                className="h-7 w-7 object-contain"
+                priority
+              />
             </div>
-            <div className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
+            <div className="flex min-w-0 items-center group-data-[collapsible=icon]:hidden">
               <span className="text-sm font-bold">DocMate</span>
-              <span className="truncate text-xs text-zinc-500">document-agent-web</span>
             </div>
           </Link>
         </div>
