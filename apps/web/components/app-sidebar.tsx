@@ -16,6 +16,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { LogoutButton } from "@/components/logout-button"
 import { cn } from "@/lib/utils"
 
 const items = [
@@ -51,7 +52,15 @@ const subItems = [
   },
 ]
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  session: {
+    email: string
+    displayName: string
+    initials: string
+  }
+}
+
+export function AppSidebar({ session }: AppSidebarProps) {
   const pathname = usePathname()
 
   return (
@@ -142,11 +151,23 @@ export function AppSidebar() {
         <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <Avatar className="h-9 w-9 border border-zinc-200">
             <AvatarImage src="" />
-            <AvatarFallback className="bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">N</AvatarFallback>
+            <AvatarFallback className="bg-zinc-200 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+              {session.initials}
+            </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-semibold truncate">Guest User</span>
-            <span className="text-[10px] text-zinc-500 truncate">로그인 기능 연결 예정</span>
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+            <span className="truncate text-sm font-semibold">
+              {session.displayName}
+            </span>
+            <span className="truncate text-[10px] text-zinc-500">
+              {session.email}
+            </span>
+          </div>
+          <div className="group-data-[collapsible=icon]:hidden">
+            <LogoutButton />
+          </div>
+          <div className="hidden group-data-[collapsible=icon]:block">
+            <LogoutButton />
           </div>
         </div>
       </SidebarFooter>

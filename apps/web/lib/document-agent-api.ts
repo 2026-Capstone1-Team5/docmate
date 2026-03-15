@@ -37,16 +37,11 @@ type ApiErrorResponse = {
 
 export type DownloadFormat = "markdown" | "json";
 
-const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_DOCUMENT_AGENT_API_BASE_URL ?? "http://localhost:8000"
-).replace(/\/+$/, "");
-const API_ROOT = API_BASE_URL.endsWith("/api/v1")
-  ? API_BASE_URL
-  : `${API_BASE_URL}/api/v1`;
+const API_ROOT = "/api/documents";
 
 function buildUrl(path: string, query?: URLSearchParams): string {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const base = `${API_ROOT}${normalizedPath}`;
+  const base = path === "/" ? API_ROOT : `${API_ROOT}${normalizedPath}`;
   if (!query) {
     return base;
   }
@@ -88,7 +83,7 @@ export async function uploadDocument(
   const formData = new FormData();
   formData.append("file", file);
 
-  return requestJson<DocumentParseResponse>("/documents", {
+  return requestJson<DocumentParseResponse>("/", {
     method: "POST",
     body: formData,
   });
@@ -111,7 +106,7 @@ export async function listDocuments(params?: {
   }
 
   return requestJson<DocumentListResponse>(
-    "/documents",
+    "/",
     {
       method: "GET",
     },
@@ -122,7 +117,7 @@ export async function listDocuments(params?: {
 export async function getDocument(
   documentId: string,
 ): Promise<DocumentResponse> {
-  return requestJson<DocumentResponse>(`/documents/${documentId}`, {
+  return requestJson<DocumentResponse>(`/${documentId}`, {
     method: "GET",
   });
 }
@@ -130,13 +125,13 @@ export async function getDocument(
 export async function getDocumentResult(
   documentId: string,
 ): Promise<DocumentParseResponse> {
-  return requestJson<DocumentParseResponse>(`/documents/${documentId}/result`, {
+  return requestJson<DocumentParseResponse>(`/${documentId}/result`, {
     method: "GET",
   });
 }
 
 export async function deleteDocument(documentId: string): Promise<void> {
-  const response = await fetch(buildUrl(`/documents/${documentId}`), {
+  const response = await fetch(buildUrl(`/${documentId}`), {
     method: "DELETE",
   });
   if (!response.ok) {
@@ -149,5 +144,5 @@ export function getDownloadUrl(
   format: DownloadFormat,
 ): string {
   const query = new URLSearchParams({ format });
-  return buildUrl(`/documents/${documentId}/download`, query);
+  return buildUrl(`/${documentId}/download`, query);
 }
