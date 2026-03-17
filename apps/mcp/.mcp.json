@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "docmate": {
+      "command": "node",
+      "args": [
+        "dist\\index.js"
+      ]
+    }
+  }
+}
