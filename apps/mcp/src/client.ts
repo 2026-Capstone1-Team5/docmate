@@ -1,9 +1,6 @@
 import { config } from "dotenv";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, "../.env") });
+config({ override: false }); // process.cwd()/.env 에서 로드, 이미 주입된 env는 덮어쓰지 않음
 
 // 모듈 로드 시점에 즉시 환경 변수 검증
 const API_KEY = (() => {

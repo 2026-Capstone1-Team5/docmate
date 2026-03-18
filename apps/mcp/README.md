@@ -1,67 +1,116 @@
-## MCP Server — `document-agent-mcp`
+# document-agent-mcp
 
-The MCP server exposes DocMate to Claude Code as three tools:
-- `upload_document` — upload and parse a local PDF
-- `list_documents` — list uploaded documents
-- `get_document_result` — retrieve parsed markdown
+MCP (Model Context Protocol) server for [DocMate](https://github.com/2026-Capstone1-Team5) — AI-powered document management.
 
-### Setup
+Exposes three tools to Claude:
 
-```bash
-cd document-agent-mcp
+| Tool | Description |
+|------|-------------|
+| `upload_document` | Upload a local PDF and convert it to Markdown |
+| `list_documents` | List all uploaded documents |
+| `get_document_result` | Retrieve the full parsed Markdown of a document |
 
-# Install dependencies
-pnpm install
+---
 
-# Build
-pnpm build
-```
+## Quick Start (Claude Code)
 
-### Create an API key
+### 1. Get a DocMate API key
 
-You need a DocMate API key so the MCP server can authenticate with the backend.
-
-1. Make sure the backend is running.
-2. Register an account at `http://localhost:3000/register` (or via the API).
+1. Make sure the DocMate backend is running.
+2. Register at `http://localhost:3000/register` (or via the API).
 3. Go to **API Keys** in the dashboard and create a new key. Copy it.
 
-### Configure `.env`
+### 2. Add `.mcp.json` to your project
 
-API credentials are managed via a `.env` file. Copy the example and fill in your values:
+Create a `.mcp.json` file in the root of the project where you want to use the MCP server:
+
+```json
+{
+  "mcpServers": {
+    "docmate": {
+      "command": "npx",
+      "args": ["-y", "document-agent-mcp"],
+      "env": {
+        "DOCMATE_API_KEY": "your-api-key-here",
+        "DOCUMENT_AGENT_API_BASE_URL": "http://127.0.0.1:8000"
+      }
+    }
+  }
+}
+```
+
+- `DOCMATE_API_KEY`: the key you created above (**required**)
+- `DOCUMENT_AGENT_API_BASE_URL`: base URL of the running DocMate backend (default: `http://127.0.0.1:8000`)
+
+### 3. Launch Claude Code
+
+```bash
+claude
+```
+
+Verify the MCP server is connected:
+
+```
+/mcp
+```
+
+You should see `docmate` listed with `upload_document`, `list_documents`, and `get_document_result`.
+
+---
+
+## Claude Desktop
+
+Add the following to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "docmate": {
+      "command": "npx",
+      "args": ["-y", "document-agent-mcp"],
+      "env": {
+        "DOCMATE_API_KEY": "your-api-key-here",
+        "DOCUMENT_AGENT_API_BASE_URL": "http://127.0.0.1:8000"
+      }
+    }
+  }
+}
+```
+
+Config file location:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+---
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `DOCMATE_API_KEY` | Yes | — | DocMate API key for authentication |
+| `DOCUMENT_AGENT_API_BASE_URL` | No | `http://127.0.0.1:8000` | DocMate backend URL |
+
+---
+
+## Local Development
+
+```bash
+git clone https://github.com/2026-Capstone1-Team5/document-agent-mcp
+cd document-agent-mcp
+pnpm install
+pnpm build
+
+# Run directly
+node dist/index.js
+```
+
+Copy `.env.example` to `.env` and fill in your values for local dev:
 
 ```bash
 cp .env.example .env
 ```
 
-Then open `.env` and set your values:
-
 ```env
 DOCMATE_API_KEY=<YOUR_API_KEY>
 DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000
 ```
-
-- `DOCMATE_API_KEY`: the key you created above
-- `DOCUMENT_AGENT_API_BASE_URL`: base URL of the running DocMate backend
-
-> **Note:** `.env` is listed in `.gitignore` and will never be committed. Never share or commit this file.
-
-### Run Claude Code
-
-```bash
-# Make sure you are inside document-agent-mcp
-cd document-agent-mcp
-
-# Launch Claude Code
-claude
-```
-
-After launch, verify the MCP server and skills are connected:
-
-```
-/mcp     # confirm docmate tools are listed
-/skills  # confirm docmate skills are available
-```
-
-Skills can be triggered by the AI itself when needed, or they can be used at the user's explicit request.
-
----
