@@ -121,3 +121,11 @@ export function getDownloadUrl(
   const query = new URLSearchParams({ format });
   return buildApiUrl(API_ROOT, `/${documentId}/download`, query);
 }
+
+export function getSourceUrl(
+  documentId: string,
+  disposition: "inline" | "attachment" = "inline",
+): string {
+  const query = new URLSearchParams({ disposition });
+  return buildApiUrl(API_ROOT, `/${documentId}/source`, query);
+}

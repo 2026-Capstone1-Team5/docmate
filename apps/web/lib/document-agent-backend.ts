@@ -139,20 +139,26 @@ export function createUnauthorizedResponse() {
   )
 }
 
+const PROXY_RESPONSE_HEADER_NAMES = [
+  "accept-ranges",
+  "cache-control",
+  "content-disposition",
+  "content-length",
+  "content-range",
+  "content-type",
+  "etag",
+  "last-modified",
+  "x-content-type-options",
+] as const
+
 export function proxyResponse(response: Response): NextResponse {
   const headers = new Headers()
-  const contentType = response.headers.get("content-type")
-  const contentDisposition = response.headers.get("content-disposition")
-  const contentLength = response.headers.get("content-length")
 
-  if (contentType) {
-    headers.set("content-type", contentType)
-  }
-  if (contentDisposition) {
-    headers.set("content-disposition", contentDisposition)
-  }
-  if (contentLength) {
-    headers.set("content-length", contentLength)
+  for (const headerName of PROXY_RESPONSE_HEADER_NAMES) {
+    const headerValue = response.headers.get(headerName)
+    if (headerValue) {
+      headers.set(headerName, headerValue)
+    }
   }
 
   return new NextResponse(response.body, {
