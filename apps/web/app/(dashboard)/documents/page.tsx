@@ -3,10 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DocumentSummary, listDocuments } from "@/lib/document-agent-api";
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Plus, ExternalLink, Loader2, AlertCircle, Search } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import {
+  Plus,
+  ExternalLink,
+  Loader2,
+  AlertCircle,
+  FileText,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,7 +20,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+}
+
+function inferFileType(doc: DocumentSummary) {
+  const type = doc.contentType?.split("/")[1]?.toUpperCase();
+  if (type) {
+    return type;
+  }
+  const ext = doc.filename.split(".").pop()?.toUpperCase();
+  return ext || "FILE";
+}
 
 export default function DocumentListPage() {
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
@@ -41,122 +67,140 @@ export default function DocumentListPage() {
     fetchDocuments();
   }, []);
 
-  // 마지막 업로드 시간 계산
-  const lastUploadTime = documents.length > 0 
-    ? new Date(Math.max(...documents.map(d => new Date(d.createdAt).getTime()))).toLocaleString('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      })
-    : "업로드 기록 없음";
+  const latestUpload = documents[0]?.createdAt ?? null;
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
-        <p className="text-zinc-500 font-medium">Loading documents...</p>
+        <p className="text-zinc-500 font-medium">문서 목록을 불러오는 중입니다...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl space-y-8 pb-20">
-      <div className="flex justify-between items-end">
-        <div className="space-y-4">
-          <Badge variant="secondary" className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 px-2 py-0 text-[10px]">문서 인덱스</Badge>
+    <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden bg-white">
+      <header className="border-b border-zinc-200 px-6 py-4">
+        <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight">검수할 문서를 선택하세요</h1>
-            <p className="text-zinc-500 text-sm">파싱 결과를 다시 열고, Markdown/JSON 출력을 확인할 수 있는 문서 목록입니다.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
+              Documents
+            </p>
+            <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
+              문서 검수 대시보드
+            </h1>
+            <p className="text-sm text-zinc-500">
+              업로드된 문서를 검색하고, 원문/Markdown/JSON 검수 화면으로 바로 이동합니다.
+            </p>
           </div>
-          <div className="flex items-center gap-4 text-[11px] text-zinc-400">
-            <span>전체 문서 {documents.length}건</span>
-            <span className="text-zinc-200">|</span>
-            <span>마지막 업로드 {lastUploadTime}</span>
-            <span className="text-zinc-200">|</span>
-            <span>출력 Markdown / JSON</span>
-          </div>
+          <Button render={<Link href="/upload" />} className="h-10 px-5 font-semibold">
+            <Plus className="mr-2 h-4 w-4" />
+            새 업로드
+          </Button>
         </div>
-        <Button render={<Link href="/upload" />} className="h-10 px-6 rounded-lg font-bold shadow-sm">
-          <Plus className="h-4 w-4 mr-2" />
-          새 문서 추가
-        </Button>
+      </header>
+
+      <div className="grid grid-cols-1 gap-3 border-b border-zinc-200 px-6 py-4">
+        <div className="flex items-center gap-2 text-xs text-zinc-500">
+          <span className="hidden lg:inline">
+            마지막 업로드: {latestUpload ? formatDate(latestUpload) : "없음"}
+          </span>
+        </div>
       </div>
 
-      <Card className="border-none shadow-sm bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-100 dark:border-zinc-800 overflow-hidden">
-        <div className="px-10 py-3 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/30 dark:bg-zinc-900/30">
-          <div>
-            <h2 className="text-lg font-bold">문서 목록</h2>
-            <p className="text-zinc-500 text-xs">파일 형식과 업로드 시각을 확인하고, 검수할 문서를 바로 엽니다.</p>
-          </div>
-          <Badge variant="outline" className="text-[10px] font-normal text-zinc-400 border-zinc-200">총 {documents.length}건</Badge>
-        </div>
-
-        {errorMessage && (
-          <div className="mx-10 mt-6 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
+      <div className="flex-1 min-h-0">
+        {errorMessage ? (
+          <div className="mx-6 mt-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
             <AlertCircle className="h-4 w-4 shrink-0" />
-            <p className="font-medium">{errorMessage}</p>
+            <p>{errorMessage}</p>
           </div>
-        )}
-        
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-zinc-100 dark:border-zinc-800">
-              <TableHead className="w-[450px] text-zinc-400 font-bold text-[11px] uppercase tracking-wider px-10 h-10">문서</TableHead>
-              <TableHead className="text-zinc-400 font-bold text-[11px] uppercase tracking-wider h-10">형식</TableHead>
-              <TableHead className="text-zinc-400 font-bold text-[11px] uppercase tracking-wider h-10">상태</TableHead>
-              <TableHead className="text-zinc-400 font-bold text-[11px] uppercase tracking-wider h-10">업로드 시각</TableHead>
-              <TableHead className="text-zinc-400 font-bold text-[11px] uppercase tracking-wider h-10 text-right px-10">열기</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {documents.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-60 text-center text-zinc-400 text-sm">
-                  <div className="flex flex-col items-center gap-2">
-                    <Search className="h-8 w-8 text-zinc-200" />
-                    <p>업로드된 문서가 없습니다.</p>
-                  </div>
-                </TableCell>
+        ) : null}
+
+        <ScrollArea className="h-full">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-zinc-200 bg-zinc-50/70 hover:bg-zinc-50/70">
+                <TableHead className="h-10 px-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  문서
+                </TableHead>
+                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  형식
+                </TableHead>
+                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  상태
+                </TableHead>
+                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  업로드 시각
+                </TableHead>
+                <TableHead className="h-10 px-6 text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  열기
+                </TableHead>
               </TableRow>
-            ) : (
-              documents.map((doc) => (
-                <TableRow key={doc.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 border-zinc-100 dark:border-zinc-800 transition-colors group">
-                  <TableCell className="px-10 py-4">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-bold text-zinc-800 dark:text-zinc-200 group-hover:text-primary transition-colors">{doc.filename}</span>
+            </TableHeader>
+            <TableBody>
+              {documents.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-[360px] px-6">
+                    <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-zinc-200 bg-zinc-50">
+                        <FileText className="h-6 w-6 text-zinc-400" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-zinc-700">
+                          표시할 문서가 없습니다.
+                        </p>
+                        <p className="text-sm text-zinc-500">문서를 업로드하면 이 목록에 표시됩니다.</p>
+                      </div>
+                      <Button render={<Link href="/upload" />} variant="outline" className="h-9 px-4 font-semibold">
+                        <Plus className="mr-2 h-4 w-4" />
+                        문서 업로드
+                      </Button>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="text-[10px] font-bold text-zinc-400 border-zinc-200 rounded px-1.5 h-5">PDF</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border-zinc-200 text-[10px] px-1.5 h-5 font-bold">준비됨</Badge>
-                  </TableCell>
-                  <TableCell className="text-xs text-zinc-500 font-medium">
-                    {new Date(doc.createdAt).toLocaleString('ko-KR', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true
-                    })}
-                  </TableCell>
-                  <TableCell className="text-right px-10">
-                    <Button variant="ghost" size="xs" render={<Link href={`/documents/${doc.id}`} />} className="text-[11px] font-bold text-zinc-800 hover:text-primary gap-1">
-                      상세 보기
-                      <ExternalLink className="h-3 w-3" />
-                    </Button>
-                  </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+              ) : (
+                documents.map((doc) => (
+                  <TableRow
+                    key={doc.id}
+                    className="border-zinc-100 transition-colors hover:bg-zinc-50/60"
+                  >
+                    <TableCell className="px-6 py-4">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-semibold text-zinc-800">{doc.filename}</span>
+                        <span className="text-xs text-zinc-500">ID: {doc.id.slice(0, 8)}...</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="h-6 border-zinc-200 px-2 text-[10px] font-semibold text-zinc-500">
+                        {inferFileType(doc)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="h-6 bg-zinc-100 px-2 text-[10px] font-semibold text-zinc-600">
+                        준비됨
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs font-medium text-zinc-500">
+                      {formatDate(doc.createdAt)}
+                    </TableCell>
+                    <TableCell className="px-6 text-right">
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        render={<Link href={`/documents/${doc.id}`} />}
+                        className="gap-1 text-xs font-semibold text-zinc-700 hover:text-zinc-900"
+                      >
+                        상세 보기
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </ScrollArea>
+      </div>
     </div>
   );
 }
