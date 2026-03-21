@@ -17,6 +17,24 @@ export type DocumentResponse = {
   document: DocumentSummary;
 };
 
+export type ParseJobSummary = {
+  id: string;
+  filename: string;
+  contentType: string;
+  status: "queued" | "processing" | "succeeded" | "failed";
+  documentId: string | null;
+  errorCode: string | null;
+  errorMessage: string | null;
+  createdAt: string;
+  updatedAt: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+};
+
+export type ParseJobResponse = {
+  job: ParseJobSummary;
+};
+
 export type DocumentParseResponse = {
   document: DocumentSummary;
   result: ParseResult;
@@ -32,14 +50,15 @@ export type DocumentListResponse = {
 export type DownloadFormat = "markdown" | "json";
 
 const API_ROOT = "/api/documents";
+const PARSE_JOBS_API_ROOT = "/api/parse-jobs";
 
 export async function uploadDocument(
   file: File,
-): Promise<DocumentParseResponse> {
+): Promise<ParseJobResponse> {
   const formData = new FormData();
   formData.append("file", file);
 
-  return requestJson<DocumentParseResponse>({
+  return requestJson<ParseJobResponse>({
     apiRoot: API_ROOT,
     path: "/",
     init: {
@@ -47,6 +66,17 @@ export async function uploadDocument(
       body: formData,
     },
     fallbackMessage: "API 요청에 실패했습니다.",
+  });
+}
+
+export async function getParseJob(jobId: string): Promise<ParseJobResponse> {
+  return requestJson<ParseJobResponse>({
+    apiRoot: PARSE_JOBS_API_ROOT,
+    path: `/${jobId}`,
+    init: {
+      method: "GET",
+    },
+    fallbackMessage: "파싱 작업 상태를 불러오지 못했습니다.",
   });
 }
 

@@ -1,19 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { uploadDocument } from "@/lib/document-agent-api";
+import { getParseJob, uploadDocument } from "@/lib/document-agent-api";
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Upload, Loader2, AlertCircle, CheckCircle2, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 
+const POLL_INTERVAL_MS = 1000;
+const POLL_TIMEOUT_MS = 60000;
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+  const isActiveRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isActiveRef.current = false;
+    };
+  }, []);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,19 +38,48 @@ export default function UploadPage() {
 
     setUploading(true);
     setErrorMessage(null);
+    let navigatingToDocument = false;
 
     try {
-      const parsed = await uploadDocument(file);
-      router.push(`/documents/${parsed.document.id}`);
+      const queued = await uploadDocument(file);
+      const startedAt = Date.now();
+
+      while (isActiveRef.current && Date.now() - startedAt < POLL_TIMEOUT_MS) {
+        const current = await getParseJob(queued.job.id);
+
+        if (current.job.status === "failed") {
+          throw new Error(current.job.errorMessage ?? "문서 파싱에 실패했습니다.");
+        }
+
+        if (current.job.documentId) {
+          if (!isActiveRef.current) {
+            return;
+          }
+          navigatingToDocument = true;
+          router.push(`/documents/${current.job.documentId}`);
+          return;
+        }
+
+        await wait(POLL_INTERVAL_MS);
+      }
+
+      if (isActiveRef.current) {
+        setErrorMessage("업로드는 완료되었지만 파싱이 아직 진행 중입니다. 문서 목록에서 잠시 후 다시 확인해 주세요.");
+      }
     } catch (error) {
       console.error(error);
+      if (!isActiveRef.current) {
+        return;
+      }
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
         setErrorMessage("An error occurred during upload.");
       }
     } finally {
-      setUploading(false);
+      if (isActiveRef.current && !navigatingToDocument) {
+        setUploading(false);
+      }
     }
   };
 
@@ -49,7 +92,7 @@ export default function UploadPage() {
               <Badge variant="secondary" className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 px-2 py-0 text-[10px]">Drag and Drop</Badge>
               <div className="space-y-1">
                 <h1 className="text-2xl font-bold">문서 업로드 워크벤치</h1>
-                <p className="text-zinc-500 text-sm">파일을 올리면 즉시 파싱 요청을 보내고, 성공 시 상세 검수 화면으로 이동합니다.</p>
+                <p className="text-zinc-500 text-sm">파일을 올리면 파싱 작업을 생성하고, 완료되면 상세 검수 화면으로 이동합니다.</p>
               </div>
             </div>
 
@@ -149,7 +192,7 @@ export default function UploadPage() {
               <ul className="space-y-3 text-[11px] text-zinc-500 leading-relaxed">
                 <li className="flex gap-2">
                   <span className="shrink-0">•</span>
-                  <span>문서 업로드 뒤 즉시 상세 Viewer로 이동합니다.</span>
+                  <span>문서 업로드 뒤 async parse job을 생성하고 완료 시 상세 Viewer로 이동합니다.</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="shrink-0">•</span>

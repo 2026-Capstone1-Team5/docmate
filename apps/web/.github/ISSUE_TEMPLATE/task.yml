@@ -1,0 +1,47 @@
+name: Task
+description: Create a project task using the standard Summary / Background / Scope / Done format.
+title: "feat: "
+labels:
+  - task
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe what this task changes.
+      placeholder: |
+        `document-agent-web`에서 어떤 기능 또는 정리를 수행하는지 한두 문장으로 적어주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Explain why this task is needed now.
+      placeholder: |
+        현재 동작/제약과 이번 작업이 필요한 이유를 적어주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List the concrete implementation scope.
+      placeholder: |
+        - 구현 항목 1
+        - 구현 항목 2
+        - 구현 항목 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Done
+      description: Define the condition for completion.
+      placeholder: |
+        이 작업이 완료되었다고 볼 수 있는 상태를 적어주세요.
+    validations:
+      required: true
