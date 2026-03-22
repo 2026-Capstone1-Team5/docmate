@@ -16,6 +16,7 @@ import {
   DocumentSummary,
   getDocumentResult,
   getDownloadUrl,
+  getSourcePreviewMode,
   getSourceUrl,
   ParseResult,
 } from "@/lib/document-agent-api";
@@ -33,9 +34,12 @@ export default function DocumentDetailPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const previewUrl = doc ? getSourceUrl(doc.id) : null;
-  const isPdfPreview = Boolean(
-    doc && (doc.contentType.toLowerCase().includes("pdf") || doc.filename.toLowerCase().endsWith(".pdf")),
-  );
+  const previewMode = doc
+    ? getSourcePreviewMode({
+        name: doc.filename,
+        type: doc.contentType,
+      })
+    : null;
   const resultDownloadExt = resultView === "markdown" ? "md" : "json";
   const resultDownloadName = doc
     ? `${doc.filename.replace(/\.[^.]+$/, "")}.${resultDownloadExt}`
@@ -107,13 +111,13 @@ export default function DocumentDetailPage() {
 
   return (
     <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden border-y border-zinc-200 bg-white lg:flex-row">
-      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-b border-zinc-200 lg:border-b-0 lg:border-r">
+      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-b border-zinc-200 lg:basis-1/2 lg:border-b-0 lg:border-r">
         {previewUrl ? (
           <SourcePreviewPanel
             key={doc.id}
             fileName={doc.filename}
             previewUrl={previewUrl}
-            mode={isPdfPreview ? "pdf" : "embed"}
+            mode={previewMode ?? "embed"}
             toolbarStart={(
               <Button
                 variant="ghost"
@@ -155,10 +159,14 @@ export default function DocumentDetailPage() {
       </section>
 
       <ResultViewerPanel
+        panelTab="result"
+        onPanelTabChange={() => {}}
         resultView={resultView}
         onResultViewChange={setResultView}
+        showConfigTab={false}
         downloadUrl={getDownloadUrl(doc.id, resultView)}
         downloadFileName={resultDownloadName}
+        resultTabDisabled={false}
         state="ready"
         markdownContent={result.markdown}
         jsonContent={result.canonicalJson}

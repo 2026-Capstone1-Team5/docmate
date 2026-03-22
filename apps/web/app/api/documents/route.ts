@@ -9,6 +9,8 @@ import {
   proxyResponse,
 } from "@/lib/document-agent-backend"
 
+const VALID_PARSER_BACKENDS = new Set(["markitdown", "pdftotext"])
+
 export async function GET(request: NextRequest) {
   const accessToken = await getAccessToken()
   if (!accessToken) {
@@ -45,11 +47,31 @@ export async function POST(request: NextRequest) {
 
   try {
     const formData = await request.formData()
-    const response = await fetchDocumentAgentApi("/documents", {
-      method: "POST",
-      headers: createAuthHeaders(accessToken),
-      body: formData,
-    })
+    const query = new URLSearchParams()
+    const parserBackend = request.nextUrl.searchParams.get("parserBackend")
+    if (parserBackend) {
+      if (!VALID_PARSER_BACKENDS.has(parserBackend)) {
+        return NextResponse.json(
+          {
+            error: {
+              message: "지원하지 않는 parserBackend 값입니다.",
+            },
+          },
+          { status: 400 },
+        )
+      }
+      query.set("parserBackend", parserBackend)
+    }
+
+    const response = await fetchDocumentAgentApi(
+      "/documents",
+      {
+        method: "POST",
+        headers: createAuthHeaders(accessToken),
+        body: formData,
+      },
+      query,
+    )
 
     if (!response.ok) {
       const error = await parseBackendApiError(

@@ -157,3 +157,15 @@
     @apply bg-background text-foreground antialiased;
   }
 }
+.doc-viewer-embedded .rdv-header-bar {
+  display: none !important;
+}
+
+.doc-viewer-embedded .rdv-pdf-controls .rdv-toolbar-group:last-child > .rdv-toolbar-btn:last-child {
+  display: none !important;
+}
+
+.doc-viewer-embedded .rdv-container,
+.doc-viewer-embedded #proxy-renderer {
+  background: white;
+}

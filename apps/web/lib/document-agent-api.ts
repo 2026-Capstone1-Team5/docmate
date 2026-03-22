@@ -1,5 +1,22 @@
 import { buildApiUrl, requestJson, requestVoid } from "@/lib/api-client";
 
+export type ParserBackend = "markitdown" | "pdftotext"
+export type PanelTab = "config" | "result"
+export type SourcePreviewMode = "pdf" | "image" | "docx" | "xlsx" | "pptx" | "embed"
+
+export const DEFAULT_PARSER_BACKEND: ParserBackend = "markitdown"
+export const SUPPORTED_UPLOAD_ACCEPT =
+  ".pdf,.docx,.pptx,.xlsx,.png,.jpg,.jpeg,image/png,image/jpeg"
+export const SUPPORTED_UPLOAD_EXTENSIONS = [
+  ".pdf",
+  ".docx",
+  ".pptx",
+  ".xlsx",
+  ".png",
+  ".jpg",
+  ".jpeg",
+] as const
+
 export type DocumentSummary = {
   id: string;
   filename: string;
@@ -54,13 +71,19 @@ const PARSE_JOBS_API_ROOT = "/api/parse-jobs";
 
 export async function uploadDocument(
   file: File,
+  options?: {
+    parserBackend?: ParserBackend
+  },
 ): Promise<ParseJobResponse> {
   const formData = new FormData();
   formData.append("file", file);
+  const query = new URLSearchParams()
+  query.set("parserBackend", options?.parserBackend ?? DEFAULT_PARSER_BACKEND)
 
   return requestJson<ParseJobResponse>({
     apiRoot: API_ROOT,
     path: "/",
+    query,
     init: {
       method: "POST",
       body: formData,
@@ -158,4 +181,85 @@ export function getSourceUrl(
 ): string {
   const query = new URLSearchParams({ disposition });
   return buildApiUrl(API_ROOT, `/${documentId}/source`, query);
+}
+
+export function getFileExtension(filename: string): string {
+  const lastDotIndex = filename.lastIndexOf(".")
+  if (lastDotIndex < 0) {
+    return ""
+  }
+  return filename.slice(lastDotIndex).toLowerCase()
+}
+
+export function isPdfFile(file: Pick<File, "name" | "type">): boolean {
+  return (
+    file.type.toLowerCase().includes("pdf") ||
+    getFileExtension(file.name) === ".pdf"
+  )
+}
+
+export function getSourcePreviewMode(
+  file: Pick<File, "name" | "type">
+): SourcePreviewMode {
+  const contentType = file.type.toLowerCase()
+  const extension = getFileExtension(file.name)
+
+  if (contentType.includes("pdf") || extension === ".pdf") {
+    return "pdf"
+  }
+
+  if (
+    contentType === "image/png" ||
+    contentType === "image/jpeg" ||
+    extension === ".png" ||
+    extension === ".jpg" ||
+    extension === ".jpeg"
+  ) {
+    return "image"
+  }
+
+  if (
+    contentType.includes("wordprocessingml") ||
+    extension === ".docx"
+  ) {
+    return "docx"
+  }
+
+  if (
+    contentType.includes("spreadsheetml") ||
+    extension === ".xlsx"
+  ) {
+    return "xlsx"
+  }
+
+  if (
+    contentType.includes("presentationml") ||
+    extension === ".pptx"
+  ) {
+    return "pptx"
+  }
+
+  return "embed"
+}
+
+export function isSupportedUploadFile(file: Pick<File, "name" | "type">): boolean {
+  const contentType = file.type.toLowerCase()
+  const extension = getFileExtension(file.name)
+
+  if (
+    SUPPORTED_UPLOAD_EXTENSIONS.includes(
+      extension as (typeof SUPPORTED_UPLOAD_EXTENSIONS)[number]
+    )
+  ) {
+    return true
+  }
+
+  return (
+    contentType.includes("pdf") ||
+    contentType === "image/png" ||
+    contentType === "image/jpeg" ||
+    contentType.includes("wordprocessingml") ||
+    contentType.includes("spreadsheetml") ||
+    contentType.includes("presentationml")
+  )
 }
