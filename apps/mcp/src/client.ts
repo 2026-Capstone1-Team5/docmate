@@ -1,6 +1,10 @@
 import { config } from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-config({ override: false }); // process.cwd()/.env 에서 로드, 이미 주입된 env는 덮어쓰지 않음
+// process.cwd()/.env 우선, 없으면 모듈 위치 기준 fallback
+config({ override: false });
+config({ path: join(dirname(fileURLToPath(import.meta.url)), "../.env"), override: false });
 
 // 모듈 로드 시점에 즉시 환경 변수 검증
 const API_KEY = (() => {
