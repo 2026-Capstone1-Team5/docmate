@@ -72,11 +72,11 @@ document-agent-mcp setup --help
 |-------|-------------|------------|
 | Claude Code | `~/.claude/skills/` | registered via `claude mcp add --scope user` |
 | Gemini CLI | `~/.gemini/skills/` | `~/.gemini/.mcp.json` |
-| OpenAI Codex | `~/.codex/skills/` | `~/.codex/.mcp.json` |
+| OpenAI Codex | `~/.codex/skills/` | registered via `codex mcp add` or `~/.codex/config.toml` |
 
 Agent detection is automatic — setup checks which CLIs are available on your `PATH`.
 If none are detected, pass `--agent <name>` explicitly.
-When `--target <path>` is used, all skills and MCP config files are written under that directory, including Claude at `<path>/.claude/.mcp.json`.
+When `--target <path>` is used, skills and agent config files are written under that directory instead of `HOME`.
 
 ---
 
@@ -141,6 +141,16 @@ claude mcp add --scope user docmate \
   -- document-agent-mcp
 ```
 
+For Codex:
+
+```bash
+npm install -g document-agent-mcp
+codex mcp add docmate \
+  --env DOCMATE_API_KEY=your-api-key-here \
+  --env DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000 \
+  -- document-agent-mcp
+```
+
 ---
 
 ## Local Development
@@ -153,6 +163,9 @@ pnpm build
 
 # Run directly
 node dist/index.js
+
+# Run setup directly from the repo
+node dist/index.js setup
 ```
 
 Copy `.env.example` to `.env` and fill in your values for local dev:
@@ -164,4 +177,24 @@ cp .env.example .env
 ```env
 DOCMATE_API_KEY=<YOUR_API_KEY>
 DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000
+```
+
+---
+
+## npm Release
+
+GitHub Actions is configured to:
+
+- run `pnpm build` and `npm pack` on PRs and pushes
+- publish to npm on `v*` tag pushes or manual workflow dispatch
+
+Repository secret required:
+
+- `NPM_TOKEN`
+
+Tag-based release example:
+
+```bash
+git tag v0.1.6
+git push origin v0.1.6
 ```

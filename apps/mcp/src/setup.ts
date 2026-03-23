@@ -47,6 +47,11 @@ function prompt(rl: readline.Interface, question: string): Promise<string> {
 // ── Agent detection ───────────────────────────────────────────────────────────
 type Agent = "claude" | "gemini" | "codex";
 
+interface McpCommandConfig {
+  command: string;
+  args?: string[];
+}
+
 function hasCommand(cmd: string): boolean {
   const r = spawnSync(cmd, ["--version"], {
     stdio: "ignore",
@@ -72,6 +77,14 @@ function srcSkillsDir(agent: Agent): string {
 
 function destSkillsDir(agent: Agent, target: string): string {
   return path.join(target, `.${agent}`, "skills");
+}
+
+function getMcpCommandConfig(): McpCommandConfig {
+  const entryPath = path.resolve(process.argv[1] ?? path.join(PACKAGE_ROOT, "dist", "index.js"));
+  return {
+    command: process.execPath,
+    args: [entryPath],
+  };
 }
 
 // ── Skills installer ──────────────────────────────────────────────────────────
@@ -100,7 +113,12 @@ function installSkills(agent: Agent, target: string): boolean {
 }
 
 // ── MCP config helpers ────────────────────────────────────────────────────────
-function writeMcpJson(jsonPath: string, apiKey: string, backendUrl: string): boolean {
+function writeMcpJson(
+  jsonPath: string,
+  apiKey: string,
+  backendUrl: string,
+  commandConfig: McpCommandConfig,
+): boolean {
   fs.mkdirSync(path.dirname(jsonPath), { recursive: true });
 
   let config: Record<string, unknown> = {};
@@ -134,7 +152,10 @@ function writeMcpJson(jsonPath: string, apiKey: string, backendUrl: string): boo
 
   configWithServers.mcpServers ??= {};
   configWithServers.mcpServers.docmate = {
-    command: "document-agent-mcp",
+    command: commandConfig.command,
+    ...(commandConfig.args && commandConfig.args.length > 0
+      ? { args: commandConfig.args }
+      : {}),
     env: {
       DOCMATE_API_KEY: apiKey,
       DOCUMENT_AGENT_API_BASE_URL: backendUrl,
@@ -146,12 +167,53 @@ function writeMcpJson(jsonPath: string, apiKey: string, backendUrl: string): boo
   return true;
 }
 
+function writeCodexConfigToml(
+  tomlPath: string,
+  apiKey: string,
+  backendUrl: string,
+  commandConfig: McpCommandConfig,
+): boolean {
+  fs.mkdirSync(path.dirname(tomlPath), { recursive: true });
+
+  let existing = "";
+  if (fs.existsSync(tomlPath)) {
+    existing = fs.readFileSync(tomlPath, "utf8");
+  }
+
+  const stripped = existing
+    .replace(/^\[mcp_servers\.docmate\][\s\S]*?(?=^\[|\Z)/gm, "")
+    .trimEnd();
+
+  const escapedCommand = JSON.stringify(commandConfig.command);
+  const escapedArgs = JSON.stringify(commandConfig.args ?? []);
+  const escapedApiKey = JSON.stringify(apiKey);
+  const escapedBackendUrl = JSON.stringify(backendUrl);
+
+  const block = [
+    "[mcp_servers.docmate]",
+    `command = ${escapedCommand}`,
+    `args = ${escapedArgs}`,
+    "",
+    "[mcp_servers.docmate.env]",
+    `DOCMATE_API_KEY = ${escapedApiKey}`,
+    `DOCUMENT_AGENT_API_BASE_URL = ${escapedBackendUrl}`,
+    "",
+  ].join("\n");
+
+  const output = stripped ? `${stripped}\n\n${block}` : block;
+  fs.writeFileSync(tomlPath, output);
+  ok(`MCP config → ${c.bold}${tomlPath}${c.reset}`);
+  return true;
+}
+
 function configureClaude(apiKey: string, backendUrl: string, target: string): boolean {
+  const commandConfig = getMcpCommandConfig();
   if (target !== HOME) {
     return writeMcpJson(
       path.join(target, ".claude", ".mcp.json"),
       apiKey,
       backendUrl,
+      commandConfig,
     );
   }
 
@@ -162,7 +224,7 @@ function configureClaude(apiKey: string, backendUrl: string, target: string): bo
       "mcp", "add", "--scope", "user", "docmate",
       "-e", `DOCMATE_API_KEY=${apiKey}`,
       "-e", `DOCUMENT_AGENT_API_BASE_URL=${backendUrl}`,
-      "--", "document-agent-mcp",
+      "--", commandConfig.command, ...(commandConfig.args ?? []),
     ],
     { stdio: "inherit", shell: process.platform === "win32" },
   );
@@ -172,8 +234,54 @@ function configureClaude(apiKey: string, backendUrl: string, target: string): bo
     return true;
   } else {
     warn("claude mcp add failed — falling back to ~/.claude/.mcp.json");
-    return writeMcpJson(path.join(HOME, ".claude", ".mcp.json"), apiKey, backendUrl);
+    return writeMcpJson(
+      path.join(HOME, ".claude", ".mcp.json"),
+      apiKey,
+      backendUrl,
+      commandConfig,
+    );
   }
+}
+
+function configureCodex(apiKey: string, backendUrl: string, target: string): boolean {
+  const commandConfig = getMcpCommandConfig();
+
+  if (target !== HOME) {
+    return writeCodexConfigToml(
+      path.join(target, ".codex", "config.toml"),
+      apiKey,
+      backendUrl,
+      commandConfig,
+    );
+  }
+
+  const args = [
+    "mcp", "add", "docmate",
+    "--env", `DOCMATE_API_KEY=${apiKey}`,
+    "--env", `DOCUMENT_AGENT_API_BASE_URL=${backendUrl}`,
+    "--",
+    commandConfig.command,
+    ...(commandConfig.args ?? []),
+  ];
+
+  const result = spawnSync(
+    "codex",
+    args,
+    { stdio: "inherit", shell: process.platform === "win32" },
+  );
+
+  if (result.status === 0) {
+    ok("MCP server registered for Codex");
+    return true;
+  }
+
+  warn("codex mcp add failed — falling back to ~/.codex/config.toml");
+  return writeCodexConfigToml(
+    path.join(HOME, ".codex", "config.toml"),
+    apiKey,
+    backendUrl,
+    commandConfig,
+  );
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -248,9 +356,13 @@ OPTIONS:
       if (!configureClaude(apiKey, backendUrl, target)) {
         failures.push(`${agent}:mcp`);
       }
+    } else if (agent === "codex") {
+      if (!configureCodex(apiKey, backendUrl, target)) {
+        failures.push(`${agent}:mcp`);
+      }
     } else {
       const jsonPath = path.join(target, `.${agent}`, ".mcp.json");
-      if (!writeMcpJson(jsonPath, apiKey, backendUrl)) {
+      if (!writeMcpJson(jsonPath, apiKey, backendUrl, getMcpCommandConfig())) {
         failures.push(`${agent}:mcp`);
       }
     }
