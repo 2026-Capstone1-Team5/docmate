@@ -1,6 +1,6 @@
 {
-  "name": "document-agent-mcp",
-  "version": "0.1.5",
+  "name": "@qxinm/document-agent-mcp",
+  "version": "0.1.6",
   "description": "MCP server for DocMate — AI-powered document management",
   "type": "module",
   "main": "dist/index.js",

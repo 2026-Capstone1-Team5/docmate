@@ -24,7 +24,7 @@ Exposes three tools to AI agents:
 ### 2. Install and run setup
 
 ```bash
-npm install -g document-agent-mcp
+npm install -g @qxinm/document-agent-mcp
 document-agent-mcp setup
 ```
 
@@ -134,7 +134,7 @@ If you prefer to configure manually, create a `.mcp.json` in your project root:
 Or register globally via CLI:
 
 ```bash
-npm install -g document-agent-mcp
+npm install -g @qxinm/document-agent-mcp
 claude mcp add --scope user docmate \
   -e DOCMATE_API_KEY=your-api-key-here \
   -e DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000 \
@@ -144,7 +144,7 @@ claude mcp add --scope user docmate \
 For Codex:
 
 ```bash
-npm install -g document-agent-mcp
+npm install -g @qxinm/document-agent-mcp
 codex mcp add docmate \
   --env DOCMATE_API_KEY=your-api-key-here \
   --env DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000 \
