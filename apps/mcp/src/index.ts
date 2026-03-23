@@ -1,19 +1,19 @@
 #!/usr/bin/env node
+
+// ── Setup subcommand (must run before any tool imports that validate env) ─────
+if (process.argv[2] === "setup") {
+  const { runSetup } = await import("./setup.js");
+  await runSetup(process.argv.slice(3));
+  process.exit(0);
+}
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-import {
-  uploadDocumentSchema,
-  runUploadDocument,
-} from "./tools/upload.js";
-import {
-  listDocumentsSchema,
-  runListDocuments,
-} from "./tools/list.js";
-import {
-  getDocumentResultSchema,
-  runGetDocumentResult,
-} from "./tools/result.js";
+const { uploadDocumentSchema, runUploadDocument } = await import("./tools/upload.js");
+const { listDocumentsSchema, runListDocuments } = await import("./tools/list.js");
+const { getDocumentResultSchema, runGetDocumentResult } = await import("./tools/result.js");
+const { getParseJobSchema, runGetParseJob } = await import("./tools/parse-job.js");
 
 const server = new McpServer({
   name: "docmate",
@@ -39,6 +39,17 @@ server.registerTool(
     inputSchema: listDocumentsSchema,
   },
   async (args) => runListDocuments(args),
+);
+
+server.registerTool(
+  "get_parse_job_status",
+  {
+    description:
+      "Check the status of an uploaded parse job. " +
+      "Use this when upload_document reports that parsing is still in progress.",
+    inputSchema: getParseJobSchema,
+  },
+  async (args) => runGetParseJob(args),
 );
 
 server.registerTool(

@@ -2,17 +2,18 @@
 
 MCP (Model Context Protocol) server for [DocMate](https://github.com/2026-Capstone1-Team5) — AI-powered document management.
 
-Exposes three tools to Claude:
+Exposes three tools to AI agents:
 
 | Tool | Description |
 |------|-------------|
 | `upload_document` | Upload a local PDF and convert it to Markdown |
 | `list_documents` | List all uploaded documents |
+| `get_parse_job_status` | Check whether an async parse job is still running, succeeded, or failed |
 | `get_document_result` | Retrieve the full parsed Markdown of a document |
 
 ---
 
-## Quick Start (Claude Code)
+## Quick Start
 
 ### 1. Get a DocMate API key
 
@@ -20,41 +21,62 @@ Exposes three tools to Claude:
 2. Register at `http://localhost:3000/register` (or via the API).
 3. Go to **API Keys** in the dashboard and create a new key. Copy it.
 
-### 2. Add `.mcp.json` to your project
-
-Create a `.mcp.json` file in the root of the project where you want to use the MCP server:
-
-```json
-{
-  "mcpServers": {
-    "docmate": {
-      "command": "npx",
-      "args": ["-y", "document-agent-mcp"],
-      "env": {
-        "DOCMATE_API_KEY": "your-api-key-here",
-        "DOCUMENT_AGENT_API_BASE_URL": "http://127.0.0.1:8000"
-      }
-    }
-  }
-}
-```
-
-- `DOCMATE_API_KEY`: the key you created above (**required**)
-- `DOCUMENT_AGENT_API_BASE_URL`: base URL of the running DocMate backend (default: `http://127.0.0.1:8000`)
-
-### 3. Launch Claude Code
+### 2. Install and run setup
 
 ```bash
-claude
+npm install -g document-agent-mcp
+document-agent-mcp setup
 ```
 
-Verify the MCP server is connected:
+The setup command will:
+- Prompt for your API key and backend URL
+- Auto-detect installed agents (Claude Code, Gemini CLI, Codex)
+- Register the MCP server with your agent automatically
+- Install DocMate skills (slash commands)
+
+Works on **Windows, macOS, and Linux**.
+
+### 3. Verify the connection
+
+Launch your agent and run:
 
 ```
 /mcp
 ```
 
-You should see `docmate` listed with `upload_document`, `list_documents`, and `get_document_result`.
+You should see `docmate` listed with `upload_document`, `list_documents`, `get_parse_job_status`, and `get_document_result`.
+
+---
+
+## Setup options
+
+```bash
+# Install for a specific agent only
+document-agent-mcp setup --agent claude
+document-agent-mcp setup --agent gemini
+document-agent-mcp setup --agent codex
+
+# Install for multiple agents
+document-agent-mcp setup --agent claude --agent gemini
+
+# Install into a specific project directory instead of HOME
+document-agent-mcp setup --target ./my-project
+
+# Show help
+document-agent-mcp setup --help
+```
+
+### Installed locations
+
+| Agent | Skills path | MCP config |
+|-------|-------------|------------|
+| Claude Code | `~/.claude/skills/` | registered via `claude mcp add --scope user` |
+| Gemini CLI | `~/.gemini/skills/` | `~/.gemini/.mcp.json` |
+| OpenAI Codex | `~/.codex/skills/` | `~/.codex/.mcp.json` |
+
+Agent detection is automatic — setup checks which CLIs are available on your `PATH`.
+If none are detected, pass `--agent <name>` explicitly.
+When `--target <path>` is used, all skills and MCP config files are written under that directory, including Claude at `<path>/.claude/.mcp.json`.
 
 ---
 
@@ -66,8 +88,7 @@ Add the following to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "docmate": {
-      "command": "npx",
-      "args": ["-y", "document-agent-mcp"],
+      "command": "document-agent-mcp",
       "env": {
         "DOCMATE_API_KEY": "your-api-key-here",
         "DOCUMENT_AGENT_API_BASE_URL": "http://127.0.0.1:8000"
@@ -89,6 +110,36 @@ Config file location:
 |----------|----------|---------|-------------|
 | `DOCMATE_API_KEY` | Yes | — | DocMate API key for authentication |
 | `DOCUMENT_AGENT_API_BASE_URL` | No | `http://127.0.0.1:8000` | DocMate backend URL |
+
+---
+
+## Manual MCP setup (without `skills.sh`)
+
+If you prefer to configure manually, create a `.mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "docmate": {
+      "command": "document-agent-mcp",
+      "env": {
+        "DOCMATE_API_KEY": "your-api-key-here",
+        "DOCUMENT_AGENT_API_BASE_URL": "http://127.0.0.1:8000"
+      }
+    }
+  }
+}
+```
+
+Or register globally via CLI:
+
+```bash
+npm install -g document-agent-mcp
+claude mcp add --scope user docmate \
+  -e DOCMATE_API_KEY=your-api-key-here \
+  -e DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000 \
+  -- document-agent-mcp
+```
 
 ---
 
