@@ -2,7 +2,11 @@
 
 MCP (Model Context Protocol) server for [DocMate](https://github.com/2026-Capstone1-Team5) — AI-powered document management.
 
-Exposes three tools to AI agents:
+Published package:
+
+- `@qxinm/document-agent-mcp`
+
+Exposes four tools to AI agents:
 
 | Tool | Description |
 |------|-------------|
@@ -191,6 +195,8 @@ GitHub Actions is configured to:
 Repository secret required:
 
 - `NPM_TOKEN`
+
+The token must have publish permission for the `@qxinm` scope.
 
 Tag-based release example:
 
