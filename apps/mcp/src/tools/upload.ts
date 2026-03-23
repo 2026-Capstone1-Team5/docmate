@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
-import { uploadDocument, ApiError } from "../client.js";
+import { uploadDocument, ApiError, UploadPendingError } from "../client.js";
 
 export const uploadDocumentSchema = z.object({
   file_path: z.string().min(1, "file_path is required."),
@@ -89,6 +89,20 @@ export async function runUploadDocument(
       content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
     };
   } catch (err) {
+    if (err instanceof UploadPendingError) {
+      const result = {
+        parse_job_id: err.jobId,
+        is_result_ready: false,
+        message:
+          `Parsing is still in progress. ` +
+          `Check the job later with get_parse_job_status("${err.jobId}").`,
+      };
+
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    }
+
     const message =
       err instanceof ApiError ? err.message : `Unexpected error: ${String(err)}`;
     return { isError: true, content: [{ type: "text", text: message }] };
