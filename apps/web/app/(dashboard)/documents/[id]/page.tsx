@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import {
   ArrowLeft,
   Loader2,
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SourcePreviewPanel } from "@/components/dashboard/source-preview-panel";
 import { ResultViewerPanel } from "@/components/dashboard/result-viewer-panel";
 import {
   deleteDocument,
@@ -20,6 +20,11 @@ import {
   getSourceUrl,
   ParseResult,
 } from "@/lib/document-agent-api";
+
+const SourcePreviewPanel = dynamic(
+  () => import("@/components/dashboard/source-preview-panel").then((module) => module.SourcePreviewPanel),
+  { ssr: false },
+);
 
 export default function DocumentDetailPage() {
   const params = useParams<{ id: string }>();

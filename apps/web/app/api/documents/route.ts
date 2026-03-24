@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import {
+  DOCUMENT_AI_PARSER_ENABLED,
+} from "@/lib/document-agent-api"
+
+import {
   createAuthHeaders,
   createUnauthorizedResponse,
   fetchDocumentAgentApi,
@@ -9,7 +13,11 @@ import {
   proxyResponse,
 } from "@/lib/document-agent-backend"
 
-const VALID_PARSER_BACKENDS = new Set(["markitdown", "pdftotext"])
+const VALID_PARSER_BACKENDS = new Set(["markitdown", "pdftotext", "document_ai"])
+
+const ALLOWED_PARSER_BACKENDS = DOCUMENT_AI_PARSER_ENABLED
+  ? VALID_PARSER_BACKENDS
+  : new Set(["markitdown", "pdftotext"])
 
 export async function GET(request: NextRequest) {
   const accessToken = await getAccessToken()
@@ -50,7 +58,7 @@ export async function POST(request: NextRequest) {
     const query = new URLSearchParams()
     const parserBackend = request.nextUrl.searchParams.get("parserBackend")
     if (parserBackend) {
-      if (!VALID_PARSER_BACKENDS.has(parserBackend)) {
+      if (!ALLOWED_PARSER_BACKENDS.has(parserBackend)) {
         return NextResponse.json(
           {
             error: {

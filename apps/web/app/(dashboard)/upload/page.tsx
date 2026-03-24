@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   FileSpreadsheet,
   FileText,
@@ -12,10 +13,10 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { SourcePreviewPanel } from "@/components/dashboard/source-preview-panel";
 import { ResultViewerPanel } from "@/components/dashboard/result-viewer-panel";
 import {
   DEFAULT_PARSER_BACKEND,
+  DOCUMENT_AI_PARSER_ENABLED,
   DocumentSummary,
   getDocumentResult,
   getParseJob,
@@ -33,12 +34,23 @@ import {
 const POLL_INTERVAL_MS = 1000;
 const POLL_TIMEOUT_MS = 60000;
 
+const SourcePreviewPanel = dynamic(
+  () => import("@/components/dashboard/source-preview-panel").then((module) => module.SourcePreviewPanel),
+  { ssr: false },
+);
+
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function parserLabel(parserBackend: ParserBackend): string {
-  return parserBackend === "markitdown" ? "MarkItDown" : "pdftotext";
+  if (parserBackend === "markitdown") {
+    return "MarkItDown";
+  }
+  if (parserBackend === "pdftotext") {
+    return "pdftotext";
+  }
+  return "document_ai";
 }
 
 function UploadConfigPanel({
@@ -115,6 +127,31 @@ function UploadConfigPanel({
               </Badge>
             </div>
           </button>
+
+          {DOCUMENT_AI_PARSER_ENABLED ? (
+            <button
+              type="button"
+              onClick={() => onParserBackendChange("document_ai")}
+              disabled={uploading}
+              className={`rounded-xl border px-4 py-3 text-left transition ${
+                parserBackend === "document_ai"
+                  ? "border-[#96b24a] bg-[#f4f8df] shadow-[0_10px_30px_rgba(150,178,74,0.10)]"
+                  : "border-zinc-200 bg-white hover:border-zinc-300"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-zinc-900">document_ai</p>
+                  <p className="mt-1 text-xs leading-5 text-zinc-500">
+                    PDF 전용 문서 AI 파서를 로컬 환경에서만 사용합니다.
+                  </p>
+                </div>
+                <Badge variant="outline" className="border-[#dbe6a6] bg-[#fbfde9] text-[#667226]">
+                  로컬 전용
+                </Badge>
+              </div>
+            </button>
+          ) : null}
         </div>
       </section>
 
@@ -194,6 +231,16 @@ export default function UploadPage() {
 
     if (parserBackend === "pdftotext" && !isPdfFile(selectedFile)) {
       setErrorMessage("`pdftotext` 파서는 PDF 파일에서만 사용할 수 있습니다. MarkItDown으로 바꾸거나 PDF를 선택해 주세요.");
+      setSuccessMessage(null);
+      setParsedDocument(null);
+      setParsedResult(null);
+      setFile(selectedFile);
+      setPanelTab("config");
+      return;
+    }
+
+    if (parserBackend === "document_ai" && !isPdfFile(selectedFile)) {
+      setErrorMessage("`document_ai` 파서는 PDF 파일에서만 사용할 수 있습니다. PDF를 선택해 주세요.");
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
