@@ -105,9 +105,13 @@ services:
       PARSE_JOB_QUEUE_NAME: ${PARSE_JOB_QUEUE_NAME:-document-agent-api:parse-jobs}
       PARSER_TIMEOUT_SECONDS: ${PARSER_TIMEOUT_SECONDS:-300}
       PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
+      ENABLED_PARSER_BACKENDS: ${ENABLED_PARSER_BACKENDS:-markitdown,pdftotext,document_ai}
+      DOCUMENT_AI_SCRIPT_PATH: ${DOCUMENT_AI_SCRIPT_PATH:-/app/apps/ai/scripts/parse_document.py}
       WORKER_TEMP_ROOT: ${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
     ports:
       - "${API_PORT:-8000}:8000"
+    volumes:
+      - ../apps/ai:/app/apps/ai:ro
     healthcheck:
       test:
         [
@@ -148,12 +152,22 @@ services:
       WORKER_POLL_TIMEOUT_SECONDS: ${WORKER_POLL_TIMEOUT_SECONDS:-5}
       PARSER_TIMEOUT_SECONDS: ${PARSER_TIMEOUT_SECONDS:-300}
       PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
+      ENABLED_PARSER_BACKENDS: ${ENABLED_PARSER_BACKENDS:-markitdown,pdftotext,document_ai}
+      DOCUMENT_AI_SCRIPT_PATH: ${DOCUMENT_AI_SCRIPT_PATH:-/app/apps/ai/scripts/parse_document.py}
+      MINERU_COMPOSE_FILE: ${MINERU_COMPOSE_FILE:-/app/apps/ai/compose.yaml}
       WORKER_TEMP_ROOT: ${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
+      WORKER_HOST_TEMP_ROOT: ${WORKER_HOST_TEMP_ROOT:-/tmp/document-agent-api-worker}
+    volumes:
+      - ../apps/ai:/app/apps/ai:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${WORKER_HOST_TEMP_ROOT:-/tmp/document-agent-api-worker}:${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
 
   web:
     build:
       context: ..
       dockerfile: infra/Dockerfile.web
+      args:
+        NEXT_PUBLIC_DOCUMENT_AI_PARSER_ENABLED: ${NEXT_PUBLIC_DOCUMENT_AI_PARSER_ENABLED:-true}
     container_name: document-agent-web
     restart: unless-stopped
     depends_on:
@@ -162,6 +176,8 @@ services:
     environment:
       DOCUMENT_AGENT_API_BASE_URL: ${DOCUMENT_AGENT_API_BASE_URL:-http://api:8000}
       NEXT_PUBLIC_DOCUMENT_AGENT_API_BASE_URL: ${NEXT_PUBLIC_DOCUMENT_AGENT_API_BASE_URL:-http://127.0.0.1:8000}
+      DOCUMENT_AI_PARSER_ENABLED: ${DOCUMENT_AI_PARSER_ENABLED:-true}
+      NEXT_PUBLIC_DOCUMENT_AI_PARSER_ENABLED: ${NEXT_PUBLIC_DOCUMENT_AI_PARSER_ENABLED:-true}
     ports:
       - "${WEB_PORT:-3001}:3000"
 

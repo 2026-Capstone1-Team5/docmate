@@ -55,7 +55,10 @@ docker-compose up -d --build
 
 ## Notes
 
-- `apps/ai`는 현재 포함되어 있지만 compose 기본 서비스에는 넣지 않았다. 무거워서 로컬 필요 시 별도 실행하는 쪽이 맞다.
+- `apps/ai`는 로컬 compose에서 `document_agent-api` 서비스의 파서 엔진으로 주입됩니다.
+  - `api`/`worker`에 `../apps/ai:/app/apps/ai:ro`가 마운트됩니다.
+  - 기본적으로 `document_ai`를 포함한 파서 백엔드가 활성화됩니다(`ENABLED_PARSER_BACKENDS=document_ai,...`).
+- 운영 환경에서는 `DOCUMENT_AI_*` 플래그를 끄면 `document_ai`가 비활성화되어 문서 선택 UI에서 노출되지 않습니다.
 - `apps/mcp`도 현재 compose 기본 서비스에는 넣지 않았다. 로컬 도구 연동 시 별도 실행하면 된다.
 - object storage는 local compose에서 `MinIO`를 사용하고, production에서는 Cloudflare R2로 바꿔 붙일 수 있다.
 - 각 앱 repo 변경을 반영하려면 해당 submodule을 업데이트한 뒤 상위 monorepo에서 submodule pointer를 커밋해야 한다.
