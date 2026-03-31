@@ -1,9 +1,7 @@
 ---
-name: "docmate-get-document-result"
-description: "Use when the user asks to retrieve a parsed document result, read full Markdown content, or fetch output by document_id."
+name: docmate-get-document-result
+description: Use when the user asks to get document result, show parsed result, retrieve document content, read parsed markdown, or provides a document_id to fetch.
 ---
-
-# DocMate Get Document Result
 
 Retrieve the full parsed result for a specific DocMate document.
 

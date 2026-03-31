@@ -1,9 +1,7 @@
 ---
-name: "docmate-upload-document"
-description: "Use when the user asks to upload a PDF, parse a local file in DocMate, or add a document by path."
+name: docmate-upload-document
+description: Use when the user asks to upload a document, upload a PDF, parse a PDF, add a file to DocMate, or provides a file path to upload.
 ---
-
-# DocMate Upload Document
 
 Upload a local PDF file to DocMate and parse it.
 

@@ -19,13 +19,22 @@ Exposes four tools to AI agents:
 
 ## Quick Start
 
-### 1. Get a DocMate API key
+### Option 1: Install via skills.sh (Recommended)
 
-1. Make sure the DocMate backend is running.
-2. Register at `http://localhost:3000/register` (or via the API).
-3. Go to **API Keys** in the dashboard and create a new key. Copy it.
+```bash
+npx skills add 2026-Capstone1-Team5/document-agent-mcp
+```
 
-### 2. Install and run setup
+This downloads the DocMate skills and configures them for your detected agents (Claude Code, Gemini CLI, Codex, Cursor, and 40+ more).
+
+Then run setup to register the MCP server and provide your API key:
+
+```bash
+npm install -g @qxinm/document-agent-mcp
+document-agent-mcp setup
+```
+
+### Option 2: Install via npm
 
 ```bash
 npm install -g @qxinm/document-agent-mcp
@@ -40,7 +49,7 @@ The setup command will:
 
 Works on **Windows, macOS, and Linux**.
 
-### 3. Verify the connection
+### Verify the connection
 
 Launch your agent and run:
 
@@ -117,7 +126,7 @@ Config file location:
 
 ---
 
-## Manual MCP setup (without `skills.sh`)
+## Manual MCP setup (without `document-agent-mcp setup`)
 
 If you prefer to configure manually, create a `.mcp.json` in your project root:
 

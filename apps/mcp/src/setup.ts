@@ -71,8 +71,20 @@ function detectAgents(): Agent[] {
 // ── Path helpers ──────────────────────────────────────────────────────────────
 const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 
-function srcSkillsDir(agent: Agent): string {
-  return path.join(PACKAGE_ROOT, `.${agent}`, "skills");
+function srcSkillsDir(_agent: Agent): string {
+  return path.join(PACKAGE_ROOT, "skills");
+}
+
+function getMcpCommandPath(): string {
+  const fallback = path.join(PACKAGE_ROOT, "dist", "index.js");
+  const invoked = process.argv[1];
+  const invokedBase = invoked ? path.basename(invoked) : "";
+
+  if (invokedBase === "skills.js" || invokedBase === "setup.js") {
+    return fallback;
+  }
+
+  return invoked ? path.resolve(invoked) : fallback;
 }
 
 function destSkillsDir(agent: Agent, target: string): string {
@@ -80,11 +92,38 @@ function destSkillsDir(agent: Agent, target: string): string {
 }
 
 function getMcpCommandConfig(): McpCommandConfig {
-  const entryPath = path.resolve(process.argv[1] ?? path.join(PACKAGE_ROOT, "dist", "index.js"));
+  const entryPath = getMcpCommandPath();
   return {
     command: process.execPath,
     args: [entryPath],
   };
+}
+
+function rewriteGeminiToolNames(skillRoot: string) {
+  const stack = [skillRoot];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) continue;
+
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const fullPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+        continue;
+      }
+
+      if (!entry.isFile() || !entry.name.endsWith(".md")) {
+        continue;
+      }
+
+      const content = fs.readFileSync(fullPath, "utf8");
+      const updated = content.replaceAll("mcp__docmate__", "mcp_docmate_");
+      if (updated !== content) {
+        fs.writeFileSync(fullPath, updated, "utf8");
+      }
+    }
+  }
 }
 
 // ── Skills installer ──────────────────────────────────────────────────────────
@@ -105,6 +144,9 @@ function installSkills(agent: Agent, target: string): boolean {
     const skillSrc = path.join(src, entry.name);
     const skillDest = path.join(dest, entry.name);
     fs.cpSync(skillSrc, skillDest, { recursive: true });
+    if (agent === "gemini") {
+      rewriteGeminiToolNames(skillDest);
+    }
     ok(`skill: ${entry.name}`);
     count++;
   }

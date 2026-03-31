@@ -1,9 +1,7 @@
 ---
-name: "docmate-list-documents"
-description: "Use when the user asks to list DocMate documents, browse uploaded files, or filter/search available documents."
+name: docmate-list-documents
+description: Use when the user asks to list documents, show uploaded files, browse available documents in DocMate, or search/filter documents.
 ---
-
-# DocMate List Documents
 
 List documents uploaded to DocMate.
 

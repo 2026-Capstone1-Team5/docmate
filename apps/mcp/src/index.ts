@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 async function main() {
-  // ── Setup subcommand (must run before any tool imports that validate env) ───
-  if (process.argv[2] === "setup") {
+  // ── Setup / Skills subcommand (must run before any tool imports that validate env) ───
+  if (process.argv[2] === "setup" || process.argv[2] === "skills") {
     const { runSetup } = await import("./setup.js");
     await runSetup(process.argv.slice(3));
     return;

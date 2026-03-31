@@ -77,11 +77,7 @@ detect_agents() {
 
 # ── Path resolution ───────────────────────────────────────────────────────────
 get_source_dir() {
-  case "$1" in
-    claude) echo "$SCRIPT_DIR/.claude/skills" ;;
-    gemini) echo "$SCRIPT_DIR/.gemini/skills" ;;
-    codex)  echo "$SCRIPT_DIR/.codex/skills"  ;;
-  esac
+  echo "$SCRIPT_DIR/skills"
 }
 
 get_dest_dir() {
