@@ -14,7 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_BENCHMARK_CSV = REPO_ROOT / "benchmark/manifest.csv"
 DEFAULT_OUTPUT_MANIFEST = REPO_ROOT / "output/benchmark_reports/paper_routing_evidence_manifest.jsonl"
-DEFAULT_OUTPUT_DIR = REPO_ROOT / "benchmark/paper_ood/derived/routing_evidence"
+DEFAULT_OUTPUT_DIR = REPO_ROOT / "benchmark/pdfs"
 DEFAULT_METADATA_DIR = REPO_ROOT / "benchmark/paper_ood/metadata/routing_evidence"
 TARGET_SUBGROUPS = {"receipt", "invoice"}
 DEFAULT_PAGE_WIDTH = 595.0
@@ -108,6 +108,8 @@ def build_source_rows_from_benchmark_csv(path: Path) -> list[dict[str, Any]]:
         doc_id = str(row["doc_id"])
         subgroup = subgroup_for_doc_id(doc_id)
         if subgroup not in TARGET_SUBGROUPS:
+            continue
+        if doc_id.endswith("-routingtrap"):
             continue
         metadata_path = REPO_ROOT / "benchmark/paper_ood/metadata" / f"{doc_id}.source.json"
         if not metadata_path.exists():

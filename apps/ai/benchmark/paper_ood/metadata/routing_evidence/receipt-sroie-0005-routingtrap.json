@@ -3,7 +3,7 @@
   "base_doc_id": "receipt-sroie-0005",
   "donor_doc_id": "receipt-sroie-0006",
   "image_path": "benchmark/paper_ood/raw/receipt-sroie-0005.png",
-  "output_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0005-routingtrap.pdf",
+  "output_pdf": "benchmark/pdfs/receipt-sroie-0005-routingtrap.pdf",
   "selected_image_scale": 0.72,
   "harmful_text_preview": "MBC HY TRMDUNG\n76/78/9786\nNY.9&1, JMLMN HMRMYNU 0/9, TMMMN DQSM HMRMYNU. 58877 JYHYR BMHRA JYHYR\n08.77\nMBC HY TRMDUNG\n76/78/9786\nNY.9&1, JMLMN HMRMYNU 0/9, TMMMN DQSM HMRMYNU. 58877 JYHYR BMHRA JYHYR\n08.77\nMBC HY TRMDUNG\n76/78/9786\nNY.9&1, JMLMN HMRMYNU 0/9, TMMMN DQSM HMRMYNU. 58877 JYHYR BMHRA JYHYR\n08.77\nMBC HY TRMDUNG\n76/78/9786\nNY.9&1, JMLMN HMRMYNU 0/9, TMMMN DQSM HMRMYNU. 58877 JYHYR BMHRA ",
   "harmful_text_chars": 1879,

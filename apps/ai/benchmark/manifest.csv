@@ -48,3 +48,16 @@ benchmark/pdfs/ocrform-funsd-0002.pdf,en,scanned,yes,no,no
 benchmark/pdfs/ocrform-funsd-0003.pdf,en,scanned,yes,no,no
 benchmark/pdfs/structured-funsd-0001.pdf,en,scanned,yes,no,no
 benchmark/pdfs/structured-funsd-0002.pdf,en,scanned,yes,no,no
+benchmark/pdfs/invoice-invoiceocr-0001-routingtrap.pdf,en,scanned,yes,no,no
+benchmark/pdfs/invoice-invoiceocr-0002-routingtrap.pdf,en,scanned,yes,no,no
+benchmark/pdfs/invoice-invoiceocr-0003-routingtrap.pdf,en,scanned,yes,no,no
+benchmark/pdfs/receipt-cord-0001-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-cord-0002-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-cord-0003-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-cord-0004-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-sroie-0001-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-sroie-0002-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-sroie-0003-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-sroie-0004-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-sroie-0005-routingtrap.pdf,en,scanned,no,no,no
+benchmark/pdfs/receipt-sroie-0006-routingtrap.pdf,en,scanned,no,no,no

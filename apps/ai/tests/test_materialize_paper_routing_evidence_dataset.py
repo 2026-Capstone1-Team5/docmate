@@ -108,7 +108,8 @@ class MaterializePaperRoutingEvidenceDatasetTests(unittest.TestCase):
             csv_path = benchmark_dir / "manifest.csv"
             csv_path.write_text(
                 'filename,language,digital_type,contains_tables,contains_formulas,contains_figures\n'
-                'benchmark/pdfs/receipt-sroie-0001.pdf,en,scanned,no,no,no\n',
+                'benchmark/pdfs/receipt-sroie-0001.pdf,en,scanned,no,no,no\n'
+                'benchmark/pdfs/receipt-sroie-0001-routingtrap.pdf,en,scanned,no,no,no\n',
                 encoding='utf-8',
             )
             with mock.patch.object(materialize, 'REPO_ROOT', tmp):
@@ -135,7 +136,7 @@ class MaterializePaperRoutingEvidenceDatasetTests(unittest.TestCase):
         row = materialize.build_manifest_row(
             source_row=source_row,
             donor_row=donor_row,
-            output_pdf=Path("/repo/benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0001-routingtrap.pdf"),
+            output_pdf=Path("/repo/benchmark/pdfs/receipt-sroie-0001-routingtrap.pdf"),
         )
         self.assertEqual(row["doc_id"], "receipt-sroie-0001-routingtrap")
         self.assertEqual(row["base_doc_id"], "receipt-sroie-0001")

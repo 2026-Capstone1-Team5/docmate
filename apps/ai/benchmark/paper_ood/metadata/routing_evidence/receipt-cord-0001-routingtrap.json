@@ -3,7 +3,7 @@
   "base_doc_id": "receipt-cord-0001",
   "donor_doc_id": "receipt-cord-0002",
   "image_path": "benchmark/paper_ood/raw/receipt-cord-0001.png",
-  "output_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-cord-0001-routingtrap.pdf",
+  "output_pdf": "benchmark/pdfs/receipt-cord-0001-routingtrap.pdf",
   "selected_image_scale": 0.72,
   "harmful_text_preview": "SPGTHY BYLYGNMSQ 25,777 PQPPQR MAS 832,777 WMGYA RUBQYQ 862,777 UCQD LQMYN TQM 99,777 FASUYN TQM LYCHQ 95,777 NATTQLM BRYWNUQS 02,777\n270,777\n92,827\n29,582\n257,632\nSPGTHY BYLYGNMSQ 25,777 PQPPQR MAS 832,777 WMGYA RUBQYQ 862,777 UCQD LQMYN TQM 99,777 FASUYN TQM LYCHQ 95,777 NATTQLM BRYWNUQS 02,777\n270,777\n92,827\n29,582\n257,632\nSPGTHY BYLYGNMSQ 25,777 PQPPQR MAS 832,777 WMGYA RUBQYQ 862,777 UCQD LQM",
   "harmful_text_chars": 1937,

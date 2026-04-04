@@ -3,7 +3,7 @@
   "base_doc_id": "invoice-invoiceocr-0001",
   "donor_doc_id": "invoice-invoiceocr-0002",
   "image_path": "benchmark/paper_ood/raw/invoice-invoiceocr-0001.png",
-  "output_pdf": "benchmark/paper_ood/derived/routing_evidence/invoice-invoiceocr-0001-routingtrap.pdf",
+  "output_pdf": "benchmark/pdfs/invoice-invoiceocr-0001-routingtrap.pdf",
   "selected_image_scale": 0.72,
   "harmful_text_preview": "{'hqmdqr': {'unvyucq_ny': '38023968', 'unvyucq_dmtq': '76/73/9789', 'sqllqr': 'Chmpmmn, Kum mnd Grqqn 31408 Jmmqs Brmnch Smuthmyath, NC 93549', 'cluqnt': 'Rydrugaqz-Stqvqns 9957 Mngqlm Plmun Hyrtynshurq, MS 60915', 'sqllqr_tmx_ud': '616-51-6872', 'cluqnt_tmx_ud': '606-65-5144', 'ubmn': 'GB27MCUQ26482705984730'}, 'utqms': [{'utqm_dqsc': 'Wunq Glmssqs Gyblqts Pmur Clqmr Glmss', 'utqm_qty': '2,77', '",
   "harmful_text_chars": 2477,

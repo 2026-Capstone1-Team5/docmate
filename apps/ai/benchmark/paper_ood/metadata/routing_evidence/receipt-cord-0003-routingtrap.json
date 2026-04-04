@@ -3,7 +3,7 @@
   "base_doc_id": "receipt-cord-0003",
   "donor_doc_id": "receipt-cord-0004",
   "image_path": "benchmark/paper_ood/raw/receipt-cord-0003.png",
-  "output_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-cord-0003-routingtrap.pdf",
+  "output_pdf": "benchmark/pdfs/receipt-cord-0003-routingtrap.pdf",
   "selected_image_scale": 0.72,
   "harmful_text_preview": "Buntmng Brqmqr 26,777 Chuckqn H-H 867,777 Mdqs 87,777\n926,777\n86,777\n6,377\n29,183\n079,783\nBuntmng Brqmqr 26,777 Chuckqn H-H 867,777 Mdqs 87,777\n926,777\n86,777\n6,377\n29,183\n079,783\nBuntmng Brqmqr 26,777 Chuckqn H-H 867,777 Mdqs 87,777\n926,777\n86,777\n6,377\n29,183\n079,783\nBuntmng Brqmqr 26,777 Chuckqn H-H 867,777 Mdqs 87,777\n926,777\n86,777\n6,377\n29,183\n079,783\nBuntmng Brqmqr 26,777 Chuckqn H-H 867,77",
   "harmful_text_chars": 1943,

@@ -3,7 +3,7 @@
   "base_doc_id": "receipt-sroie-0002",
   "donor_doc_id": "receipt-sroie-0003",
   "image_path": "benchmark/paper_ood/raw/receipt-sroie-0002.png",
-  "output_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0002-routingtrap.pdf",
+  "output_pdf": "benchmark/pdfs/receipt-sroie-0002-routingtrap.pdf",
   "selected_image_scale": 0.72,
   "harmful_text_preview": "MR D.U.Y. (JYHYR) SDN BHD\n89-78-86\nLYT 8528-M & 8528-B, JMLMN KPB 3, KMWMSMN PQRUNDASTRUMN BMLMKYNG, 10077 SQRU KQMBMNGMN, SQLMNGYR (MR DUY TQSCY TQRBMA)\n00.67\nMR D.U.Y. (JYHYR) SDN BHD\n89-78-86\nLYT 8528-M & 8528-B, JMLMN KPB 3, KMWMSMN PQRUNDASTRUMN BMLMKYNG, 10077 SQRU KQMBMNGMN, SQLMNGYR (MR DUY TQSCY TQRBMA)\n00.67\nMR D.U.Y. (JYHYR) SDN BHD\n89-78-86\nLYT 8528-M & 8528-B, JMLMN KPB 3, KMWMSMN PQR",
   "harmful_text_chars": 1913,

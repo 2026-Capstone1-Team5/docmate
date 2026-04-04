@@ -3,7 +3,7 @@
   "base_doc_id": "invoice-invoiceocr-0002",
   "donor_doc_id": "invoice-invoiceocr-0003",
   "image_path": "benchmark/paper_ood/raw/invoice-invoiceocr-0002.png",
-  "output_pdf": "benchmark/paper_ood/derived/routing_evidence/invoice-invoiceocr-0002-routingtrap.pdf",
+  "output_pdf": "benchmark/pdfs/invoice-invoiceocr-0002-routingtrap.pdf",
   "selected_image_scale": 0.72,
   "harmful_text_preview": "{'hqmdqr': {'unvyucq_ny': '06957176', 'unvyucq_dmtq': '74/73/9781', 'sqllqr': 'Dmvus PLC 49724 Cmstully Vum Dqnusqshurq, KY 62900', 'cluqnt': 'Bmulqy-Hmrrus 873 Muchmql Strqqt Nyrth Wullumm, DC 63357', 'sqllqr_tmx_ud': '605-46-6835', 'cluqnt_tmx_ud': '632-50-5748', 'ubmn': 'GB06WJ7A47365836042083'}, 'utqms': [{'utqm_dqsc': 'Chundu Rags Cmrpqt Nqw Dqsugn Byhqmumn Gmrdqn Yygm Mmt Undumn Kulum Cyantq",
   "harmful_text_chars": 3045,

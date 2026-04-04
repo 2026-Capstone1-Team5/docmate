@@ -3,7 +3,7 @@
   "base_doc_id": "receipt-sroie-0006",
   "donor_doc_id": "receipt-cord-0001",
   "image_path": "benchmark/paper_ood/raw/receipt-sroie-0006.png",
-  "output_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0006-routingtrap.pdf",
+  "output_pdf": "benchmark/pdfs/receipt-sroie-0006-routingtrap.pdf",
   "selected_image_scale": 0.72,
   "harmful_text_preview": "Nmsu Cmmpar Bmlu 42,777 Bbk Bqngul Nmsu 892,777 MulkShmkq Stmrwb 04,777 Ucq Lqmyn Tqm 91,777 Nmsu Mymm Dqwmtm 47,777 Frqq Ucq Tqm 7 Yrgmnuc Grqqn Sm 32,777 Ucq Tqm 85,777 Ucq Yrmngq 96,777 Mymm Saur Bmlu 52,777 Tmha Gyrqng 03,777 Tqmpq Gyrqng 03,777 Tmha Tqlyr Msun 17,777. Nmsu Gyrqng Smmb 47,777 Bbk Pmnggmng Smm 033,777 Mymm Smmbml Hujm 69,777 Hyt Tqm 11,777 Ucq Kypu 09,777 Tmha Tqlyr Msun 17,777",
   "harmful_text_chars": 1947,
