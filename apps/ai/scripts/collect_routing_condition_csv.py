@@ -81,7 +81,15 @@ def build_condition_input(
         intermediate_dir = output_dir / "intermediate"
         intermediate_dir.mkdir(parents=True, exist_ok=True)
         stripped_pdf = intermediate_dir / f"{source_pdf.stem}_text_layer_removed.pdf"
-        provenance = text_layer_strip_pdf.build_provenance_payload(source_pdf, stripped_pdf)
+        provenance = text_layer_strip_pdf.build_provenance_payload(
+            source_pdf,
+            stripped_pdf,
+            dpi=300,
+            max_text_chars=0,
+            page_size_tolerance=0.01,
+            render_diff_dpi=72,
+            render_diff_tolerance=0.01,
+        )
         return stripped_pdf, provenance
     return source_pdf, None
 
@@ -91,25 +99,30 @@ def parse_condition_row(row: dict[str, Any], condition: str, run_root: Path) -> 
     output_dir.mkdir(parents=True, exist_ok=True)
 
     input_pdf, provenance = build_condition_input(row, condition, output_dir)
-    parse_mode = "normal"
+    observed_pdf = input_pdf
     if condition == "rasterized":
-        variant = parse_document.parse_one_variant(
-            Path(str(row["input_pdf"])).resolve(),
-            output_dir,
-            str(row.get("language") or "en"),
-            300,
-            "rasterized",
-        )
-        observed_pdf = Path(str(variant["parse_input"])).resolve()
-    else:
-        variant = parse_document.parse_one_variant(
-            input_pdf,
-            output_dir,
-            str(row.get("language") or "en"),
-            300,
-            parse_mode,
-        )
-        observed_pdf = input_pdf
+        observed_pdf = output_dir / "intermediate" / f"{Path(str(row['input_pdf'])).stem}_rasterized.pdf"
+
+    parse_error: str | None = None
+    try:
+        if condition == "rasterized":
+            parse_document.parse_one_variant(
+                Path(str(row["input_pdf"])).resolve(),
+                output_dir,
+                str(row.get("language") or "en"),
+                300,
+                "rasterized",
+            )
+        else:
+            parse_document.parse_one_variant(
+                input_pdf,
+                output_dir,
+                str(row.get("language") or "en"),
+                300,
+                "normal",
+            )
+    except Exception as exc:  # pragma: no cover - depends on runtime/model support
+        parse_error = str(exc)
 
     observation = observe_pdf(observed_pdf)
     result = {
@@ -120,11 +133,13 @@ def parse_condition_row(row: dict[str, Any], condition: str, run_root: Path) -> 
         "img_coverage": observation.get("high_image_coverage_ratio"),
         "cid_font": detect_cid_font_signal(observed_pdf),
         "classify_result": observation.get("classify_result"),
-        "mineru_output_path": stringify_repo_path(output_dir / "mineru_output"),
+        "mineru_output_path": stringify_repo_path(output_dir / "mineru_output") if parse_error is None else "",
     }
     if provenance is not None:
         provenance_path = output_dir / "intermediate" / f"{observed_pdf.name}.provenance.json"
         provenance_path.write_text(__import__("json").dumps(provenance, indent=2) + "\n", encoding="utf-8")
+    if parse_error is not None:
+        (output_dir / "parse_error.txt").write_text(parse_error + "\n", encoding="utf-8")
     return result
 
 
