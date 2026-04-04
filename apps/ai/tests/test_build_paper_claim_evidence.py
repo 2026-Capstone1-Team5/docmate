@@ -1,4 +1,5 @@
 import importlib.util
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -54,6 +55,7 @@ class BuildPaperClaimEvidenceTests(unittest.TestCase):
                         "doc_id": "receipt-1",
                         "subgroup": "receipt",
                         "source_bucket": "local:receipt",
+                        "input_pdf": "benchmark/pdfs/receipt-1.pdf",
                         "observation": {
                             "classify_result": "txt",
                             "avg_cleaned_chars_per_page": 120.0,
@@ -79,6 +81,8 @@ class BuildPaperClaimEvidenceTests(unittest.TestCase):
         )
         self.assertEqual(payload["claim_mode"], "controlled_classifier_unreliability_supported")
         self.assertEqual(payload["direct_txt_observations_on_ood_docs"][0]["doc_id"], "receipt-1")
+        self.assertEqual(payload["direct_txt_observations_on_ood_docs"][0]["input_pdf"], "benchmark/pdfs/receipt-1.pdf")
+        self.assertEqual(payload["direct_txt_observations_on_ood_docs"][0]["classify_result"], "txt")
         self.assertEqual(payload["direct_txt_observations_on_ood_docs"][0]["original_primary_score"], 0.1)
         self.assertEqual(payload["direct_txt_observations_on_ood_docs"][0]["invalid_char_ratio"], 0.0)
         self.assertTrue(payload["direct_txt_observations_on_ood_docs"][0]["supports_direct_failure_observation"])
@@ -172,6 +176,46 @@ class BuildPaperClaimEvidenceTests(unittest.TestCase):
         self.assertIn("Structured control quantitative rows", rendered)
         self.assertIn("No receipt/invoice-style OOD document", rendered)
         self.assertIn("auto_minus_original", rendered)
+
+    def test_write_csv_emits_direct_observation_rows(self):
+        payload = builder.build_claim_evidence(
+            routing_payload={
+                "summary": {"documents": 1},
+                "rows": [
+                    {
+                        "doc_id": "receipt-1",
+                        "subgroup": "receipt",
+                        "source_bucket": "local:receipt",
+                        "input_pdf": "benchmark/pdfs/receipt-1.pdf",
+                        "observation": {
+                            "classify_result": "txt",
+                            "avg_cleaned_chars_per_page": 120.0,
+                            "invalid_char_ratio": 0.0,
+                            "cid_char_ratio": 0.0,
+                            "high_image_coverage_ratio": 0.2,
+                            "classifier_signal_accepts_text_path": True,
+                        },
+                        "scored": {
+                            "scores": {
+                                "original": {"primary_score": 0.1, "auxiliary_metrics": {"cer": 0.8}},
+                                "rasterized": {"primary_score": 0.7, "auxiliary_metrics": {"cer": 0.2}},
+                                "auto": {"primary_score": 0.7, "auxiliary_metrics": {"cer": 0.2}},
+                            }
+                        },
+                    }
+                ],
+            },
+            scored_payload={
+                "variant_summary": {},
+                "pairwise_summary": {"rasterized_vs_original": {"mean_delta": 0.2}},
+            },
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "claim.csv"
+            builder.write_csv(output, payload)
+            content = output.read_text(encoding="utf-8")
+        self.assertIn("doc_id,subgroup,input_pdf,classify_result", content)
+        self.assertIn("receipt-1,receipt,benchmark/pdfs/receipt-1.pdf,txt", content)
 
 
 if __name__ == "__main__":

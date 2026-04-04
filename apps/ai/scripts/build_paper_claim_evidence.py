@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import csv
 import json
 from pathlib import Path
 from typing import Any
@@ -155,6 +156,64 @@ def render_markdown(payload: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def render_csv_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    rows = []
+    for row in payload.get("direct_txt_observations_on_ood_docs", []):
+        rows.append(
+            {
+                "doc_id": row.get("doc_id"),
+                "subgroup": row.get("subgroup"),
+                "input_pdf": row.get("input_pdf"),
+                "classify_result": row.get("classify_result"),
+                "classifier_signal_accepts_text_path": row.get(
+                    "classifier_signal_accepts_text_path"
+                ),
+                "supports_direct_failure_observation": row.get(
+                    "supports_direct_failure_observation"
+                ),
+                "avg_cleaned_chars_per_page": row.get("avg_cleaned_chars_per_page"),
+                "invalid_char_ratio": row.get("invalid_char_ratio"),
+                "cid_char_ratio": row.get("cid_char_ratio"),
+                "high_image_coverage_ratio": row.get("high_image_coverage_ratio"),
+                "original_primary_score": row.get("original_primary_score"),
+                "rasterized_primary_score": row.get("rasterized_primary_score"),
+                "auto_primary_score": row.get("auto_primary_score"),
+                "original_cer": row.get("original_cer"),
+                "rasterized_cer": row.get("rasterized_cer"),
+                "auto_cer": row.get("auto_cer"),
+            }
+        )
+    return rows
+
+
+def write_csv(path: Path, payload: dict[str, Any]) -> None:
+    fieldnames = [
+        "doc_id",
+        "subgroup",
+        "input_pdf",
+        "classify_result",
+        "classifier_signal_accepts_text_path",
+        "supports_direct_failure_observation",
+        "avg_cleaned_chars_per_page",
+        "invalid_char_ratio",
+        "cid_char_ratio",
+        "high_image_coverage_ratio",
+        "original_primary_score",
+        "rasterized_primary_score",
+        "auto_primary_score",
+        "original_cer",
+        "rasterized_cer",
+        "auto_cer",
+    ]
+    rows = render_csv_rows(payload)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+
+
 def build_claim_evidence(
     *,
     routing_payload: dict[str, Any],
@@ -176,6 +235,8 @@ def build_claim_evidence(
                 "doc_id": row.get("doc_id"),
                 "subgroup": subgroup,
                 "source_bucket": row.get("source_bucket"),
+                "input_pdf": row.get("input_pdf"),
+                "classify_result": classify_result,
                 "avg_cleaned_chars_per_page": row.get("observation", {}).get("avg_cleaned_chars_per_page"),
                 "invalid_char_ratio": row.get("observation", {}).get("invalid_char_ratio"),
                 "cid_char_ratio": row.get("observation", {}).get("cid_char_ratio"),
@@ -232,6 +293,7 @@ def main() -> None:
     parser.add_argument("--control-scored-json")
     parser.add_argument("--output-json", required=True)
     parser.add_argument("--output-md")
+    parser.add_argument("--output-csv")
     args = parser.parse_args()
 
     payload = build_claim_evidence(
@@ -248,6 +310,12 @@ def main() -> None:
         md_path = Path(args.output_md).resolve()
         md_path.parent.mkdir(parents=True, exist_ok=True)
         md_path.write_text(render_markdown(payload), encoding="utf-8")
+    csv_path = (
+        Path(args.output_csv).resolve()
+        if args.output_csv
+        else output_path.with_suffix(".csv")
+    )
+    write_csv(csv_path, payload)
     print(json.dumps({"claim_mode": payload["claim_mode"]}, indent=2, ensure_ascii=False))
 
 
