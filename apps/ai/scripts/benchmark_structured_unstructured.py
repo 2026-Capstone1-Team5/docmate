@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import json
 import statistics
 import subprocess
@@ -33,6 +34,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--run-root", required=True)
     parser.add_argument("--variants", default="original,rasterized,auto")
+    parser.add_argument("--jobs", type=int, default=4)
     parser.add_argument("--timeout-seconds", type=int, default=600)
     parser.add_argument("--output-json")
     parser.add_argument("--output-summary")
@@ -176,6 +178,20 @@ def summarize(results: list[dict[str, Any]], variants: list[str]) -> dict[str, A
     return summary
 
 
+def benchmark_document(
+    row: dict[str, Any],
+    *,
+    variants: list[str],
+    run_root: Path,
+    timeout_seconds: int,
+) -> dict[str, Any]:
+    rendered = dict(row)
+    rendered["variants"] = {}
+    for variant in variants:
+        rendered["variants"][variant] = run_variant(row, variant, run_root, timeout_seconds)
+    return rendered
+
+
 def main() -> int:
     args = parse_args()
     variants = [variant.strip() for variant in args.variants.split(",") if variant.strip()]
@@ -185,13 +201,30 @@ def main() -> int:
     manifest_path = resolve_repo_path(args.manifest)
     run_root = resolve_repo_path(args.run_root)
     rows = load_manifest(manifest_path)
-    results: list[dict[str, Any]] = []
-    for row in rows:
-        rendered = dict(row)
-        rendered["variants"] = {}
-        for variant in variants:
-            rendered["variants"][variant] = run_variant(row, variant, run_root, args.timeout_seconds)
-        results.append(rendered)
+    jobs = max(1, args.jobs)
+    if jobs == 1:
+        results = [
+            benchmark_document(
+                row,
+                variants=variants,
+                run_root=run_root,
+                timeout_seconds=args.timeout_seconds,
+            )
+            for row in rows
+        ]
+    else:
+        with ThreadPoolExecutor(max_workers=jobs) as executor:
+            results = list(
+                executor.map(
+                    lambda row: benchmark_document(
+                        row,
+                        variants=variants,
+                        run_root=run_root,
+                        timeout_seconds=args.timeout_seconds,
+                    ),
+                    rows,
+                )
+            )
     summary = summarize(results, variants)
     if args.output_json:
         output_json = resolve_repo_path(args.output_json)
