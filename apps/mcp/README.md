@@ -198,10 +198,10 @@ DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000
 
 ## npm Release
 
-GitHub Actions is configured to:
+GitHub Actions 워크플로는 모노레포 루트에 있다 (저장소 루트에서만 실행됨):
 
-- run `pnpm build` (`tsc`) and `npm pack` on PRs and pushes (`npm pack` runs `prepack`, which syncs `skills/` before packing)
-- publish to npm on `v*` tag pushes or manual workflow dispatch
+- `.github/workflows/mcp-ci.yml` — `apps/mcp` 변경 시 `pnpm build` (`tsc`) 및 `npm pack` (`prepack`에서 `skills/` 동기화)
+- `.github/workflows/mcp-publish.yml` — `v*` 또는 `mcp/v*` 태그 푸시, 또는 수동 `workflow_dispatch`로 npm publish
 
 Repository secret required:
 
@@ -212,6 +212,6 @@ The token must have publish permission for the `@qxinm` scope.
 Tag-based release example:
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag mcp/v0.2.0
+git push origin mcp/v0.2.0
 ```
