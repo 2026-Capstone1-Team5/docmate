@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm view:*)",
+      "Bash(pnpm build:*)",
+      "Bash(npm publish:*)",
+      "Bash(npm show:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(docker run:*)",
+      "Bash(netstat -ano)",
+      "Bash(xargs -I{} taskkill /PID {} /F)"
+    ]
+  }
+}

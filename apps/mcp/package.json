@@ -1,0 +1,50 @@
+{
+  "name": "@qxinm/document-agent-mcp",
+  "version": "0.1.6",
+  "description": "MCP server for DocMate — AI-powered document management",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "document-agent-mcp": "dist/index.js",
+    "skills": "dist/skills.js"
+  },
+  "files": [
+    "dist",
+    "skills.sh",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2026-Capstone1-Team5/document-agent-mcp.git"
+  },
+  "homepage": "https://github.com/2026-Capstone1-Team5/document-agent-mcp#readme",
+  "keywords": [
+    "mcp",
+    "docmate",
+    "document",
+    "pdf",
+    "claude"
+  ],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "prepack": "npm run build"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "dotenv": "^16.5.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}
