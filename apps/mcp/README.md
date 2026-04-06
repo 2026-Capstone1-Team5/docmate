@@ -198,10 +198,12 @@ DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000
 
 ## npm Release
 
-GitHub Actions is configured to:
+GitHub Actions workflows live at the **repository root** (`.github/workflows/`); only those paths are loaded.
 
-- run `pnpm build` (`tsc`) and `npm pack` on PRs and pushes (`npm pack` runs `prepack`, which syncs `skills/` before packing)
-- publish to npm on `v*` tag pushes or manual workflow dispatch
+- `.github/workflows/mcp-ci.yml` — on changes under `apps/mcp`, runs `pnpm build` (`tsc`) and `npm pack` (`prepack` syncs `skills/` before packing).
+- `.github/workflows/mcp-publish.yml` — publishes on `v*` or `mcp/v*` tag pushes, or via manual `workflow_dispatch` (you must enter **confirm_version** exactly matching `package.json`; tag pushes still require the tag to match that version).
+
+Pick **one** tag pattern per release (`v*` or `mcp/v*`) when possible so you do not trigger two runs for the same semver.
 
 Repository secret required:
 
@@ -212,6 +214,6 @@ The token must have publish permission for the `@qxinm` scope.
 Tag-based release example:
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag mcp/v0.2.0
+git push origin mcp/v0.2.0
 ```

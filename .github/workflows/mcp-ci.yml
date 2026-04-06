@@ -1,12 +1,22 @@
-name: CI
+name: MCP package CI
 
 on:
   pull_request:
+    paths:
+      - "apps/mcp/**"
+      - ".github/workflows/mcp-ci.yml"
   push:
     branches:
       - main
       - feat/**
       - feature/**
+    paths:
+      - "apps/mcp/**"
+      - ".github/workflows/mcp-ci.yml"
+
+defaults:
+  run:
+    working-directory: apps/mcp
 
 jobs:
   build-and-pack:
@@ -26,6 +36,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: apps/mcp/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -35,4 +46,3 @@ jobs:
 
       - name: Pack npm tarball
         run: npm pack
-
