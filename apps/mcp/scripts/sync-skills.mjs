@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Copy monorepo-root skills/ into apps/mcp/skills for build and npm pack.
+ * Copy monorepo-root skills/ into apps/mcp/skills before npm pack/publish.
+ * Invoked from package.json `sync-skills` and `prepack` (not from `build`, so published tarballs need no scripts/).
  * Canonical source: <repo>/skills
  */
 import fs from "fs";

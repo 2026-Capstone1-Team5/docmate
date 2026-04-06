@@ -35,7 +35,7 @@ submodule 초기화는 필요하지 않다.
 npx skills add 2026-Capstone1-Team5/docmate
 ```
 
-`apps/mcp` 패키지(`@qxinm/docmate-mcp`)는 빌드 시 이 디렉터리를 `apps/mcp/skills/`로 복사해 npm tarball에 포함한다.
+`apps/mcp` 패키지(`@qxinm/docmate-mcp`)는 `npm pack`/`npm publish` 직전(`prepack`)에 이 디렉터리를 `apps/mcp/skills/`로 복사해 npm tarball에 포함한다.
 
 ## History Preservation
 

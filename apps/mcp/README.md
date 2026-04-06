@@ -174,7 +174,7 @@ codex mcp add docmate \
 git clone https://github.com/2026-Capstone1-Team5/docmate
 cd docmate/apps/mcp
 pnpm install
-pnpm build
+pnpm run build:local
 
 # Run directly
 node dist/index.js
@@ -200,7 +200,7 @@ DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000
 
 GitHub Actions is configured to:
 
-- run `pnpm build` and `npm pack` on PRs and pushes
+- run `pnpm build` (`tsc`) and `npm pack` on PRs and pushes (`npm pack` runs `prepack`, which syncs `skills/` before packing)
 - publish to npm on `v*` tag pushes or manual workflow dispatch
 
 Repository secret required:

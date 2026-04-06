@@ -33,10 +33,11 @@
   "license": "ISC",
   "scripts": {
     "sync-skills": "node scripts/sync-skills.mjs",
-    "build": "node scripts/sync-skills.mjs && tsc",
+    "build": "tsc",
+    "build:local": "npm run sync-skills && npm run build",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
-    "prepack": "npm run build"
+    "prepack": "npm run sync-skills && npm run build"
   },
   "packageManager": "pnpm@10.32.1",
   "dependencies": {
