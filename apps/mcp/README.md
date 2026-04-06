@@ -198,10 +198,12 @@ DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000
 
 ## npm Release
 
-GitHub Actions 워크플로는 모노레포 루트에 있다 (저장소 루트에서만 실행됨):
+GitHub Actions workflows live at the **repository root** (`.github/workflows/`); only those paths are loaded.
 
-- `.github/workflows/mcp-ci.yml` — `apps/mcp` 변경 시 `pnpm build` (`tsc`) 및 `npm pack` (`prepack`에서 `skills/` 동기화)
-- `.github/workflows/mcp-publish.yml` — `v*` 또는 `mcp/v*` 태그 푸시, 또는 수동 `workflow_dispatch`로 npm publish
+- `.github/workflows/mcp-ci.yml` — on changes under `apps/mcp`, runs `pnpm build` (`tsc`) and `npm pack` (`prepack` syncs `skills/` before packing).
+- `.github/workflows/mcp-publish.yml` — publishes on `v*` or `mcp/v*` tag pushes, or via manual `workflow_dispatch` (you must enter **confirm_version** exactly matching `package.json`; tag pushes still require the tag to match that version).
+
+Pick **one** tag pattern per release (`v*` or `mcp/v*`) when possible so you do not trigger two runs for the same semver.
 
 Repository secret required:
 

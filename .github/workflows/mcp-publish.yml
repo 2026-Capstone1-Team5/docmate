@@ -2,6 +2,11 @@ name: Publish @qxinm/docmate-mcp
 
 on:
   workflow_dispatch:
+    inputs:
+      confirm_version:
+        description: Must exactly match apps/mcp/package.json version (required for manual publish)
+        required: true
+        type: string
   push:
     tags:
       - "v*"
@@ -12,8 +17,26 @@ defaults:
     working-directory: apps/mcp
 
 jobs:
-  publish:
+  version:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mcp
+    outputs:
+      semver: ${{ steps.semver.outputs.value }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: semver
+        run: echo "value=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: version
+    runs-on: ubuntu-latest
+    concurrency:
+      group: mcp-npm-${{ needs.version.outputs.semver }}
+      cancel-in-progress: false
     permissions:
       contents: read
       id-token: write
@@ -34,6 +57,16 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: pnpm
           cache-dependency-path: apps/mcp/pnpm-lock.yaml
+
+      - name: Verify manual dispatch version
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          CONFIRM="${{ github.event.inputs.confirm_version }}"
+          if [ "$CONFIRM" != "$PACKAGE_VERSION" ]; then
+            echo "confirm_version (${CONFIRM}) must equal package.json version (${PACKAGE_VERSION})."
+            exit 1
+          fi
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -57,7 +90,10 @@ jobs:
             echo "Unexpected tag name: $TAG_NAME"
             exit 1
           fi
-          test "$PACKAGE_VERSION" = "$TAG_VERSION"
+          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
+            echo "Version mismatch: package.json=${PACKAGE_VERSION} tag=${TAG_VERSION} (ref=${TAG_NAME})"
+            exit 1
+          fi
 
       - name: Publish package
         run: npm publish --access public --provenance
