@@ -7,10 +7,11 @@
 
 ```text
 docmate/
+  skills/   # Agent Skills (SKILL.md) — used by `npx skills add 2026-Capstone1-Team5/docmate`
   apps/
     api/   # document-agent-api history imported directly
     web/   # document-agent-web history imported directly
-    mcp/   # document-agent-mcp history imported directly
+    mcp/   # @qxinm/docmate-mcp (syncs skills/ from repo root on build)
     ai/    # document-ai history imported directly
   infra/
     docker-compose.yml
@@ -25,6 +26,16 @@ cd docmate
 ```
 
 submodule 초기화는 필요하지 않다.
+
+## Agent skills (Claude / Codex / Cursor 등)
+
+저장소 루트의 `skills/`에 DocMate용 Agent Skill 정의가 있다. [Skills CLI](https://www.npmjs.com/package/skills)로 설치하려면:
+
+```bash
+npx skills add 2026-Capstone1-Team5/docmate
+```
+
+`apps/mcp` 패키지(`@qxinm/docmate-mcp`)는 `npm pack`/`npm publish` 직전(`prepack`)에 이 디렉터리를 `apps/mcp/skills/`로 복사해 npm tarball에 포함한다.
 
 ## History Preservation
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * document-agent-mcp skills
+ * @qxinm/docmate-mcp skills
  * Standalone entry point: npx skills
  */
 import { runSetup } from "./setup.js";

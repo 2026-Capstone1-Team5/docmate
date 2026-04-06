@@ -89,9 +89,9 @@ get_dest_dir() {
 }
 
 # ── Step 1: Install npm package ───────────────────────────────────────────────
-echo -e "${BOLD}[1/3] Installing document-agent-mcp from npm...${NC}"
-if npm install -g document-agent-mcp; then
-  echo -e "  ${GREEN}✔${NC} document-agent-mcp installed"
+echo -e "${BOLD}[1/3] Installing @qxinm/docmate-mcp from npm...${NC}"
+if npm install -g @qxinm/docmate-mcp; then
+  echo -e "  ${GREEN}✔${NC} @qxinm/docmate-mcp installed"
 else
   echo -e "  ${RED}✗ npm install failed. Is Node.js installed?${NC}"
   exit 1
@@ -177,7 +177,7 @@ configure_mcp_claude() {
     if claude mcp add --scope user docmate \
         -e DOCMATE_API_KEY="$DOCMATE_API_KEY" \
         -e DOCUMENT_AGENT_API_BASE_URL="$BACKEND_URL" \
-        -- document-agent-mcp; then
+        -- docmate-mcp; then
       echo -e "  ${GREEN}✔${NC} MCP server registered (user scope)"
       return 0
     else
@@ -222,7 +222,7 @@ if (
 }
 config.mcpServers = config.mcpServers || {};
 config.mcpServers.docmate = {
-  command: 'document-agent-mcp',
+  command: 'docmate-mcp',
   env: { DOCMATE_API_KEY: apiKey, DOCUMENT_AGENT_API_BASE_URL: backendUrl }
 };
 fs.writeFileSync(file, JSON.stringify(config, null, 2) + '\n');
@@ -237,7 +237,7 @@ JSEOF
 {
   "mcpServers": {
     "docmate": {
-      "command": "document-agent-mcp",
+      "command": "docmate-mcp",
       "env": {
         "DOCMATE_API_KEY": "$DOCMATE_API_KEY",
         "DOCUMENT_AGENT_API_BASE_URL": "$BACKEND_URL"

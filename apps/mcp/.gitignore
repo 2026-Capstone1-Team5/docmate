@@ -1,6 +1,9 @@
 # 빌드 결과물
 dist/
 
+# 루트 skills/에서 sync-skills로 복사 (원본은 저장소 루트 skills/)
+skills/
+
 # 환경 변수
 .env
 

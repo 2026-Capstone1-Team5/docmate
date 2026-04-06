@@ -1,10 +1,10 @@
-# document-agent-mcp
+# @qxinm/docmate-mcp
 
-MCP (Model Context Protocol) server for [DocMate](https://github.com/2026-Capstone1-Team5) — AI-powered document management.
+MCP (Model Context Protocol) server for [DocMate](https://github.com/2026-Capstone1-Team5/docmate) — AI-powered document management.
 
 Published package:
 
-- `@qxinm/document-agent-mcp`
+- `@qxinm/docmate-mcp`
 
 Exposes four tools to AI agents:
 
@@ -19,10 +19,12 @@ Exposes four tools to AI agents:
 
 ## Quick Start
 
-### Option 1: Install via skills.sh (Recommended)
+### Option 1: Install via Skills CLI (Recommended)
+
+DocMate agent skills live in the monorepo root [`skills/`](https://github.com/2026-Capstone1-Team5/docmate/tree/main/skills). Install them with:
 
 ```bash
-npx skills add 2026-Capstone1-Team5/document-agent-mcp
+npx skills add 2026-Capstone1-Team5/docmate
 ```
 
 This downloads the DocMate skills and configures them for your detected agents (Claude Code, Gemini CLI, Codex, Cursor, and 40+ more).
@@ -30,15 +32,15 @@ This downloads the DocMate skills and configures them for your detected agents (
 Then run setup to register the MCP server and provide your API key:
 
 ```bash
-npm install -g @qxinm/document-agent-mcp
-document-agent-mcp setup
+npm install -g @qxinm/docmate-mcp
+docmate-mcp setup
 ```
 
 ### Option 2: Install via npm
 
 ```bash
-npm install -g @qxinm/document-agent-mcp
-document-agent-mcp setup
+npm install -g @qxinm/docmate-mcp
+docmate-mcp setup
 ```
 
 The setup command will:
@@ -65,18 +67,18 @@ You should see `docmate` listed with `upload_document`, `list_documents`, `get_p
 
 ```bash
 # Install for a specific agent only
-document-agent-mcp setup --agent claude
-document-agent-mcp setup --agent gemini
-document-agent-mcp setup --agent codex
+docmate-mcp setup --agent claude
+docmate-mcp setup --agent gemini
+docmate-mcp setup --agent codex
 
 # Install for multiple agents
-document-agent-mcp setup --agent claude --agent gemini
+docmate-mcp setup --agent claude --agent gemini
 
 # Install into a specific project directory instead of HOME
-document-agent-mcp setup --target ./my-project
+docmate-mcp setup --target ./my-project
 
 # Show help
-document-agent-mcp setup --help
+docmate-mcp setup --help
 ```
 
 ### Installed locations
@@ -101,7 +103,7 @@ Add the following to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "docmate": {
-      "command": "document-agent-mcp",
+      "command": "docmate-mcp",
       "env": {
         "DOCMATE_API_KEY": "your-api-key-here",
         "DOCUMENT_AGENT_API_BASE_URL": "http://127.0.0.1:8000"
@@ -126,7 +128,7 @@ Config file location:
 
 ---
 
-## Manual MCP setup (without `document-agent-mcp setup`)
+## Manual MCP setup (without `docmate-mcp setup`)
 
 If you prefer to configure manually, create a `.mcp.json` in your project root:
 
@@ -134,7 +136,7 @@ If you prefer to configure manually, create a `.mcp.json` in your project root:
 {
   "mcpServers": {
     "docmate": {
-      "command": "document-agent-mcp",
+      "command": "docmate-mcp",
       "env": {
         "DOCMATE_API_KEY": "your-api-key-here",
         "DOCUMENT_AGENT_API_BASE_URL": "http://127.0.0.1:8000"
@@ -147,21 +149,21 @@ If you prefer to configure manually, create a `.mcp.json` in your project root:
 Or register globally via CLI:
 
 ```bash
-npm install -g @qxinm/document-agent-mcp
+npm install -g @qxinm/docmate-mcp
 claude mcp add --scope user docmate \
   -e DOCMATE_API_KEY=your-api-key-here \
   -e DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000 \
-  -- document-agent-mcp
+  -- docmate-mcp
 ```
 
 For Codex:
 
 ```bash
-npm install -g @qxinm/document-agent-mcp
+npm install -g @qxinm/docmate-mcp
 codex mcp add docmate \
   --env DOCMATE_API_KEY=your-api-key-here \
   --env DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000 \
-  -- document-agent-mcp
+  -- docmate-mcp
 ```
 
 ---
@@ -169,10 +171,10 @@ codex mcp add docmate \
 ## Local Development
 
 ```bash
-git clone https://github.com/2026-Capstone1-Team5/document-agent-mcp
-cd document-agent-mcp
+git clone https://github.com/2026-Capstone1-Team5/docmate
+cd docmate/apps/mcp
 pnpm install
-pnpm build
+pnpm run build:local
 
 # Run directly
 node dist/index.js
@@ -198,7 +200,7 @@ DOCUMENT_AGENT_API_BASE_URL=http://127.0.0.1:8000
 
 GitHub Actions is configured to:
 
-- run `pnpm build` and `npm pack` on PRs and pushes
+- run `pnpm build` (`tsc`) and `npm pack` on PRs and pushes (`npm pack` runs `prepack`, which syncs `skills/` before packing)
 - publish to npm on `v*` tag pushes or manual workflow dispatch
 
 Repository secret required:
@@ -210,6 +212,6 @@ The token must have publish permission for the `@qxinm` scope.
 Tag-based release example:
 
 ```bash
-git tag v0.1.6
-git push origin v0.1.6
+git tag v0.2.0
+git push origin v0.2.0
 ```
