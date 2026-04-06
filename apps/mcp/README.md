@@ -212,6 +212,6 @@ The token must have publish permission for the `@qxinm` scope.
 Tag-based release example:
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag mcp/v0.2.0
+git push origin mcp/v0.2.0
 ```
