@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * document-agent-mcp setup
+ * docmate-mcp setup
  * Cross-platform interactive setup: installs skills and registers MCP config.
- * Invoked via: document-agent-mcp setup
+ * Invoked via: docmate-mcp setup
  */
 
 import * as fs from "fs";
@@ -342,7 +342,7 @@ export async function runSetup(args: string[]) {
       target = args[++i];
     } else if (args[i] === "--help" || args[i] === "-h") {
       console.log(`
-Usage: document-agent-mcp setup [OPTIONS]
+Usage: docmate-mcp setup [OPTIONS]
 
 OPTIONS:
   --agent <name>    claude | gemini | codex  (repeatable)
@@ -378,7 +378,7 @@ OPTIONS:
 
   if (agents.length === 0) {
     warn("No supported agents detected (claude, gemini, codex).");
-    console.log("  Specify one manually:  document-agent-mcp setup --agent claude");
+    console.log("  Specify one manually:  docmate-mcp setup --agent claude");
     process.exit(0);
   }
 

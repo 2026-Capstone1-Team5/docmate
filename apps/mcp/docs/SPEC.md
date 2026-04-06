@@ -1,8 +1,8 @@
-# document-agent-mcp SPEC
+# docmate-mcp SPEC
 
 ## Purpose
 
-- `document-agent-mcp`는 Document AI 기능을 Claude Code, Gemini CLI, Codex 같은 Agent가 사용할 수 있게 연결하는 저장소다.
+- `@qxinm/docmate-mcp`는 Document AI 기능을 Claude Code, Gemini CLI, Codex 같은 Agent가 사용할 수 있게 연결하는 패키지다.
 - 이 저장소는 API를 Agent 친화적인 도구 인터페이스로 노출하는 역할을 맡는다.
 
 ## Responsibilities
