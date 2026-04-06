@@ -1,0 +1,12 @@
+[submodule "apps/api"]
+	path = apps/api
+	url = https://github.com/2026-Capstone1-Team5/document-agent-api.git
+[submodule "apps/web"]
+	path = apps/web
+	url = https://github.com/2026-Capstone1-Team5/document-agent-web.git
+[submodule "apps/mcp"]
+	path = apps/mcp
+	url = https://github.com/2026-Capstone1-Team5/document-agent-mcp.git
+[submodule "apps/ai"]
+	path = apps/ai
+	url = https://github.com/2026-Capstone1-Team5/document-ai.git
