@@ -1,0 +1,1288 @@
+{
+  "manifest": "output/benchmark_reports/paper_routing_evidence_manifest.jsonl",
+  "scored_json": "output/benchmark_reports/paper_routing_evidence_full_scored.json",
+  "summary": {
+    "documents": 13,
+    "subgroup_counts": {
+      "receipt": 10,
+      "invoice": 3
+    },
+    "subgroup_txt_counts": {
+      "receipt": 10,
+      "invoice": 3
+    },
+    "subgroup_txt_rates": {
+      "receipt": 1.0,
+      "invoice": 1.0
+    },
+    "mean_cid_ratio_by_subgroup": {
+      "receipt": 0.0,
+      "invoice": 0.0
+    },
+    "mean_original_cer_when_classified_txt": 3.421463694938542,
+    "mean_auto_cer_when_classified_txt": 0.8962926597081794
+  },
+  "rows": [
+    {
+      "doc_id": "receipt-sroie-0001-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:jsdnrs/ICDAR2019-SROIE",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0001-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1548.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-sroie-0001-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.17647058823529413,
+            "rasterized": 0.42857142857142855,
+            "auto": 0.42857142857142855
+          },
+          "best_variant": "rasterized",
+          "best_score": 0.42857142857142855,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.25210084033613445,
+          "rasterized_vs_original": 0.25210084033613445,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-sroie-0001-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.17647058823529413,
+            "primary_score": 0.17647058823529413,
+            "auxiliary_metrics": {
+              "token_f1": 0.17647058823529413,
+              "cer": 15.101694915254237,
+              "wer": 3.3636363636363638,
+              "ned": 0.9453580901856764
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-sroie-0001-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.42857142857142855,
+            "primary_score": 0.42857142857142855,
+            "auxiliary_metrics": {
+              "token_f1": 0.42857142857142855,
+              "cer": 1.5,
+              "wer": 1.2272727272727273,
+              "ned": 0.7531914893617021
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-sroie-0001-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.42857142857142855,
+            "primary_score": 0.42857142857142855,
+            "auxiliary_metrics": {
+              "token_f1": 0.42857142857142855,
+              "cer": 1.5,
+              "wer": 1.2272727272727273,
+              "ned": 0.7531914893617021
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0002-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:jsdnrs/ICDAR2019-SROIE",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0002-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1615.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-sroie-0002-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.0,
+            "rasterized": 0.0,
+            "auto": 0.0
+          },
+          "best_variant": "original",
+          "best_score": 0.0,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.0,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-sroie-0002-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.7961165048543689,
+              "wer": 1.0,
+              "ned": 0.7961165048543689
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-sroie-0002-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8932038834951457,
+              "wer": 1.0,
+              "ned": 0.8932038834951457
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-sroie-0002-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8932038834951457,
+              "wer": 1.0,
+              "ned": 0.8932038834951457
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0003-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:jsdnrs/ICDAR2019-SROIE",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0003-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1609.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-sroie-0003-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.0,
+            "rasterized": 0.0,
+            "auto": 0.0
+          },
+          "best_variant": "original",
+          "best_score": 0.0,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.0,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-sroie-0003-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8867924528301887,
+              "wer": 1.0,
+              "ned": 0.8867924528301887
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-sroie-0003-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8679245283018868,
+              "wer": 1.0,
+              "ned": 0.8679245283018868
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-sroie-0003-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8679245283018868,
+              "wer": 1.0,
+              "ned": 0.8679245283018868
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0004-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:jsdnrs/ICDAR2019-SROIE",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0004-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1560.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-sroie-0004-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.11650485436893204,
+            "rasterized": 0.33333333333333337,
+            "auto": 0.33333333333333337
+          },
+          "best_variant": "rasterized",
+          "best_score": 0.33333333333333337,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.21682847896440133,
+          "rasterized_vs_original": 0.21682847896440133,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-sroie-0004-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.11650485436893204,
+            "primary_score": 0.11650485436893204,
+            "auxiliary_metrics": {
+              "token_f1": 0.11650485436893204,
+              "cer": 19.814814814814813,
+              "wer": 7.166666666666667,
+              "ned": 0.9553571428571429
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-sroie-0004-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.33333333333333337,
+            "primary_score": 0.33333333333333337,
+            "auxiliary_metrics": {
+              "token_f1": 0.33333333333333337,
+              "cer": 1.0864197530864197,
+              "wer": 1.3333333333333333,
+              "ned": 0.7586206896551724
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-sroie-0004-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.33333333333333337,
+            "primary_score": 0.33333333333333337,
+            "auxiliary_metrics": {
+              "token_f1": 0.33333333333333337,
+              "cer": 1.0864197530864197,
+              "wer": 1.3333333333333333,
+              "ned": 0.7586206896551724
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0005-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:jsdnrs/ICDAR2019-SROIE",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0005-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1588.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-sroie-0005-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.0,
+            "rasterized": 0.0,
+            "auto": 0.0
+          },
+          "best_variant": "original",
+          "best_score": 0.0,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.0,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-sroie-0005-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9019607843137255,
+              "wer": 1.0,
+              "ned": 0.9019607843137255
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-sroie-0005-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9084967320261438,
+              "wer": 1.0,
+              "ned": 0.9084967320261438
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-sroie-0005-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9084967320261438,
+              "wer": 1.0,
+              "ned": 0.9084967320261438
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0006-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:jsdnrs/ICDAR2019-SROIE",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-sroie-0006-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1613.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-sroie-0006-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.0,
+            "rasterized": 0.0,
+            "auto": 0.0
+          },
+          "best_variant": "original",
+          "best_score": 0.0,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.0,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-sroie-0006-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8921568627450981,
+              "wer": 1.0,
+              "ned": 0.8921568627450981
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-sroie-0006-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9215686274509803,
+              "wer": 1.0,
+              "ned": 0.9215686274509803
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-sroie-0006-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9215686274509803,
+              "wer": 1.0,
+              "ned": 0.9215686274509803
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0001-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:naver-clova-ix/cord-v2",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-cord-0001-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1654.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-cord-0001-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.0,
+            "rasterized": 0.0,
+            "auto": 0.0
+          },
+          "best_variant": "original",
+          "best_score": 0.0,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.0,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-cord-0001-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8407258064516129,
+              "wer": 1.0,
+              "ned": 0.8407258064516129
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-cord-0001-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8991935483870968,
+              "wer": 1.0,
+              "ned": 0.8991935483870968
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-cord-0001-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8991935483870968,
+              "wer": 1.0,
+              "ned": 0.8991935483870968
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0002-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:naver-clova-ix/cord-v2",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-cord-0002-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1568.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-cord-0002-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.380952380952381,
+            "rasterized": 0.5957446808510638,
+            "auto": 0.5957446808510638
+          },
+          "best_variant": "rasterized",
+          "best_score": 0.5957446808510638,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.21479229989868281,
+          "rasterized_vs_original": 0.21479229989868281,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-cord-0002-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.380952380952381,
+            "primary_score": 0.380952380952381,
+            "auxiliary_metrics": {
+              "token_f1": 0.380952380952381,
+              "cer": 0.9079754601226994,
+              "wer": 1.2083333333333333,
+              "ned": 0.6851851851851852
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-cord-0002-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.5957446808510638,
+            "primary_score": 0.5957446808510638,
+            "auxiliary_metrics": {
+              "token_f1": 0.5957446808510638,
+              "cer": 0.4662576687116564,
+              "wer": 0.5416666666666666,
+              "ned": 0.4662576687116564
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-cord-0002-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.5957446808510638,
+            "primary_score": 0.5957446808510638,
+            "auxiliary_metrics": {
+              "token_f1": 0.5957446808510638,
+              "cer": 0.4662576687116564,
+              "wer": 0.5416666666666666,
+              "ned": 0.4662576687116564
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0003-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:naver-clova-ix/cord-v2",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-cord-0003-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1296.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-cord-0003-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.0,
+            "rasterized": 0.0,
+            "auto": 0.0
+          },
+          "best_variant": "original",
+          "best_score": 0.0,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.0,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-cord-0003-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.891156462585034,
+              "wer": 1.0,
+              "ned": 0.891156462585034
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-cord-0003-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8775510204081632,
+              "wer": 1.0,
+              "ned": 0.8775510204081632
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-cord-0003-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.8775510204081632,
+              "wer": 1.0,
+              "ned": 0.8775510204081632
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0004-routingtrap",
+      "subgroup": "receipt",
+      "source_bucket": "synthetic:routing-evidence:hf:naver-clova-ix/cord-v2",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/receipt-cord-0004-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1764.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "receipt-cord-0004-routingtrap",
+          "subgroup": "receipt",
+          "variant_scores": {
+            "original": 0.0,
+            "rasterized": 0.0,
+            "auto": 0.0
+          },
+          "best_variant": "original",
+          "best_score": 0.0,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.0,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "receipt-cord-0004-routingtrap",
+            "subgroup": "receipt",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9325842696629213,
+              "wer": 1.0,
+              "ned": 0.9325842696629213
+            }
+          },
+          "rasterized": {
+            "doc_id": "receipt-cord-0004-routingtrap",
+            "subgroup": "receipt",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9213483146067416,
+              "wer": 1.0,
+              "ned": 0.9213483146067416
+            }
+          },
+          "auto": {
+            "doc_id": "receipt-cord-0004-routingtrap",
+            "subgroup": "receipt",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.0,
+            "primary_score": 0.0,
+            "auxiliary_metrics": {
+              "token_f1": 0.0,
+              "cer": 0.9213483146067416,
+              "wer": 1.0,
+              "ned": 0.9213483146067416
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0001-routingtrap",
+      "subgroup": "invoice",
+      "source_bucket": "synthetic:routing-evidence:hf:philschmid/ocr-invoice-data",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/invoice-invoiceocr-0001-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 2230.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "invoice-invoiceocr-0001-routingtrap",
+          "subgroup": "invoice",
+          "variant_scores": {
+            "original": 0.2,
+            "rasterized": 0.4393939393939394,
+            "auto": 0.4393939393939394
+          },
+          "best_variant": "rasterized",
+          "best_score": 0.4393939393939394,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.23939393939393938,
+          "rasterized_vs_original": 0.23939393939393938,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "invoice-invoiceocr-0001-routingtrap",
+            "subgroup": "invoice",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.2,
+            "primary_score": 0.2,
+            "auxiliary_metrics": {
+              "token_f1": 0.2,
+              "cer": 0.9954128440366973,
+              "wer": 0.9104477611940298,
+              "ned": 0.7474167623421355
+            }
+          },
+          "rasterized": {
+            "doc_id": "invoice-invoiceocr-0001-routingtrap",
+            "subgroup": "invoice",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.4393939393939394,
+            "primary_score": 0.4393939393939394,
+            "auxiliary_metrics": {
+              "token_f1": 0.4393939393939394,
+              "cer": 0.8165137614678899,
+              "wer": 0.7164179104477612,
+              "ned": 0.6312056737588653
+            }
+          },
+          "auto": {
+            "doc_id": "invoice-invoiceocr-0001-routingtrap",
+            "subgroup": "invoice",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.4393939393939394,
+            "primary_score": 0.4393939393939394,
+            "auxiliary_metrics": {
+              "token_f1": 0.4393939393939394,
+              "cer": 0.8165137614678899,
+              "wer": 0.7164179104477612,
+              "ned": 0.6312056737588653
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0002-routingtrap",
+      "subgroup": "invoice",
+      "source_bucket": "synthetic:routing-evidence:hf:philschmid/ocr-invoice-data",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/invoice-invoiceocr-0002-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 2730.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "invoice-invoiceocr-0002-routingtrap",
+          "subgroup": "invoice",
+          "variant_scores": {
+            "original": 0.3105022831050228,
+            "rasterized": 0.41509433962264153,
+            "auto": 0.3105022831050228
+          },
+          "best_variant": "rasterized",
+          "best_score": 0.41509433962264153,
+          "auto_regret": 0.10459205651761871,
+          "auto_vs_original": 0.0,
+          "rasterized_vs_original": 0.10459205651761871,
+          "auto_vs_rasterized": -0.10459205651761871,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "invoice-invoiceocr-0002-routingtrap",
+            "subgroup": "invoice",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.3105022831050228,
+            "primary_score": 0.3105022831050228,
+            "auxiliary_metrics": {
+              "token_f1": 0.3105022831050228,
+              "cer": 0.8198707592891761,
+              "wer": 0.8145161290322581,
+              "ned": 0.7328519855595668
+            }
+          },
+          "rasterized": {
+            "doc_id": "invoice-invoiceocr-0002-routingtrap",
+            "subgroup": "invoice",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.41509433962264153,
+            "primary_score": 0.41509433962264153,
+            "auxiliary_metrics": {
+              "token_f1": 0.41509433962264153,
+              "cer": 0.7205169628432956,
+              "wer": 0.7338709677419355,
+              "ned": 0.6651752423564504
+            }
+          },
+          "auto": {
+            "doc_id": "invoice-invoiceocr-0002-routingtrap",
+            "subgroup": "invoice",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.3105022831050228,
+            "primary_score": 0.3105022831050228,
+            "auxiliary_metrics": {
+              "token_f1": 0.3105022831050228,
+              "cer": 0.8198707592891761,
+              "wer": 0.8145161290322581,
+              "ned": 0.7328519855595668
+            }
+          }
+        }
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0003-routingtrap",
+      "subgroup": "invoice",
+      "source_bucket": "synthetic:routing-evidence:hf:philschmid/ocr-invoice-data",
+      "input_pdf": "benchmark/paper_ood/derived/routing_evidence/invoice-invoiceocr-0003-routingtrap.pdf",
+      "observation": {
+        "classify_result": "txt",
+        "page_count": 1,
+        "pages_checked": 1,
+        "avg_cleaned_chars_per_page": 1548.0,
+        "invalid_char_ratio": 0.0,
+        "cid_char_ratio": 0.0,
+        "invalid_chars_detected": false,
+        "high_image_coverage_ratio": 0.0,
+        "classifier_signal_thresholds": {
+          "chars_per_page_min": 50,
+          "invalid_char_ratio_max": 0.05,
+          "image_coverage_ratio_max": 0.8
+        },
+        "classifier_signal_status": {
+          "chars_threshold_passed": true,
+          "invalid_ratio_threshold_passed": true,
+          "image_coverage_threshold_passed": true
+        },
+        "classifier_signal_accepts_text_path": true
+      },
+      "scored": {
+        "comparison": {
+          "doc_id": "invoice-invoiceocr-0003-routingtrap",
+          "subgroup": "invoice",
+          "variant_scores": {
+            "original": 0.46153846153846156,
+            "rasterized": 0.5038167938931297,
+            "auto": 0.5038167938931297
+          },
+          "best_variant": "rasterized",
+          "best_score": 0.5038167938931297,
+          "auto_regret": 0.0,
+          "auto_vs_original": 0.04227833235466816,
+          "rasterized_vs_original": 0.04227833235466816,
+          "auto_vs_rasterized": 0.0,
+          "text_layer_stripped_vs_original": null,
+          "rasterized_vs_text_layer_stripped": null,
+          "auto_vs_text_layer_stripped": null
+        },
+        "scores": {
+          "original": {
+            "doc_id": "invoice-invoiceocr-0003-routingtrap",
+            "subgroup": "invoice",
+            "variant": "original",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.46153846153846156,
+            "primary_score": 0.46153846153846156,
+            "auxiliary_metrics": {
+              "token_f1": 0.46153846153846156,
+              "cer": 0.6977660972404731,
+              "wer": 0.6835443037974683,
+              "ned": 0.6825192802056556
+            }
+          },
+          "rasterized": {
+            "doc_id": "invoice-invoiceocr-0003-routingtrap",
+            "subgroup": "invoice",
+            "variant": "rasterized",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.5038167938931297,
+            "primary_score": 0.5038167938931297,
+            "auxiliary_metrics": {
+              "token_f1": 0.5038167938931297,
+              "cer": 0.6734559789750328,
+              "wer": 0.6139240506329114,
+              "ned": 0.6587403598971723
+            }
+          },
+          "auto": {
+            "doc_id": "invoice-invoiceocr-0003-routingtrap",
+            "subgroup": "invoice",
+            "variant": "auto",
+            "status": "succeeded",
+            "metric_family": "token_f1",
+            "gold_format": "fields_json",
+            "raw_metric": 0.5038167938931297,
+            "primary_score": 0.5038167938931297,
+            "auxiliary_metrics": {
+              "token_f1": 0.5038167938931297,
+              "cer": 0.6734559789750328,
+              "wer": 0.6139240506329114,
+              "ned": 0.6587403598971723
+            }
+          }
+        }
+      }
+    }
+  ]
+}

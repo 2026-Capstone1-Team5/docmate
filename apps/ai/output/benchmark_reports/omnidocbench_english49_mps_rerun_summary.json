@@ -1,0 +1,48 @@
+{
+  "total_documents": 49,
+  "source_artifacts": {
+    "original": "output/omnidocbench_english49_mps_rerun_normal/results.json",
+    "rasterized": "output/omnidocbench_english49_mps_rerun_rasterized/results.json",
+    "auto": "output/omnidocbench_english49_mps_rerun_auto/results.json"
+  },
+  "overall_variant_summary": {
+    "original": {
+      "attempted": 49,
+      "succeeded": 49,
+      "success_rate": 1.0,
+      "mean_elapsed_seconds": 43.53110204081632,
+      "mean_markdown_chars": 3504.6530612244896,
+      "parse_mode_distribution": {
+        "normal": 49
+      }
+    },
+    "rasterized": {
+      "attempted": 49,
+      "succeeded": 49,
+      "success_rate": 1.0,
+      "mean_elapsed_seconds": 43.43418367346939,
+      "mean_markdown_chars": 3481.734693877551,
+      "parse_mode_distribution": {
+        "rasterized": 49
+      }
+    },
+    "auto": {
+      "attempted": 49,
+      "succeeded": 49,
+      "success_rate": 1.0,
+      "mean_elapsed_seconds": 43.274510204081636,
+      "mean_markdown_chars": 3481.734693877551,
+      "parse_mode_distribution": {
+        "rasterized": 49
+      }
+    }
+  },
+  "route_selection_summary": {
+    "total_documents": 49,
+    "documents_with_recorded_parse_mode": 49,
+    "parse_failures": 0,
+    "auto_to_normal": 0,
+    "auto_to_rasterized": 49,
+    "route_behavior": "conservative_fallback"
+  }
+}

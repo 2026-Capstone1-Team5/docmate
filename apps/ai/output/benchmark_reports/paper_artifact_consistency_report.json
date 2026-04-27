@@ -1,0 +1,32 @@
+{
+  "consistent": true,
+  "manifest": "apps/ai/paper/paper_artifact_manifest.json",
+  "checks": {
+    "artifact_exists:broad_summary": "pass",
+    "artifact_exists:controlled_scored": "pass",
+    "artifact_exists:controlled_manifest": "pass",
+    "artifact_exists:controlled_observation": "pass",
+    "artifact_exists:claim_bundle": "pass",
+    "broad_summary_variants_present": "pass",
+    "controlled_observation_summary_consistent_with_claim_bundle": "pass",
+    "claim_bundle_quantitative_variants_present": "pass",
+    "controlled_scored_variants_present": "pass",
+    "claim_bundle_matches_controlled_scored": "pass",
+    "claim_mode_consistent_with_bundle_evidence": "pass",
+    "acceptance_report_sources_match_manifest": "pass"
+  },
+  "failures": [],
+  "resolved_artifacts": {
+    "broad_summary": "apps/ai/output/benchmark_reports/omnidocbench_english49_mps_rerun_summary.json",
+    "controlled_scored": "apps/ai/output/benchmark_reports/paper_routing_evidence_full_scored.json",
+    "controlled_manifest": "apps/ai/output/benchmark_reports/paper_routing_evidence_manifest.jsonl",
+    "controlled_observation": "apps/ai/output/benchmark_reports/paper_routing_evidence_observation_scored.json",
+    "claim_bundle": "apps/ai/output/benchmark_reports/paper_routing_evidence_claim_evidence.json",
+    "acceptance_report_json": "apps/ai/output/benchmark_reports/paper_acceptance_report.json",
+    "acceptance_report_md": "apps/ai/output/benchmark_reports/paper_acceptance_report.md",
+    "artifact_consistency_report_json": "apps/ai/output/benchmark_reports/paper_artifact_consistency_report.json",
+    "artifact_consistency_report_md": "apps/ai/output/benchmark_reports/paper_artifact_consistency_report.md",
+    "paper_variant_main_table_rows": "apps/ai/output/benchmark_reports/paper_variant_main_table_rows.json",
+    "paper_variant_runtime_summary": "apps/ai/output/benchmark_reports/paper_variant_runtime_summary.json"
+  }
+}

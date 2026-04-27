@@ -1,0 +1,1121 @@
+{
+  "manifest": "apps/ai/output/benchmark_reports/paper_routing_evidence_manifest.jsonl",
+  "run_root": "apps/ai/output/paper_routing_evidence_full",
+  "variants": [
+    "original",
+    "rasterized",
+    "auto"
+  ],
+  "doc_scores": [
+    {
+      "doc_id": "receipt-sroie-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.17647058823529413,
+      "primary_score": 0.17647058823529413,
+      "auxiliary_metrics": {
+        "token_f1": 0.17647058823529413,
+        "cer": 15.101694915254237,
+        "wer": 3.3636363636363638,
+        "ned": 0.9453580901856764
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.42857142857142855,
+      "primary_score": 0.42857142857142855,
+      "auxiliary_metrics": {
+        "token_f1": 0.42857142857142855,
+        "cer": 1.5,
+        "wer": 1.2272727272727273,
+        "ned": 0.7531914893617021
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.42857142857142855,
+      "primary_score": 0.42857142857142855,
+      "auxiliary_metrics": {
+        "token_f1": 0.42857142857142855,
+        "cer": 1.5,
+        "wer": 1.2272727272727273,
+        "ned": 0.7531914893617021
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.7961165048543689,
+        "wer": 1.0,
+        "ned": 0.7961165048543689
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8932038834951457,
+        "wer": 1.0,
+        "ned": 0.8932038834951457
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8932038834951457,
+        "wer": 1.0,
+        "ned": 0.8932038834951457
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8867924528301887,
+        "wer": 1.0,
+        "ned": 0.8867924528301887
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8679245283018868,
+        "wer": 1.0,
+        "ned": 0.8679245283018868
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8679245283018868,
+        "wer": 1.0,
+        "ned": 0.8679245283018868
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.11650485436893204,
+      "primary_score": 0.11650485436893204,
+      "auxiliary_metrics": {
+        "token_f1": 0.11650485436893204,
+        "cer": 19.814814814814813,
+        "wer": 7.166666666666667,
+        "ned": 0.9553571428571429
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.33333333333333337,
+      "primary_score": 0.33333333333333337,
+      "auxiliary_metrics": {
+        "token_f1": 0.33333333333333337,
+        "cer": 1.0864197530864197,
+        "wer": 1.3333333333333333,
+        "ned": 0.7586206896551724
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.33333333333333337,
+      "primary_score": 0.33333333333333337,
+      "auxiliary_metrics": {
+        "token_f1": 0.33333333333333337,
+        "cer": 1.0864197530864197,
+        "wer": 1.3333333333333333,
+        "ned": 0.7586206896551724
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0005-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9019607843137255,
+        "wer": 1.0,
+        "ned": 0.9019607843137255
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0005-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9084967320261438,
+        "wer": 1.0,
+        "ned": 0.9084967320261438
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0005-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9084967320261438,
+        "wer": 1.0,
+        "ned": 0.9084967320261438
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0006-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8921568627450981,
+        "wer": 1.0,
+        "ned": 0.8921568627450981
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0006-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9215686274509803,
+        "wer": 1.0,
+        "ned": 0.9215686274509803
+      }
+    },
+    {
+      "doc_id": "receipt-sroie-0006-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9215686274509803,
+        "wer": 1.0,
+        "ned": 0.9215686274509803
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8407258064516129,
+        "wer": 1.0,
+        "ned": 0.8407258064516129
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8991935483870968,
+        "wer": 1.0,
+        "ned": 0.8991935483870968
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8991935483870968,
+        "wer": 1.0,
+        "ned": 0.8991935483870968
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.380952380952381,
+      "primary_score": 0.380952380952381,
+      "auxiliary_metrics": {
+        "token_f1": 0.380952380952381,
+        "cer": 0.9079754601226994,
+        "wer": 1.2083333333333333,
+        "ned": 0.6851851851851852
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.5957446808510638,
+      "primary_score": 0.5957446808510638,
+      "auxiliary_metrics": {
+        "token_f1": 0.5957446808510638,
+        "cer": 0.4662576687116564,
+        "wer": 0.5416666666666666,
+        "ned": 0.4662576687116564
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.5957446808510638,
+      "primary_score": 0.5957446808510638,
+      "auxiliary_metrics": {
+        "token_f1": 0.5957446808510638,
+        "cer": 0.4662576687116564,
+        "wer": 0.5416666666666666,
+        "ned": 0.4662576687116564
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.891156462585034,
+        "wer": 1.0,
+        "ned": 0.891156462585034
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8775510204081632,
+        "wer": 1.0,
+        "ned": 0.8775510204081632
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.8775510204081632,
+        "wer": 1.0,
+        "ned": 0.8775510204081632
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9325842696629213,
+        "wer": 1.0,
+        "ned": 0.9325842696629213
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9213483146067416,
+        "wer": 1.0,
+        "ned": 0.9213483146067416
+      }
+    },
+    {
+      "doc_id": "receipt-cord-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.0,
+      "primary_score": 0.0,
+      "auxiliary_metrics": {
+        "token_f1": 0.0,
+        "cer": 0.9213483146067416,
+        "wer": 1.0,
+        "ned": 0.9213483146067416
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0001-routingtrap",
+      "subgroup": "invoice",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.2,
+      "primary_score": 0.2,
+      "auxiliary_metrics": {
+        "token_f1": 0.2,
+        "cer": 0.9954128440366973,
+        "wer": 0.9104477611940298,
+        "ned": 0.7474167623421355
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0001-routingtrap",
+      "subgroup": "invoice",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.4393939393939394,
+      "primary_score": 0.4393939393939394,
+      "auxiliary_metrics": {
+        "token_f1": 0.4393939393939394,
+        "cer": 0.8165137614678899,
+        "wer": 0.7164179104477612,
+        "ned": 0.6312056737588653
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0001-routingtrap",
+      "subgroup": "invoice",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.4393939393939394,
+      "primary_score": 0.4393939393939394,
+      "auxiliary_metrics": {
+        "token_f1": 0.4393939393939394,
+        "cer": 0.8165137614678899,
+        "wer": 0.7164179104477612,
+        "ned": 0.6312056737588653
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0002-routingtrap",
+      "subgroup": "invoice",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.3105022831050228,
+      "primary_score": 0.3105022831050228,
+      "auxiliary_metrics": {
+        "token_f1": 0.3105022831050228,
+        "cer": 0.8198707592891761,
+        "wer": 0.8145161290322581,
+        "ned": 0.7328519855595668
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0002-routingtrap",
+      "subgroup": "invoice",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.41509433962264153,
+      "primary_score": 0.41509433962264153,
+      "auxiliary_metrics": {
+        "token_f1": 0.41509433962264153,
+        "cer": 0.7205169628432956,
+        "wer": 0.7338709677419355,
+        "ned": 0.6651752423564504
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0002-routingtrap",
+      "subgroup": "invoice",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.3105022831050228,
+      "primary_score": 0.3105022831050228,
+      "auxiliary_metrics": {
+        "token_f1": 0.3105022831050228,
+        "cer": 0.8198707592891761,
+        "wer": 0.8145161290322581,
+        "ned": 0.7328519855595668
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0003-routingtrap",
+      "subgroup": "invoice",
+      "variant": "original",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.46153846153846156,
+      "primary_score": 0.46153846153846156,
+      "auxiliary_metrics": {
+        "token_f1": 0.46153846153846156,
+        "cer": 0.6977660972404731,
+        "wer": 0.6835443037974683,
+        "ned": 0.6825192802056556
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0003-routingtrap",
+      "subgroup": "invoice",
+      "variant": "rasterized",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.5038167938931297,
+      "primary_score": 0.5038167938931297,
+      "auxiliary_metrics": {
+        "token_f1": 0.5038167938931297,
+        "cer": 0.6734559789750328,
+        "wer": 0.6139240506329114,
+        "ned": 0.6587403598971723
+      }
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0003-routingtrap",
+      "subgroup": "invoice",
+      "variant": "auto",
+      "status": "succeeded",
+      "metric_family": "token_f1",
+      "gold_format": "fields_json",
+      "raw_metric": 0.5038167938931297,
+      "primary_score": 0.5038167938931297,
+      "auxiliary_metrics": {
+        "token_f1": 0.5038167938931297,
+        "cer": 0.6734559789750328,
+        "wer": 0.6139240506329114,
+        "ned": 0.6587403598971723
+      }
+    }
+  ],
+  "doc_comparisons": [
+    {
+      "doc_id": "receipt-sroie-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.17647058823529413,
+        "rasterized": 0.42857142857142855,
+        "auto": 0.42857142857142855
+      },
+      "best_variant": "rasterized",
+      "best_score": 0.42857142857142855,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.25210084033613445,
+      "rasterized_vs_original": 0.25210084033613445,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-sroie-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.0,
+        "rasterized": 0.0,
+        "auto": 0.0
+      },
+      "best_variant": "original",
+      "best_score": 0.0,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.0,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-sroie-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.0,
+        "rasterized": 0.0,
+        "auto": 0.0
+      },
+      "best_variant": "original",
+      "best_score": 0.0,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.0,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-sroie-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.11650485436893204,
+        "rasterized": 0.33333333333333337,
+        "auto": 0.33333333333333337
+      },
+      "best_variant": "rasterized",
+      "best_score": 0.33333333333333337,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.21682847896440133,
+      "rasterized_vs_original": 0.21682847896440133,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-sroie-0005-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.0,
+        "rasterized": 0.0,
+        "auto": 0.0
+      },
+      "best_variant": "original",
+      "best_score": 0.0,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.0,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-sroie-0006-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.0,
+        "rasterized": 0.0,
+        "auto": 0.0
+      },
+      "best_variant": "original",
+      "best_score": 0.0,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.0,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-cord-0001-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.0,
+        "rasterized": 0.0,
+        "auto": 0.0
+      },
+      "best_variant": "original",
+      "best_score": 0.0,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.0,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-cord-0002-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.380952380952381,
+        "rasterized": 0.5957446808510638,
+        "auto": 0.5957446808510638
+      },
+      "best_variant": "rasterized",
+      "best_score": 0.5957446808510638,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.21479229989868281,
+      "rasterized_vs_original": 0.21479229989868281,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-cord-0003-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.0,
+        "rasterized": 0.0,
+        "auto": 0.0
+      },
+      "best_variant": "original",
+      "best_score": 0.0,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.0,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "receipt-cord-0004-routingtrap",
+      "subgroup": "receipt",
+      "variant_scores": {
+        "original": 0.0,
+        "rasterized": 0.0,
+        "auto": 0.0
+      },
+      "best_variant": "original",
+      "best_score": 0.0,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.0,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0001-routingtrap",
+      "subgroup": "invoice",
+      "variant_scores": {
+        "original": 0.2,
+        "rasterized": 0.4393939393939394,
+        "auto": 0.4393939393939394
+      },
+      "best_variant": "rasterized",
+      "best_score": 0.4393939393939394,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.23939393939393938,
+      "rasterized_vs_original": 0.23939393939393938,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0002-routingtrap",
+      "subgroup": "invoice",
+      "variant_scores": {
+        "original": 0.3105022831050228,
+        "rasterized": 0.41509433962264153,
+        "auto": 0.3105022831050228
+      },
+      "best_variant": "rasterized",
+      "best_score": 0.41509433962264153,
+      "auto_regret": 0.10459205651761871,
+      "auto_vs_original": 0.0,
+      "rasterized_vs_original": 0.10459205651761871,
+      "auto_vs_rasterized": -0.10459205651761871,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    },
+    {
+      "doc_id": "invoice-invoiceocr-0003-routingtrap",
+      "subgroup": "invoice",
+      "variant_scores": {
+        "original": 0.46153846153846156,
+        "rasterized": 0.5038167938931297,
+        "auto": 0.5038167938931297
+      },
+      "best_variant": "rasterized",
+      "best_score": 0.5038167938931297,
+      "auto_regret": 0.0,
+      "auto_vs_original": 0.04227833235466816,
+      "rasterized_vs_original": 0.04227833235466816,
+      "auto_vs_rasterized": 0.0,
+      "text_layer_stripped_vs_original": null,
+      "rasterized_vs_text_layer_stripped": null,
+      "auto_vs_text_layer_stripped": null
+    }
+  ],
+  "variant_summary": {
+    "original": {
+      "n": 13,
+      "mean_primary_score": 0.12661296678462242,
+      "median_primary_score": 0.0,
+      "mean_auxiliary_metrics": {
+        "token_f1": 0.12661296678462242,
+        "cer": 3.421463694938542,
+        "wer": 1.626703427512317,
+        "ned": 0.8377062761367932
+      }
+    },
+    "rasterized": {
+      "n": 13,
+      "mean_primary_score": 0.20891957812811818,
+      "median_primary_score": 0.0,
+      "mean_auxiliary_metrics": {
+        "token_f1": 0.20891957812811818,
+        "cer": 0.8886500599815732,
+        "wer": 0.9358835120073336,
+        "ned": 0.7863444444936291
+      }
+    },
+    "auto": {
+      "n": 13,
+      "mean_primary_score": 0.20087403531907058,
+      "median_primary_score": 0.0,
+      "mean_auxiliary_metrics": {
+        "token_f1": 0.20087403531907058,
+        "cer": 0.8962926597081794,
+        "wer": 0.942086985952743,
+        "ned": 0.7915503478169457
+      }
+    }
+  },
+  "subgroup_summary": {
+    "receipt": {
+      "original": {
+        "n": 10,
+        "mean_primary_score": 0.06739278235566072,
+        "median_primary_score": 0.0,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.06739278235566072,
+          "cer": 4.19659783336347,
+          "wer": 1.8738636363636363,
+          "ned": 0.8727393561670954
+        }
+      },
+      "rasterized": {
+        "n": 10,
+        "mean_primary_score": 0.13576494427558256,
+        "median_primary_score": 0.0,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.13576494427558256,
+          "cer": 0.9341964076474234,
+          "wer": 1.0102272727272728,
+          "ned": 0.826735650240469
+        }
+      },
+      "auto": {
+        "n": 10,
+        "mean_primary_score": 0.13576494427558256,
+        "median_primary_score": 0.0,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.13576494427558256,
+          "cer": 0.9341964076474234,
+          "wer": 1.0102272727272728,
+          "ned": 0.826735650240469
+        }
+      }
+    },
+    "invoice": {
+      "original": {
+        "n": 3,
+        "mean_primary_score": 0.32401358154782817,
+        "median_primary_score": 0.3105022831050228,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.32401358154782817,
+          "cer": 0.8376832335221155,
+          "wer": 0.8028360646745855,
+          "ned": 0.7209293427024526
+        }
+      },
+      "rasterized": {
+        "n": 3,
+        "mean_primary_score": 0.4527683576365702,
+        "median_primary_score": 0.4393939393939394,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.4527683576365702,
+          "cer": 0.736828901095406,
+          "wer": 0.6880709762742027,
+          "ned": 0.6517070920041627
+        }
+      },
+      "auto": {
+        "n": 3,
+        "mean_primary_score": 0.417904338797364,
+        "median_primary_score": 0.4393939393939394,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.417904338797364,
+          "cer": 0.7699468332440329,
+          "wer": 0.7149526967043102,
+          "ned": 0.6742660064052014
+        }
+      }
+    }
+  },
+  "pairwise_summary": {
+    "auto_vs_original": {
+      "n": 13,
+      "mean_delta": 0.07426106853444817,
+      "median_delta": 0.0,
+      "bootstrap_mean_ci95": [
+        0.019774664019488537,
+        0.1402819735966752
+      ],
+      "bootstrap_median_ci95": [
+        0.0,
+        0.21479229989868281
+      ],
+      "positive_rate": 0.38461538461538464,
+      "sign_test_p_value": 0.0625
+    },
+    "rasterized_vs_original": {
+      "n": 13,
+      "mean_delta": 0.08230661134349575,
+      "median_delta": 0.0,
+      "bootstrap_mean_ci95": [
+        0.027437915142596397,
+        0.14435497776830172
+      ],
+      "bootstrap_median_ci95": [
+        0.0,
+        0.21479229989868281
+      ],
+      "positive_rate": 0.46153846153846156,
+      "sign_test_p_value": 0.03125
+    },
+    "auto_vs_rasterized": {
+      "n": 13,
+      "mean_delta": -0.008045542809047594,
+      "median_delta": 0.0,
+      "bootstrap_mean_ci95": [
+        -0.02413662842714278,
+        0.0
+      ],
+      "bootstrap_median_ci95": [
+        0.0,
+        0.0
+      ],
+      "positive_rate": 0.0,
+      "sign_test_p_value": 1.0
+    }
+  },
+  "subgroup_pairwise_summary": {
+    "receipt": {
+      "auto_vs_original": {
+        "n": 10,
+        "mean_delta": 0.06837216191992186,
+        "median_delta": 0.0,
+        "bootstrap_mean_ci95": [
+          0.0,
+          0.13694794174641559
+        ],
+        "bootstrap_median_ci95": [
+          0.0,
+          0.21479229989868281
+        ],
+        "positive_rate": 0.3,
+        "sign_test_p_value": 0.25
+      },
+      "rasterized_vs_original": {
+        "n": 10,
+        "mean_delta": 0.06837216191992186,
+        "median_delta": 0.0,
+        "bootstrap_mean_ci95": [
+          0.0,
+          0.13694794174641559
+        ],
+        "bootstrap_median_ci95": [
+          0.0,
+          0.21479229989868281
+        ],
+        "positive_rate": 0.3,
+        "sign_test_p_value": 0.25
+      },
+      "auto_vs_rasterized": {
+        "n": 10,
+        "mean_delta": 0.0,
+        "median_delta": 0.0,
+        "bootstrap_mean_ci95": [
+          0.0,
+          0.0
+        ],
+        "bootstrap_median_ci95": [
+          0.0,
+          0.0
+        ],
+        "positive_rate": 0.0,
+        "sign_test_p_value": null
+      }
+    },
+    "invoice": {
+      "auto_vs_original": {
+        "n": 3,
+        "mean_delta": 0.09389075724953584,
+        "median_delta": 0.04227833235466816,
+        "bootstrap_mean_ci95": [
+          0.0,
+          0.23939393939393938
+        ],
+        "bootstrap_median_ci95": [
+          0.0,
+          0.23939393939393938
+        ],
+        "positive_rate": 0.6666666666666666,
+        "sign_test_p_value": 0.5
+      },
+      "rasterized_vs_original": {
+        "n": 3,
+        "mean_delta": 0.12875477608874208,
+        "median_delta": 0.10459205651761871,
+        "bootstrap_mean_ci95": [
+          0.06304957374231834,
+          0.23939393939393938
+        ],
+        "bootstrap_median_ci95": [
+          0.04227833235466816,
+          0.23939393939393938
+        ],
+        "positive_rate": 1.0,
+        "sign_test_p_value": 0.25
+      },
+      "auto_vs_rasterized": {
+        "n": 3,
+        "mean_delta": -0.034864018839206236,
+        "median_delta": 0.0,
+        "bootstrap_mean_ci95": [
+          -0.10459205651761871,
+          0.0
+        ],
+        "bootstrap_median_ci95": [
+          -0.10459205651761871,
+          0.0
+        ],
+        "positive_rate": 0.0,
+        "sign_test_p_value": 1.0
+      }
+    }
+  }
+}

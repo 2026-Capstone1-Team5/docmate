@@ -1,0 +1,81 @@
+{
+  "artifacts": [
+    {
+      "id": "broad_summary",
+      "path": "output/benchmark_reports/omnidocbench_english49_mps_rerun_summary.json",
+      "kind": "broad_summary",
+      "required": true,
+      "used_by": ["broad_benchmark_lane", "paper_acceptance"]
+    },
+    {
+      "id": "controlled_scored",
+      "path": "output/benchmark_reports/paper_routing_evidence_full_scored.json",
+      "kind": "controlled_scored",
+      "required": true,
+      "used_by": ["controlled_mechanism_lane", "claim_bundle"]
+    },
+    {
+      "id": "controlled_manifest",
+      "path": "output/benchmark_reports/paper_routing_evidence_manifest.jsonl",
+      "kind": "controlled_manifest",
+      "required": true,
+      "used_by": ["controlled_mechanism_lane", "reproduction"]
+    },
+    {
+      "id": "controlled_observation",
+      "path": "output/benchmark_reports/paper_routing_evidence_observation_scored.json",
+      "kind": "controlled_observation",
+      "required": true,
+      "used_by": ["controlled_mechanism_lane", "claim_bundle"]
+    },
+    {
+      "id": "claim_bundle",
+      "path": "output/benchmark_reports/paper_routing_evidence_claim_evidence.json",
+      "kind": "claim_bundle",
+      "required": true,
+      "used_by": ["paper_claim", "paper_acceptance"]
+    },
+    {
+      "id": "acceptance_report_json",
+      "path": "output/benchmark_reports/paper_acceptance_report.json",
+      "kind": "acceptance_report_json",
+      "required": false,
+      "used_by": ["paper_release_gate"]
+    },
+    {
+      "id": "acceptance_report_md",
+      "path": "output/benchmark_reports/paper_acceptance_report.md",
+      "kind": "acceptance_report_md",
+      "required": false,
+      "used_by": ["paper_release_gate"]
+    },
+    {
+      "id": "artifact_consistency_report_json",
+      "path": "output/benchmark_reports/paper_artifact_consistency_report.json",
+      "kind": "artifact_consistency_report_json",
+      "required": false,
+      "used_by": ["paper_release_gate"]
+    },
+    {
+      "id": "artifact_consistency_report_md",
+      "path": "output/benchmark_reports/paper_artifact_consistency_report.md",
+      "kind": "artifact_consistency_report_md",
+      "required": false,
+      "used_by": ["paper_release_gate"]
+    },
+    {
+      "id": "paper_variant_main_table_rows",
+      "path": "output/benchmark_reports/paper_variant_main_table_rows.json",
+      "kind": "paper_table_artifact",
+      "required": false,
+      "used_by": ["paper_tables"]
+    },
+    {
+      "id": "paper_variant_runtime_summary",
+      "path": "output/benchmark_reports/paper_variant_runtime_summary.json",
+      "kind": "paper_runtime_artifact",
+      "required": false,
+      "used_by": ["paper_tables"]
+    }
+  ]
+}

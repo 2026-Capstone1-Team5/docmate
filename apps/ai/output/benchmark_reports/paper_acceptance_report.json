@@ -1,0 +1,86 @@
+{
+  "accepted": true,
+  "checks": {
+    "broad_summary_exists": "pass",
+    "broad_total_documents": "pass",
+    "broad_variant_summary_complete": "pass",
+    "broad_variant_summary_consistent": "pass",
+    "claim_bundle_exists": "pass",
+    "claim_mode": "pass",
+    "controlled_dataset_size": "pass",
+    "supporting_direct_observations_present": "pass",
+    "txt_classification_count": "pass",
+    "signal_accept_count": "pass",
+    "rasterized_improves_primary_score": "pass",
+    "auto_improves_primary_score": "pass"
+  },
+  "failures": [],
+  "sources": {
+    "broad_summary": "apps/ai/output/benchmark_reports/omnidocbench_english49_mps_rerun_summary.json",
+    "claim_bundle": "apps/ai/output/benchmark_reports/paper_routing_evidence_claim_evidence.json"
+  },
+  "observed": {
+    "claim_mode": "controlled_classifier_unreliability_supported",
+    "routing_observation_summary": {
+      "documents": 13,
+      "subgroup_counts": {
+        "receipt": 10,
+        "invoice": 3
+      },
+      "subgroup_txt_counts": {
+        "receipt": 10,
+        "invoice": 3
+      },
+      "subgroup_txt_rates": {
+        "receipt": 1.0,
+        "invoice": 1.0
+      },
+      "mean_cid_ratio_by_subgroup": {
+        "receipt": 0.0,
+        "invoice": 0.0
+      },
+      "mean_original_cer_when_classified_txt": 3.421463694938542,
+      "mean_auto_cer_when_classified_txt": 0.8962926597081794,
+      "classify_txt_count": 13,
+      "classifier_signal_accepts_text_path_count": 13
+    },
+    "quantitative_rows": [
+      {
+        "variant": "original",
+        "n": 13,
+        "mean_primary_score": 0.12661296678462242,
+        "median_primary_score": 0.0,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.12661296678462242,
+          "cer": 3.421463694938542,
+          "wer": 1.626703427512317,
+          "ned": 0.8377062761367932
+        }
+      },
+      {
+        "variant": "rasterized",
+        "n": 13,
+        "mean_primary_score": 0.20891957812811818,
+        "median_primary_score": 0.0,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.20891957812811818,
+          "cer": 0.8886500599815732,
+          "wer": 0.9358835120073336,
+          "ned": 0.7863444444936291
+        }
+      },
+      {
+        "variant": "auto",
+        "n": 13,
+        "mean_primary_score": 0.20087403531907058,
+        "median_primary_score": 0.0,
+        "mean_auxiliary_metrics": {
+          "token_f1": 0.20087403531907058,
+          "cer": 0.8962926597081794,
+          "wer": 0.942086985952743,
+          "ned": 0.7915503478169457
+        }
+      }
+    ]
+  }
+}
