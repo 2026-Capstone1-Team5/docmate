@@ -18,6 +18,10 @@ docmate/
     .env.example
 ```
 
+## Architecture
+
+- Architecture overview: [`docs/architecture.md`](docs/architecture.md)
+
 ## Clone
 
 ```bash
