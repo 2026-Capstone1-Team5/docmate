@@ -82,51 +82,51 @@ export function ResultViewerPanel({
   const markdownComponents = useMemo<Components>(
     () => ({
       h1: ({ children }) => (
-        <h1 className="mb-4 text-3xl font-semibold tracking-tight text-zinc-950">
+        <h1 className="mb-4 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
           {children}
         </h1>
       ),
       h2: ({ children }) => (
-        <h2 className="mb-3 mt-8 text-2xl font-semibold tracking-tight text-zinc-900 first:mt-0">
+        <h2 className="mb-3 mt-8 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 first:mt-0">
           {children}
         </h2>
       ),
       h3: ({ children }) => (
-        <h3 className="mb-3 mt-6 text-lg font-semibold text-zinc-900 first:mt-0">
+        <h3 className="mb-3 mt-6 text-lg font-semibold text-zinc-900 dark:text-zinc-100 first:mt-0">
           {children}
         </h3>
       ),
       h4: ({ children }) => (
-        <h4 className="mb-2 mt-5 text-sm font-semibold uppercase tracking-[0.08em] text-zinc-500 first:mt-0">
+        <h4 className="mb-2 mt-5 text-sm font-semibold uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 first:mt-0">     
           {children}
         </h4>
       ),
       p: ({ children }) => (
-        <p className="mb-4 text-[14px] leading-7 text-zinc-700 last:mb-0">{children}</p>
+        <p className="mb-4 text-[14px] leading-7 text-zinc-700 dark:text-zinc-300 last:mb-0">{children}</p>
       ),
       ul: ({ children }) => (
-        <ul className="mb-4 list-disc space-y-2 pl-6 text-[14px] leading-7 text-zinc-700">
+        <ul className="mb-4 list-disc space-y-2 pl-6 text-[14px] leading-7 text-zinc-700 dark:text-zinc-300">
           {children}
         </ul>
       ),
       ol: ({ children }) => (
-        <ol className="mb-4 list-decimal space-y-2 pl-6 text-[14px] leading-7 text-zinc-700">
+        <ol className="mb-4 list-decimal space-y-2 pl-6 text-[14px] leading-7 text-zinc-700 dark:text-zinc-300">
           {children}
         </ol>
       ),
       li: ({ children }) => <li className="pl-1">{children}</li>,
       blockquote: ({ children }) => (
-        <blockquote className="mb-4 border-l-2 border-zinc-200 pl-4 italic text-zinc-600">
+        <blockquote className="mb-4 border-l-2 border-zinc-200 dark:border-zinc-800 pl-4 italic text-zinc-600 dark:text-zinc-400">
           {children}
         </blockquote>
       ),
-      hr: () => <hr className="my-6 border-zinc-200" />,
+      hr: () => <hr className="my-6 border-zinc-200 dark:border-zinc-800" />,
       a: ({ href, children }) => (
         <a
           href={href}
           target="_blank"
           rel="noreferrer"
-          className="font-medium text-zinc-900 underline underline-offset-4"
+          className="font-medium text-zinc-900 dark:text-zinc-100 underline underline-offset-4"
         >
           {children}
         </a>
@@ -141,42 +141,42 @@ export function ResultViewerPanel({
           );
         }
         return (
-          <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[12px] text-zinc-800">
+          <code className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 font-mono text-[12px] text-zinc-800 dark:text-zinc-200">
             {children}
           </code>
         );
       },
       pre: ({ children }) => (
-        <pre className="mb-4 overflow-x-auto rounded-xl border border-zinc-200 bg-zinc-950/95 p-4 font-mono text-[12px] leading-6 shadow-sm">
+        <pre className="mb-4 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950/95 p-4 font-mono text-[12px] leading-6 shadow-sm">
           {children}
         </pre>
       ),
       table: ({ children }) => (
-        <div className="mb-5 overflow-x-auto rounded-xl border border-zinc-200">
-          <table className="min-w-full border-collapse bg-white text-left text-[13px] text-zinc-700">
+        <div className="mb-5 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <table className="min-w-full border-collapse bg-white dark:bg-zinc-950 text-left text-[13px] text-zinc-700 dark:text-zinc-300">
             {children}
           </table>
         </div>
       ),
-      thead: ({ children }) => <thead className="bg-zinc-50">{children}</thead>,
+      thead: ({ children }) => <thead className="bg-zinc-50 dark:bg-zinc-900">{children}</thead>,
       th: ({ children }) => (
-        <th className="border-b border-r border-zinc-200 px-3 py-2 text-xs font-semibold uppercase tracking-[0.04em] text-zinc-500 last:border-r-0">
+        <th className="border-b border-r border-zinc-200 dark:border-zinc-800 px-3 py-2 text-xs font-semibold uppercase tracking-[0.04em] text-zinc-500 dark:text-zinc-400 last:border-r-0">
           {children}
         </th>
       ),
       td: ({ children }) => (
-        <td className="border-b border-r border-zinc-100 px-3 py-2 align-top text-[13px] last:border-r-0">
+        <td className="border-b border-r border-zinc-100 dark:border-zinc-900 px-3 py-2 align-top text-[13px] last:border-r-0">        
           {children}
         </td>
       ),
-      strong: ({ children }) => <strong className="font-semibold text-zinc-900">{children}</strong>,
+      strong: ({ children }) => <strong className="font-semibold text-zinc-900 dark:text-zinc-100">{children}</strong>,
     }),
     [],
   );
 
   const resultContent = (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex h-12 items-center justify-between border-b border-zinc-200 bg-white px-4">
+      <div className="flex h-12 items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4">
         <div className="flex items-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -184,7 +184,7 @@ export function ResultViewerPanel({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 gap-1 px-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+                  className="h-8 gap-1 px-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   aria-label="Result format"
                 >
                   {resultView === "markdown" ? "Markdown" : "JSON"}
@@ -208,14 +208,14 @@ export function ResultViewerPanel({
           </DropdownMenu>
 
           {resultView === "markdown" ? (
-            <div className="inline-flex h-8 items-center rounded-md border border-zinc-200 bg-white p-0.5">
+            <div className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-0.5">       
               <button
                 type="button"
                 onClick={() => setMarkdownMode("preview")}
-                className={`inline-flex h-7 items-center rounded-sm px-2.5 text-xs font-medium transition ${
+                className={`inline-flex h-7 items-center rounded-sm px-2.5 text-xs font-medium transition ${      
                   markdownMode === "preview"
-                    ? "bg-zinc-900 text-white"
-                    : "text-zinc-500 hover:text-zinc-900"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
+                    : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                 }`}
               >
                 Preview
@@ -223,10 +223,10 @@ export function ResultViewerPanel({
               <button
                 type="button"
                 onClick={() => setMarkdownMode("raw")}
-                className={`inline-flex h-7 items-center rounded-sm px-2.5 text-xs font-medium transition ${
+                className={`inline-flex h-7 items-center rounded-sm px-2.5 text-xs font-medium transition ${      
                   markdownMode === "raw"
-                    ? "bg-zinc-900 text-white"
-                    : "text-zinc-500 hover:text-zinc-900"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
+                    : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                 }`}
               >
                 Raw
@@ -236,24 +236,24 @@ export function ResultViewerPanel({
         </div>
 
         <div className="flex items-center gap-0.5">
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-zinc-900" onClick={onCopy}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100" onClick={onCopy}>
             <Copy className="h-4 w-4" />
           </Button>
           {downloadUrl && (
             <a href={downloadUrl} download={downloadFileName}>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-zinc-900">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
                 <Download className="h-4 w-4" />
               </Button>
             </a>
           )}
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-zinc-900" onClick={onRefresh}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100" onClick={onRefresh}>
             <RotateCcw className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 bg-[#fbfbfb] p-5">
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+      <div className="flex-1 min-h-0 bg-[#fbfbfb] dark:bg-zinc-950 p-5">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
           <div className="min-h-0 flex-1 overflow-auto">
             <div className="p-6">
               {resultView === "markdown" ? (
@@ -268,21 +268,21 @@ export function ResultViewerPanel({
                       </ReactMarkdown>
                     </div>
                   ) : (
-                    <div className="prose prose-zinc max-w-none">
-                      <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-mono text-zinc-800 bg-transparent p-0">
+                    <div className="prose prose-zinc dark:prose-invert max-w-none">
+                      <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-mono text-zinc-800 dark:text-zinc-200 bg-transparent p-0">
                         {markdownContent}
                       </pre>
                     </div>
                   )
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
                       {emptyMarkdownMessage ?? "아직 결과가 없습니다."}
                     </p>
                   </div>
                 )
               ) : (
-                <pre className="text-[13px] leading-relaxed font-mono text-zinc-800 bg-transparent p-0 overflow-x-auto">
+                <pre className="text-[13px] leading-relaxed font-mono text-zinc-800 dark:text-zinc-200 bg-transparent p-0 overflow-x-auto">
                   {isReady
                     ? JSON.stringify(jsonContent, null, 2)
                     : emptyJsonMessage ??
@@ -301,9 +301,9 @@ export function ResultViewerPanel({
 
   if (!showConfigTab) {
     return (
-      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-t border-zinc-200 bg-[#fcfcfc] lg:basis-1/2 lg:border-t-0 lg:border-l">
-        <div className="flex h-12 items-center border-b border-zinc-200 bg-white px-4">
-          <div className="flex h-full items-center gap-2 border-b-2 border-zinc-900 px-1 text-sm font-medium text-zinc-900">
+      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-t border-zinc-200 dark:border-zinc-800 bg-[#fcfcfc] dark:bg-zinc-950 lg:basis-1/2 lg:border-t-0 lg:border-l">
+        <div className="flex h-12 items-center border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4">
+          <div className="flex h-full items-center gap-2 border-b-2 border-zinc-900 dark:border-zinc-50 px-1 text-sm font-medium text-zinc-900 dark:text-zinc-50">
             <FileText className="h-4 w-4" />
             Results
           </div>
@@ -314,17 +314,17 @@ export function ResultViewerPanel({
   }
 
   return (
-    <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-t border-zinc-200 bg-[#fcfcfc] lg:basis-1/2 lg:border-t-0 lg:border-l">
+    <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-t border-zinc-200 dark:border-zinc-800 bg-[#fcfcfc] dark:bg-zinc-950 lg:basis-1/2 lg:border-t-0 lg:border-l">
       <Tabs
         value={panelTab}
         onValueChange={(value) => onPanelTabChange(value as PanelTab)}
         className="flex h-full min-h-0 flex-col"
       >
-        <div className="flex h-12 items-center border-b border-zinc-200 bg-white px-4">
+        <div className="flex h-12 items-center border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4">
           <TabsList variant="line" className="h-full gap-6 bg-transparent p-0">
             <TabsTrigger
               value="config"
-              className="flex h-full items-center gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 text-sm font-medium text-zinc-500 shadow-none data-active:border-zinc-900 data-active:text-zinc-900"
+              className="flex h-full items-center gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 text-sm font-medium text-zinc-500 dark:text-zinc-400 shadow-none data-active:border-zinc-900 dark:data-active:border-zinc-50 data-active:text-zinc-900 dark:data-active:text-zinc-50"
             >
               <SlidersHorizontal className="h-4 w-4" />
               Build
@@ -332,7 +332,7 @@ export function ResultViewerPanel({
             <TabsTrigger
               value="result"
               disabled={resultTabDisabled}
-              className="flex h-full items-center gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 text-sm font-medium text-zinc-500 shadow-none data-active:border-zinc-900 data-active:text-zinc-900"
+              className="flex h-full items-center gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 text-sm font-medium text-zinc-500 dark:text-zinc-400 shadow-none data-active:border-zinc-900 dark:data-active:border-zinc-50 data-active:text-zinc-900 dark:data-active:text-zinc-50"
             >
               <FileText className="h-4 w-4" />
               Results
@@ -346,19 +346,19 @@ export function ResultViewerPanel({
               <div className="px-6 py-6">
                 <div className="mb-6">
                   <div className="mb-2">
-                    <h2 className="text-xl font-semibold tracking-tight text-zinc-950">
+                    <h2 className="text-xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
                       {configTitle ?? "Configuration"}
                     </h2>
                   </div>
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
                     {configDescription ?? "Load a saved configuration or start fresh with defaults."}
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   {configContent ?? (
-                    <div className="rounded-xl border border-dashed border-zinc-200 p-12 text-center">
-                      <p className="text-sm text-zinc-500">
+                    <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 p-12 text-center">
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">
                         아직 설정 항목이 없습니다.
                       </p>
                     </div>

@@ -22,7 +22,7 @@ import {
 } from "@/lib/document-agent-api";
 
 const SourcePreviewPanel = dynamic(
-  () => import("@/components/dashboard/source-preview-panel").then((module) => module.SourcePreviewPanel),
+  () => import("@/components/dashboard/source-preview-panel").then((module) => module.SourcePreviewPanel),        
   { ssr: false },
 );
 
@@ -98,7 +98,7 @@ export default function DocumentDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
-        <p className="text-zinc-500 font-medium">Loading document details...</p>
+        <p className="text-zinc-500 dark:text-zinc-400 font-medium">Loading document details...</p>
       </div>
     );
   }
@@ -106,7 +106,7 @@ export default function DocumentDetailPage() {
   if (!doc || !result) {
     return (
       <div className="text-center py-20">
-        <p>Document not found.</p>
+        <p className="text-zinc-900 dark:text-zinc-100">Document not found.</p>
         <Button variant="link" render={<Link href="/documents" />}>
           Return to Library
         </Button>
@@ -115,8 +115,8 @@ export default function DocumentDetailPage() {
   }
 
   return (
-    <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden border-y border-zinc-200 bg-white lg:flex-row">
-      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-b border-zinc-200 lg:basis-1/2 lg:border-b-0 lg:border-r">
+    <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden border-y border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 lg:flex-row">
+      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-b border-zinc-200 dark:border-zinc-800 lg:basis-1/2 lg:border-b-0 lg:border-r">
         {previewUrl ? (
           <SourcePreviewPanel
             key={doc.id}
@@ -128,7 +128,7 @@ export default function DocumentDetailPage() {
                 variant="ghost"
                 size="xs"
                 render={<Link href="/documents" />}
-                className="h-8 px-2.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100"
+                className="h-8 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
               >
                 <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
                 목록
@@ -141,7 +141,7 @@ export default function DocumentDetailPage() {
                 <button
                   type="button"
                   onClick={() => void handleDelete()}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-600 hover:bg-red-50"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
                   aria-label="Delete document"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -152,12 +152,12 @@ export default function DocumentDetailPage() {
         ) : null}
 
         {errorMessage ? (
-          <div className="mx-5 my-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          <div className="mx-5 my-4 rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400">
             {errorMessage}
           </div>
         ) : null}
         {deleteError ? (
-          <div className="mx-5 my-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          <div className="mx-5 my-4 rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400">
             {deleteError}
           </div>
         ) : null}

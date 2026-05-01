@@ -167,5 +167,5 @@
 
 .doc-viewer-embedded .rdv-container,
 .doc-viewer-embedded #proxy-renderer {
-  background: white;
+  background: transparent !important;
 }

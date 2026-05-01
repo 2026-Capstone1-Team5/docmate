@@ -24,6 +24,7 @@ import {
   XlsxPreviewViewer,
   type XlsxSheetPreview,
 } from "@/components/dashboard/xlsx-preview-viewer";
+import { useTheme } from "@/components/theme-provider";
 
 const PDF_VIEWPORT_WIDTH = 728;
 const MAX_XLSX_PREVIEW_SHEETS = 5;
@@ -70,6 +71,7 @@ export function SourcePreviewPanel({
   downloadUrl,
   downloadFileName,
 }: SourcePreviewPanelProps) {
+  const { theme } = useTheme();
   const isPdfPreview = mode === "pdf";
   const isPptxPreview = mode === "pptx";
   const supportsZoom =
@@ -280,12 +282,12 @@ export function SourcePreviewPanel({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-y border-zinc-200 bg-white">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-y border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
       {!isPptxPreview ? (
-          <div className="flex h-12 items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4">
+          <div className="flex h-12 items-center justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4">   
           <div className="flex items-center gap-2 overflow-hidden">
             {toolbarStart}
-            <span className="max-w-[160px] truncate text-xs font-medium text-zinc-600">
+            <span className="max-w-[160px] truncate text-xs font-medium text-zinc-600 dark:text-zinc-400">
               {fileName}
           </span>
         </div>
@@ -297,7 +299,7 @@ export function SourcePreviewPanel({
                 type="button"
                 disabled={pdfPageNumber <= 1}
                 onClick={() => scrollToPage(pdfPageNumber - 1)}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 disabled:opacity-50"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 disabled:opacity-50"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -316,7 +318,7 @@ export function SourcePreviewPanel({
                     const clamped = Math.min(Math.max(1, next), Math.max(1, pdfNumPages));
                     scrollToPage(clamped, "auto");
                   }}
-                  className="h-8 w-12 border-zinc-200 px-2 text-center text-sm"
+                  className="h-8 w-12 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2 text-center text-sm"
                 />
                 <span className="text-sm text-zinc-500">of</span>
                 <span className="text-sm text-zinc-500">{pdfNumPages || "?"}</span>
@@ -326,12 +328,12 @@ export function SourcePreviewPanel({
                 type="button"
                 disabled={!pdfNumPages || pdfPageNumber >= pdfNumPages}
                 onClick={() => scrollToPage(pdfPageNumber + 1)}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 disabled:opacity-50"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 disabled:opacity-50"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
 
-              <div className="mx-1 h-5 w-px bg-zinc-200" />
+              <div className="mx-1 h-5 w-px bg-zinc-200 dark:bg-zinc-800" />
             </>
           ) : null}
 
@@ -341,16 +343,16 @@ export function SourcePreviewPanel({
                 type="button"
                 aria-label="Zoom Out"
                 onClick={() => setZoomPercent((prev) => Math.max(60, prev - 10))}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 hover:bg-zinc-100"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
               >
                 <Minus className="h-4 w-4" />
               </button>
-              <span className="w-14 text-center text-sm text-zinc-600">{zoomPercent}%</span>
+              <span className="w-14 text-center text-sm text-zinc-600 dark:text-zinc-400">{zoomPercent}%</span>
               <button
                 type="button"
                 aria-label="Zoom In"
                 onClick={() => setZoomPercent((prev) => Math.min(200, prev + 10))}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 hover:bg-zinc-100"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -358,12 +360,12 @@ export function SourcePreviewPanel({
                 type="button"
                 aria-label="Reset Zoom"
                 onClick={() => setZoomPercent(100)}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 hover:bg-zinc-100"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
 
-              <div className="mx-1 h-5 w-px bg-zinc-200" />
+              <div className="mx-1 h-5 w-px bg-zinc-200 dark:bg-zinc-800" />
             </>
           ) : null}
 
@@ -371,7 +373,7 @@ export function SourcePreviewPanel({
             type="button"
             aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
             onClick={() => void toggleFullscreen()}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 hover:bg-zinc-100"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
           >
             {isFullscreen ? (
               <Minimize2 className="h-4 w-4" />
@@ -380,14 +382,14 @@ export function SourcePreviewPanel({
             )}
           </button>
 
-          <div className="mx-1 h-5 w-px bg-zinc-200" />
+          <div className="mx-1 h-5 w-px bg-zinc-200 dark:bg-zinc-800" />
 
           {downloadUrl ? (
             <a
               href={downloadUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 hover:bg-zinc-100"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
               aria-label="Download source"
               download={downloadFileName}
             >
@@ -402,10 +404,10 @@ export function SourcePreviewPanel({
         </div>
       </div>
         ) : isPptxPreview ? (
-          <div className="flex h-12 items-center gap-3 border-b border-zinc-200 bg-white px-4">
+          <div className="flex h-12 items-center gap-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4">
             <div className="flex items-center gap-2 overflow-hidden">
               {toolbarStart}
-              <span className="max-w-[220px] truncate text-xs font-medium text-zinc-600">
+              <span className="max-w-[220px] truncate text-xs font-medium text-zinc-600 dark:text-zinc-400">
                 {fileName}
               </span>
             </div>
@@ -415,13 +417,13 @@ export function SourcePreviewPanel({
       <div
         ref={scrollContainerRef}
         onScroll={isPdfPreview ? handlePdfScroll : undefined}
-        className="relative min-h-0 flex-1 overflow-auto bg-[#f3f3f3]"
+        className="relative min-h-0 flex-1 overflow-auto bg-[#f3f3f3] dark:bg-zinc-900"
         tabIndex={0}
       >
         {previewStatus === "error" ? (
-          <div className="absolute inset-6 flex flex-col items-center justify-center rounded-xl border border-red-200 bg-red-50 px-6 text-center">
+          <div className="absolute inset-6 flex flex-col items-center justify-center rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 px-6 text-center">
             <AlertCircle className="h-6 w-6 text-red-500" />
-            <p className="mt-2 text-sm font-medium text-red-600">
+            <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
               {previewMessage ?? "문서를 불러오지 못했습니다. API 연결 상태를 확인해 주세요."}
             </p>
           </div>
@@ -430,8 +432,8 @@ export function SourcePreviewPanel({
             <Document
               file={previewUrl}
               loading={
-                <div className="flex h-[720px] w-[728px] items-center justify-center border border-zinc-300 bg-white">
-                  <Loader2 className="h-6 w-6 animate-spin text-zinc-700" />
+                <div className="flex h-[720px] w-[728px] items-center justify-center border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950">
+                  <Loader2 className="h-6 w-6 animate-spin text-zinc-700 dark:text-zinc-300" />
                 </div>
               }
               onLoadSuccess={({ numPages }) => {
@@ -461,7 +463,7 @@ export function SourcePreviewPanel({
                       scale={zoomPercent / 100}
                       renderAnnotationLayer={false}
                       renderTextLayer={false}
-                      className="border border-zinc-300 bg-white shadow-sm"
+                      className="border border-zinc-300 dark:border-zinc-700 bg-white shadow-sm"
                     />
                   </div>
                 ))}
@@ -476,7 +478,7 @@ export function SourcePreviewPanel({
               width={1280}
               height={960}
               unoptimized
-              className="h-auto max-w-full rounded-xl border border-zinc-300 bg-white shadow-sm"
+              className="h-auto max-w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white shadow-sm"
               style={{
                 transform: `scale(${zoomPercent / 100})`,
                 transformOrigin: "top center",
@@ -484,7 +486,7 @@ export function SourcePreviewPanel({
             />
           </div>
         ) : mode === "docx" ? (
-          <div className="doc-viewer-embedded h-full bg-white">
+          <div className="doc-viewer-embedded h-full bg-white dark:bg-zinc-950">
             <DocViewer
               documents={[
                 {
@@ -509,19 +511,19 @@ export function SourcePreviewPanel({
                   defaultZoom: 1,
                   zoomJump: 0.1,
                 },
-                themeMode: "light",
+                themeMode: theme === "dark" ? "dark" : "light",
               }}
               style={{ height: "100%" }}
             />
           </div>
         ) : mode === "pptx" ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-50 px-6 text-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-50 dark:bg-zinc-900 px-6 text-center">
             <AlertCircle className="h-6 w-6 text-zinc-400" />
             <div className="space-y-1">
-              <p className="text-sm font-medium text-zinc-700">
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Preview is not supported for this format yet.
               </p>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 PPTX preview is not available in the current local viewer. You can still inspect the parsed result on the right.
               </p>
             </div>
@@ -557,20 +559,20 @@ export function SourcePreviewPanel({
               />
             </div>
             {previewStatus === "loading" ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-900/25">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-900/25">   
                 <Loader2 className="h-6 w-6 animate-spin text-zinc-700" />
                 <p className="text-xs font-medium text-zinc-700">원문 미리보기를 불러오는 중입니다.</p>
               </div>
             ) : null}
           </>
         ) : previewStatus === "loading" ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-900/5">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-900/5">        
             <Loader2 className="h-6 w-6 animate-spin text-zinc-700" />
             <p className="text-xs font-medium text-zinc-700">원문 미리보기를 불러오는 중입니다.</p>
           </div>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-            <p className="text-sm font-medium text-zinc-500">이 형식의 원문 미리보기를 준비하지 못했습니다.</p>
+            <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">이 형식의 원문 미리보기를 준비하지 못했습니다.</p>   
           </div>
         )}
       </div>

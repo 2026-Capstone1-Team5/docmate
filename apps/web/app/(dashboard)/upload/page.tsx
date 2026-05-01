@@ -35,7 +35,7 @@ const POLL_INTERVAL_MS = 1000;
 const POLL_TIMEOUT_MS = 60000;
 
 const SourcePreviewPanel = dynamic(
-  () => import("@/components/dashboard/source-preview-panel").then((module) => module.SourcePreviewPanel),
+  () => import("@/components/dashboard/source-preview-panel").then((module) => module.SourcePreviewPanel),        
   { ssr: false },
 );
 
@@ -64,18 +64,18 @@ function UploadConfigPanel({
 }) {
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl border border-zinc-200 bg-white p-4">
+      <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-[#73842a]" />
-            <p className="text-sm font-semibold text-zinc-900">Parse Tier</p>
+            <Sparkles className="h-4 w-4 text-[#73842a] dark:text-[#a3b84a]" />
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Parse Tier</p>
           </div>
-          <Badge variant="outline" className="border-zinc-200 bg-zinc-50 text-zinc-600">
+          <Badge variant="outline" className="border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400">
             {parserLabel(parserBackend)}
           </Badge>
         </div>
-        <p className="mt-2 text-xs leading-5 text-zinc-500">
-          문서 형식에 맞는 parser를 선택합니다. 기본은 MarkItDown이며 `pdftotext`는 PDF에서만 사용할 수 있습니다.
+        <p className="mt-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+          문서 형식에 맞는 parser를 선택합니다. 기본은 MarkItDown이며 `pdftotext`는 PDF에서만 사용할 수 있습니다. 
         </p>
 
         <div className="mt-4 grid gap-3">
@@ -85,20 +85,20 @@ function UploadConfigPanel({
             disabled={uploading}
             className={`rounded-xl border px-4 py-3 text-left transition ${
               parserBackend === "markitdown"
-                ? "border-[#96b24a] bg-[#f4f8df] shadow-[0_10px_30px_rgba(150,178,74,0.10)]"
-                : "border-zinc-200 bg-white hover:border-zinc-300"
+                ? "border-[#96b24a] bg-[#f4f8df] dark:bg-[#2c331a] shadow-[0_10px_30px_rgba(150,178,74,0.10)]"
+                : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-300 dark:hover:border-zinc-700"
             }`}
           >
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-zinc-900">MarkItDown</p>
-                <p className="mt-1 text-xs leading-5 text-zinc-500">
+                <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">MarkItDown</p>
+                <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
                   PDF, DOCX, PPTX, XLSX, PNG, JPG를 기본 경로로 처리합니다.
                 </p>
               </div>
               <Badge
                 variant="outline"
-                className="border-[#dbe6a6] bg-[#fbfde9] text-[#667226]"
+                className="border-[#dbe6a6] dark:border-[#4d5c26] bg-[#fbfde9] dark:bg-[#1a1e0d] text-[#667226] dark:text-[#a3b84a]"
               >
                 기본
               </Badge>
@@ -111,18 +111,18 @@ function UploadConfigPanel({
             disabled={uploading}
             className={`rounded-xl border px-4 py-3 text-left transition ${
               parserBackend === "pdftotext"
-                ? "border-[#96b24a] bg-[#f4f8df] shadow-[0_10px_30px_rgba(150,178,74,0.10)]"
-                : "border-zinc-200 bg-white hover:border-zinc-300"
+                ? "border-[#96b24a] bg-[#f4f8df] dark:bg-[#2c331a] shadow-[0_10px_30px_rgba(150,178,74,0.10)]"
+                : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-300 dark:hover:border-zinc-700"
             }`}
           >
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-zinc-900">pdftotext</p>
-                <p className="mt-1 text-xs leading-5 text-zinc-500">
+                <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">pdftotext</p>
+                <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
                   내장 텍스트 PDF를 빠르게 fallback 처리할 때만 사용합니다.
                 </p>
               </div>
-              <Badge variant="outline" className="border-zinc-200 bg-zinc-50 text-zinc-600">
+              <Badge variant="outline" className="border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400">
                 PDF 전용
               </Badge>
             </div>
@@ -135,18 +135,18 @@ function UploadConfigPanel({
               disabled={uploading}
               className={`rounded-xl border px-4 py-3 text-left transition ${
                 parserBackend === "document_ai"
-                  ? "border-[#96b24a] bg-[#f4f8df] shadow-[0_10px_30px_rgba(150,178,74,0.10)]"
-                  : "border-zinc-200 bg-white hover:border-zinc-300"
+                  ? "border-[#96b24a] bg-[#f4f8df] dark:bg-[#2c331a] shadow-[0_10px_30px_rgba(150,178,74,0.10)]"
+                  : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-300 dark:hover:border-zinc-700"
               }`}
             >
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold text-zinc-900">document_ai</p>
-                  <p className="mt-1 text-xs leading-5 text-zinc-500">
+                  <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">document_ai</p>
+                  <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
                     PDF 전용 문서 AI 파서를 로컬 환경에서만 사용합니다.
                   </p>
                 </div>
-                <Badge variant="outline" className="border-[#dbe6a6] bg-[#fbfde9] text-[#667226]">
+                <Badge variant="outline" className="border-[#dbe6a6] dark:border-[#4d5c26] bg-[#fbfde9] dark:bg-[#1a1e0d] text-[#667226] dark:text-[#a3b84a]">
                   로컬 전용
                 </Badge>
               </div>
@@ -155,29 +155,29 @@ function UploadConfigPanel({
         </div>
       </section>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white p-4">
-        <p className="text-sm font-semibold text-zinc-900">Supported Formats</p>
+      <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
+        <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Supported Formats</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-            <div className="flex items-center gap-2 text-zinc-700">
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-3">
+            <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
               <FileText className="h-4 w-4" />
               <span className="text-sm font-medium">PDF / DOCX</span>
             </div>
           </div>
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-            <div className="flex items-center gap-2 text-zinc-700">
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-3">
+            <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
               <Presentation className="h-4 w-4" />
               <span className="text-sm font-medium">PPTX</span>
             </div>
           </div>
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-            <div className="flex items-center gap-2 text-zinc-700">
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-3">
+            <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
               <FileSpreadsheet className="h-4 w-4" />
               <span className="text-sm font-medium">XLSX</span>
             </div>
           </div>
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-            <div className="flex items-center gap-2 text-zinc-700">
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-3">
+            <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
               <FileType2 className="h-4 w-4" />
               <span className="text-sm font-medium">PNG / JPG</span>
             </div>
@@ -315,9 +315,9 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden border-y border-zinc-200 bg-white lg:flex-row">
-      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-b border-zinc-200 lg:basis-1/2 lg:border-b-0 lg:border-r">
-        <div className="flex flex-1 flex-col bg-[radial-gradient(circle_at_top,_rgba(196,212,130,0.14),_transparent_34%),linear-gradient(180deg,#ffffff_0%,#fcfcf8_100%)]">
+    <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden border-y border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 lg:flex-row">
+      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-b border-zinc-200 dark:border-zinc-800 lg:basis-1/2 lg:border-b-0 lg:border-r">
+        <div className="flex flex-1 flex-col bg-[radial-gradient(circle_at_top,_rgba(196,212,130,0.14),_transparent_34%),linear-gradient(180deg,#ffffff_0%,#fcfcf8_100%)] dark:bg-[radial-gradient(circle_at_top,_rgba(196,212,130,0.05),_transparent_34%),linear-gradient(180deg,#09090b_0%,#09090b_100%)]">
           <Input
             id="upload-file-input"
             type="file"
@@ -331,21 +331,21 @@ export default function UploadPage() {
           />
 
           {!parsedDocument ? (
-            <div className="flex items-center justify-between border-b border-zinc-200 bg-white/90 px-5 py-3">
+            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 px-5 py-3">    
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="inline-flex h-8 items-center rounded-lg border border-zinc-200 bg-white px-2.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100"
+                  className="inline-flex h-8 items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   onClick={() => document.getElementById("upload-file-input")?.click()}
                 >
                   <Upload className="mr-1.5 h-3.5 w-3.5" />
                   Upload
                 </button>
                 {file ? (
-                  <span className="text-sm font-medium text-zinc-600">1 file</span>
+                  <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">1 file</span>
                 ) : null}
                 {file ? (
-                  <div className="inline-flex h-8 items-center rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-xs font-medium text-zinc-700">
+                  <div className="inline-flex h-8 items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     {file.name}
                   </div>
                 ) : null}
@@ -362,7 +362,7 @@ export default function UploadPage() {
               toolbarStart={(
                 <button
                   type="button"
-                  className="inline-flex h-8 items-center rounded-md border border-zinc-200 bg-white px-2.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100"
+                  className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   onClick={() => document.getElementById("upload-file-input")?.click()}
                 >
                   <Upload className="mr-1.5 h-3.5 w-3.5" />
@@ -376,25 +376,25 @@ export default function UploadPage() {
             <button
               type="button"
               onClick={() => document.getElementById("upload-file-input")?.click()}
-              className="m-5 flex flex-1 flex-col items-center justify-center rounded-[28px] border border-dashed border-zinc-300 bg-white/80 px-10 text-center transition hover:border-zinc-400 hover:bg-white"
+              className="m-5 flex flex-1 flex-col items-center justify-center rounded-[28px] border border-dashed border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/50 px-10 text-center transition hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#d8e7a5] bg-[#f8fcd8]">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#d8e7a5] dark:border-[#4d5c26] bg-[#f8fcd8] dark:bg-[#1a1e0d]">
                 {uploading ? (
-                  <Loader2 className="h-7 w-7 animate-spin text-[#7d8c36]" />
+                  <Loader2 className="h-7 w-7 animate-spin text-[#7d8c36] dark:text-[#a3b84a]" />
                 ) : (
-                  <Upload className="h-7 w-7 text-[#7d8c36]" />
+                  <Upload className="h-7 w-7 text-[#7d8c36] dark:text-[#a3b84a]" />
                 )}
               </div>
               <div className="mt-6 space-y-2">
-                <p className="text-xl font-semibold tracking-tight text-zinc-900">
+                <p className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
                   파일을 끌어 놓거나 클릭해서 선택하세요
                 </p>
-                <p className="mx-auto max-w-lg text-sm leading-6 text-zinc-500">
-                  파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다.
+                <p className="mx-auto max-w-lg text-sm leading-6 text-zinc-500 dark:text-zinc-400">
+                  파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 
                 </p>
               </div>
               {file ? (
-                <div className="mt-5 rounded-full border border-[#d8e7a5] bg-[#f8fcd8] px-4 py-1.5 text-sm font-medium text-[#667226]">
+                <div className="mt-5 rounded-full border border-[#d8e7a5] dark:border-[#4d5c26] bg-[#f8fcd8] dark:bg-[#1a1e0d] px-4 py-1.5 text-sm font-medium text-[#667226] dark:text-[#a3b84a]">
                   {file.name}
                 </div>
               ) : null}
@@ -405,19 +405,19 @@ export default function UploadPage() {
           )}
 
           {uploading ? (
-            <div className="px-5 py-4 text-sm text-zinc-500">
+            <div className="px-5 py-4 text-sm text-zinc-500 dark:text-zinc-400">
               업로드가 진행 중입니다. 파싱 완료까지 잠시만 기다려 주세요.
             </div>
           ) : null}
 
           {errorMessage ? (
-            <div className="mx-5 mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+            <div className="mx-5 mb-4 rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400">
               {errorMessage}
             </div>
           ) : null}
 
           {successMessage ? (
-            <div className="mx-5 mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+            <div className="mx-5 mb-4 rounded-2xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/20 px-4 py-3 text-sm font-medium text-emerald-700 dark:text-emerald-400">
               {successMessage}
             </div>
           ) : null}
