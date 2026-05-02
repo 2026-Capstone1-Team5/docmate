@@ -92,17 +92,17 @@ export default function DocumentListPage() {
   }
 
   return (
-    <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden bg-white">
-      <header className="border-b border-zinc-200 px-6 py-4">
+    <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden bg-white dark:bg-zinc-950">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400 dark:text-zinc-500">
               Documents
             </p>
-            <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
+            <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
               문서 검수 대시보드
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
               업로드된 문서를 검색하고, 원문/Markdown/JSON 검수 화면으로 바로 이동합니다.
             </p>
           </div>
@@ -113,8 +113,8 @@ export default function DocumentListPage() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 gap-3 border-b border-zinc-200 px-6 py-4">
-        <div className="flex items-center gap-2 text-xs text-zinc-500">
+      <div className="grid grid-cols-1 gap-3 border-b border-zinc-200 dark:border-zinc-800 px-6 py-4">
+        <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
           <span className="hidden lg:inline">
             마지막 업로드: {latestUpload ? formatDate(latestUpload) : "없음"}
           </span>
@@ -123,7 +123,7 @@ export default function DocumentListPage() {
 
       <div className="flex-1 min-h-0">
         {errorMessage ? (
-          <div className="mx-6 mt-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          <div className="mx-6 mt-4 flex items-center gap-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <p>{errorMessage}</p>
           </div>
@@ -132,17 +132,17 @@ export default function DocumentListPage() {
         <ScrollArea className="h-full">
           <Table>
             <TableHeader>
-              <TableRow className="border-zinc-200 bg-zinc-50/70 hover:bg-zinc-50/70">
-                <TableHead className="h-10 px-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+              <TableRow className="border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/70 hover:bg-zinc-50/70 dark:hover:bg-zinc-900/70">
+                <TableHead className="h-10 px-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
                   문서
                 </TableHead>
-                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">  
                   형식
                 </TableHead>
-                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">  
                   상태
                 </TableHead>
-                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <TableHead className="h-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">  
                   업로드 시각
                 </TableHead>
               </TableRow>
@@ -152,14 +152,14 @@ export default function DocumentListPage() {
                 <TableRow>
                   <TableCell colSpan={4} className="h-[360px] px-6">
                     <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-zinc-200 bg-zinc-50">
-                        <FileText className="h-6 w-6 text-zinc-400" />
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+                        <FileText className="h-6 w-6 text-zinc-400 dark:text-zinc-600" />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-zinc-700">
+                        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                           표시할 문서가 없습니다.
                         </p>
-                        <p className="text-sm text-zinc-500">문서를 업로드하면 이 목록에 표시됩니다.</p>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">문서를 업로드하면 이 목록에 표시됩니다.</p>
                       </div>
                       <Button render={<Link href="/upload" />} variant="outline" className="h-9 px-4 font-semibold">
                         <Plus className="mr-2 h-4 w-4" />
@@ -181,25 +181,25 @@ export default function DocumentListPage() {
                         router.push(`/documents/${doc.id}`);
                       }
                     }}
-                    className="cursor-pointer border-zinc-100 transition-colors hover:bg-zinc-50/60 focus-visible:bg-zinc-50/80 focus-visible:outline-none"
+                    className="cursor-pointer border-zinc-100 dark:border-zinc-800 transition-colors hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 focus-visible:bg-zinc-50/80 dark:focus-visible:bg-zinc-900/80 focus-visible:outline-none"
                   >
                     <TableCell className="px-6 py-4">
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-semibold text-zinc-800">{doc.filename}</span>
-                        <span className="text-xs text-zinc-500">ID: {doc.id.slice(0, 8)}...</span>
+                        <span className="font-semibold text-zinc-800 dark:text-zinc-200">{doc.filename}</span>
+                        <span className="text-xs text-zinc-500 dark:text-zinc-400">ID: {doc.id.slice(0, 8)}...</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="h-6 border-zinc-200 px-2 text-[10px] font-semibold text-zinc-500">
+                      <Badge variant="outline" className="h-6 border-zinc-200 dark:border-zinc-800 px-2 text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
                         {inferFileType(doc)}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className="h-6 bg-zinc-100 px-2 text-[10px] font-semibold text-zinc-600">
+                      <Badge variant="secondary" className="h-6 bg-zinc-100 dark:bg-zinc-800 px-2 text-[10px] font-semibold text-zinc-600 dark:text-zinc-300">
                         준비됨
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-xs font-medium text-zinc-500">
+                    <TableCell className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                       {formatDate(doc.createdAt)}
                     </TableCell>
                   </TableRow>
