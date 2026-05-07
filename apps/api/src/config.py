@@ -324,7 +324,8 @@ class Settings(BaseSettings):
             self.parsing_service_url = self.document_ai_service_url
         if (
             self.parsing_service_timeout_seconds == DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS
-            and self.document_ai_service_timeout_seconds != DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS
+            and self.document_ai_service_timeout_seconds
+            != DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS
         ):
             self.parsing_service_timeout_seconds = self.document_ai_service_timeout_seconds
 
