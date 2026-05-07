@@ -9,8 +9,8 @@ import {
   Loader2,
   Presentation,
   Sparkles,
-  Trash2,
   Upload,
+  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -380,10 +380,13 @@ export default function UploadPage() {
     ? parsedItems.map((item) => ({
         id: item.document.id,
         filename: item.document.filename,
+        kind: "parsed" as const,
       }))
     : files.map((file, index) => ({
         id: `${file.name}-${file.lastModified}-${index}`,
         filename: file.name,
+        kind: "file" as const,
+        fileIndex: index,
       }));
   const activeTabValue = selectedDocumentId ?? tabItems[0]?.id ?? "";
 
@@ -395,6 +398,28 @@ export default function UploadPage() {
     if (nextParsedItem) {
       selectParsedItem(nextParsedItem);
     }
+  };
+
+  const closeTab = (item: (typeof tabItems)[number]) => {
+    if (item.kind === "file") {
+      setFiles((currentFiles) => currentFiles.filter((_, index) => index !== item.fileIndex));
+      return;
+    }
+
+    setParsedItems((currentItems) => {
+      const nextItems = currentItems.filter((parsedItem) => parsedItem.document.id !== item.id);
+      if (selectedDocumentId === item.id) {
+        const nextSelectedItem = nextItems[0] ?? null;
+        setSelectedDocumentId(nextSelectedItem?.document.id ?? null);
+        setParsedDocument(nextSelectedItem?.document ?? null);
+        setParsedResult(nextSelectedItem?.result ?? null);
+        if (!nextSelectedItem) {
+          setPanelTab("config");
+          setSuccessMessage(null);
+        }
+      }
+      return nextItems;
+    });
   };
 
   const handleDrop = (event: DragEvent<HTMLButtonElement>) => {
@@ -449,7 +474,25 @@ export default function UploadPage() {
                       className="h-10 max-w-[270px] shrink-0 rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-sm font-semibold text-zinc-600 data-active:bg-white data-active:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:data-active:bg-zinc-950 dark:data-active:text-zinc-50"
                     >
                       <span className="truncate">{item.filename}</span>
-                      <Trash2 className="h-4 w-4 text-zinc-500" aria-hidden="true" />
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`${item.filename} 탭 닫기`}
+                        className="inline-flex rounded-sm text-zinc-500 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:hover:text-zinc-100"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          closeTab(item);
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            closeTab(item);
+                          }
+                        }}
+                      >
+                        <X className="h-4 w-4" aria-hidden="true" />
+                      </span>
                     </TabsTrigger>
                   ))}
                 </TabsList>
