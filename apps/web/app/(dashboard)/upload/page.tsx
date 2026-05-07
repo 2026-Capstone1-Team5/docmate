@@ -464,9 +464,6 @@ export default function UploadPage() {
                 fileName={parsedDocument.filename}
                 previewUrl={previewUrl}
                 mode={previewMode ?? "embed"}
-                toolbarStart={(
-                  <UploadButton className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800" />
-                )}
                 downloadUrl={getSourceUrl(parsedDocument.id, "attachment")}
                 downloadFileName={parsedDocument.filename}
               />
