@@ -56,8 +56,15 @@ export type ParseJobResponse = {
   job: ParseJobSummary;
 };
 
+export type ParseJobBatchError = {
+  filename: string;
+  code: string;
+  message: string;
+};
+
 export type ParseJobBatchResponse = {
   jobs: ParseJobSummary[];
+  errors?: ParseJobBatchError[];
 };
 
 export type DocumentParseResponse = {

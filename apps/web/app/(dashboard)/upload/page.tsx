@@ -47,8 +47,21 @@ type ParsedBatchItem = {
   result: ParseResult;
 };
 
+type UploadFileTab = {
+  id: string;
+  file: File;
+};
+
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function createUploadFileTabs(files: File[]): UploadFileTab[] {
+  const batchId = Date.now();
+  return files.map((file, index) => ({
+    id: `file-${batchId}-${index}-${file.lastModified}-${file.name}`,
+    file,
+  }));
 }
 
 function parserLabel(parserBackend: ParserBackend): string {
@@ -210,7 +223,7 @@ function UploadButton({ className }: { className?: string }) {
 }
 
 export default function UploadPage() {
-  const [files, setFiles] = useState<File[]>([]);
+  const [fileTabs, setFileTabs] = useState<UploadFileTab[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [panelTab, setPanelTab] = useState<PanelTab>("config");
@@ -220,6 +233,7 @@ export default function UploadPage() {
   const [resultView, setResultView] = useState<"markdown" | "json">("markdown");
   const [parsedItems, setParsedItems] = useState<ParsedBatchItem[]>([]);
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
+  const [selectedFileTabId, setSelectedFileTabId] = useState<string | null>(null);
   const [parsedDocument, setParsedDocument] = useState<DocumentSummary | null>(null);
   const [parsedResult, setParsedResult] = useState<ParseResult | null>(null);
   const isActiveRef = useRef(true);
@@ -243,6 +257,8 @@ export default function UploadPage() {
       return;
     }
 
+    const nextFileTabs = createUploadFileTabs(selectedFiles);
+
     const unsupportedFile = selectedFiles.find((selectedFile) => !isSupportedUploadFile(selectedFile));
     if (unsupportedFile) {
       setErrorMessage("지원하지 않는 파일 형식입니다. PDF, DOCX, PPTX, XLSX, PNG, JPG 파일만 업로드할 수 있습니다.");
@@ -251,7 +267,8 @@ export default function UploadPage() {
       setParsedResult(null);
       setParsedItems([]);
       setSelectedDocumentId(null);
-      setFiles([]);
+      setSelectedFileTabId(null);
+      setFileTabs([]);
       setPanelTab("config");
       return;
     }
@@ -263,7 +280,8 @@ export default function UploadPage() {
       setParsedResult(null);
       setParsedItems([]);
       setSelectedDocumentId(null);
-      setFiles(selectedFiles);
+      setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
+      setFileTabs(nextFileTabs);
       setPanelTab("config");
       return;
     }
@@ -275,12 +293,14 @@ export default function UploadPage() {
       setParsedResult(null);
       setParsedItems([]);
       setSelectedDocumentId(null);
-      setFiles(selectedFiles);
+      setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
+      setFileTabs(nextFileTabs);
       setPanelTab("config");
       return;
     }
 
-    setFiles(selectedFiles);
+    setFileTabs(nextFileTabs);
+    setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
     setUploading(true);
     setPanelTab("config");
     setErrorMessage(null);
@@ -291,9 +311,17 @@ export default function UploadPage() {
     setSelectedDocumentId(null);
 
     try {
-      const queuedJobs = selectedFiles.length === 1
-        ? [(await uploadDocument(selectedFiles[0], { parserBackend })).job]
-        : (await uploadDocumentsBatch(selectedFiles, { parserBackend })).jobs;
+      const batchResponse = selectedFiles.length === 1
+        ? { jobs: [(await uploadDocument(selectedFiles[0], { parserBackend })).job], errors: [] }
+        : await uploadDocumentsBatch(selectedFiles, { parserBackend });
+      const queuedJobs = batchResponse.jobs;
+      if (batchResponse.errors?.length) {
+        const failedFilenames = batchResponse.errors.map((error) => error.filename).join(", ");
+        setErrorMessage(`${failedFilenames} 문서는 파싱 대기열에 추가되지 않았습니다.`);
+      }
+      if (queuedJobs.length === 0) {
+        throw new Error("파싱 대기열에 추가된 문서가 없습니다.");
+      }
       const startedAt = Date.now();
 
       while (isActiveRef.current && Date.now() - startedAt < POLL_TIMEOUT_MS) {
@@ -382,13 +410,14 @@ export default function UploadPage() {
         filename: item.document.filename,
         kind: "parsed" as const,
       }))
-    : files.map((file, index) => ({
-        id: `${file.name}-${file.lastModified}-${index}`,
-        filename: file.name,
+    : fileTabs.map((item) => ({
+        id: item.id,
+        filename: item.file.name,
         kind: "file" as const,
-        fileIndex: index,
       }));
-  const activeTabValue = selectedDocumentId ?? tabItems[0]?.id ?? "";
+  const activeTabValue = parsedItems.length > 0
+    ? selectedDocumentId ?? tabItems[0]?.id ?? ""
+    : selectedFileTabId ?? tabItems[0]?.id ?? "";
 
   const handleTabChange = (nextValue: string | number | null) => {
     if (typeof nextValue !== "string") {
@@ -397,12 +426,22 @@ export default function UploadPage() {
     const nextParsedItem = parsedItems.find((item) => item.document.id === nextValue);
     if (nextParsedItem) {
       selectParsedItem(nextParsedItem);
+      return;
+    }
+    if (fileTabs.some((item) => item.id === nextValue)) {
+      setSelectedFileTabId(nextValue);
     }
   };
 
   const closeTab = (item: (typeof tabItems)[number]) => {
     if (item.kind === "file") {
-      setFiles((currentFiles) => currentFiles.filter((_, index) => index !== item.fileIndex));
+      setFileTabs((currentItems) => {
+        const nextItems = currentItems.filter((fileTab) => fileTab.id !== item.id);
+        if (selectedFileTabId === item.id || !nextItems.some((fileTab) => fileTab.id === selectedFileTabId)) {
+          setSelectedFileTabId(nextItems[0]?.id ?? null);
+        }
+        return nextItems;
+      });
       return;
     }
 
@@ -414,7 +453,8 @@ export default function UploadPage() {
         setParsedDocument(nextSelectedItem?.document ?? null);
         setParsedResult(nextSelectedItem?.result ?? null);
         if (!nextSelectedItem) {
-          setFiles([]);
+          setFileTabs([]);
+          setSelectedFileTabId(null);
           setPanelTab("config");
           setSuccessMessage(null);
         }
@@ -469,32 +509,25 @@ export default function UploadPage() {
                   className="h-auto max-w-full justify-start gap-2 overflow-x-auto p-0"
                 >
                   {tabItems.map((item) => (
-                    <TabsTrigger
-                      key={item.id}
-                      value={item.id}
-                      className="h-10 max-w-[270px] shrink-0 rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-sm font-semibold text-zinc-600 data-active:bg-white data-active:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:data-active:bg-zinc-950 dark:data-active:text-zinc-50"
-                    >
-                      <span className="truncate">{item.filename}</span>
-                      <span
-                        role="button"
-                        tabIndex={0}
+                    <div key={item.id} className="relative shrink-0">
+                      <TabsTrigger
+                        value={item.id}
+                        className="h-10 max-w-[270px] rounded-lg border border-zinc-200 bg-zinc-50 px-3 pr-8 text-sm font-semibold text-zinc-600 data-active:bg-white data-active:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:data-active:bg-zinc-950 dark:data-active:text-zinc-50"
+                      >
+                        <span className="truncate">{item.filename}</span>
+                      </TabsTrigger>
+                      <button
+                        type="button"
                         aria-label={`${item.filename} 탭 닫기`}
-                        className="inline-flex rounded-sm text-zinc-500 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:hover:text-zinc-100"
+                        className="absolute right-2 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-sm text-zinc-500 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:hover:text-zinc-100"
                         onClick={(event) => {
                           event.stopPropagation();
                           closeTab(item);
                         }}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            closeTab(item);
-                          }
-                        }}
                       >
                         <X className="h-4 w-4" aria-hidden="true" />
-                      </span>
-                    </TabsTrigger>
+                      </button>
+                    </div>
                   ))}
                 </TabsList>
               </Tabs>
@@ -540,9 +573,9 @@ export default function UploadPage() {
                   파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 여러 파일을 한 번에 선택할 수 있습니다.
                 </p>
               </div>
-              {files.length > 0 ? (
+              {fileTabs.length > 0 ? (
                 <div className="mt-5 rounded-full border border-[#d8e7a5] dark:border-[#4d5c26] bg-[#f8fcd8] dark:bg-[#1a1e0d] px-4 py-1.5 text-sm font-medium text-[#667226] dark:text-[#a3b84a]">
-                  {files.length === 1 ? files[0].name : `${files.length}개 파일 선택됨`}
+                  {fileTabs.length === 1 ? fileTabs[0].file.name : `${fileTabs.length}개 파일 선택됨`}
                 </div>
               ) : null}
               <p className="mt-10 max-w-md text-xs leading-5 text-zinc-400">
