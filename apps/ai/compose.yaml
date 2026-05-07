@@ -10,6 +10,8 @@ services:
       YOLO_CONFIG_DIR: /opt/mineru-cache/ultralytics
       MINERU_MODEL_SOURCE: huggingface
       MINERU_PDF_RENDER_THREADS: "1"
+      PARSER_TIMEOUT_SECONDS: ${PARSER_TIMEOUT_SECONDS:-300}
+      PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
     volumes:
       - mineru-cache:/opt/mineru-cache
       - .:/workspace:ro
@@ -26,6 +28,8 @@ services:
       YOLO_CONFIG_DIR: /opt/mineru-cache/ultralytics
       MINERU_MODEL_SOURCE: huggingface
       MINERU_PDF_RENDER_THREADS: "1"
+      PARSER_TIMEOUT_SECONDS: ${PARSER_TIMEOUT_SECONDS:-300}
+      PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
     volumes:
       - mineru-cache:/opt/mineru-cache
       - .:/workspace:ro

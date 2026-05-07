@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import sys
+import subprocess
 import tempfile
 import threading
 from pathlib import Path
 from typing import Any
+from typing import Literal
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
@@ -17,11 +19,15 @@ from parse_document import inspect_pdf  # noqa: E402
 from parse_document import rasterize_pdf  # noqa: E402
 from parse_document import run_mineru  # noqa: E402
 
+ParserBackend = Literal["markitdown", "pdftotext", "document_ai"]
+
 
 class DocumentAIRuntime:
-    def __init__(self) -> None:
+    def __init__(self, *, pdftotext_command: str = "pdftotext", parser_timeout_seconds: int = 300) -> None:
         self._ready = False
         self._parse_lock = threading.Lock()
+        self.pdftotext_command = pdftotext_command
+        self.parser_timeout_seconds = parser_timeout_seconds
 
     @property
     def ready(self) -> bool:
@@ -35,6 +41,83 @@ class DocumentAIRuntime:
         from mineru.cli.common import do_parse  # noqa: F401
 
         self._ready = True
+
+    def parse_document(
+        self,
+        *,
+        input_path: Path,
+        output_dir: Path,
+        parser_backend: ParserBackend,
+        language: str,
+    ) -> dict[str, Any]:
+        if parser_backend == "markitdown":
+            return self.parse_markitdown(input_path=input_path)
+        if parser_backend == "pdftotext":
+            return self.parse_pdftotext(input_path=input_path)
+        if parser_backend == "document_ai":
+            return self.parse_pdf(pdf_path=input_path, output_dir=output_dir, language=language)
+
+        msg = f"unsupported parser backend: {parser_backend}"
+        raise ValueError(msg)
+
+    def parse_markitdown(self, *, input_path: Path) -> dict[str, Any]:
+        try:
+            from markitdown import MarkItDown
+        except ImportError as exc:
+            msg = "markitdown is not installed"
+            raise RuntimeError(msg) from exc
+
+        converter = MarkItDown(enable_plugins=False)
+        try:
+            result = converter.convert(str(input_path))
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(str(exc)) from exc
+
+        markdown = result.text_content.strip()
+        if not markdown:
+            msg = "markitdown returned no extractable text"
+            raise RuntimeError(msg)
+
+        return {
+            "markdown": markdown,
+            "canonical_json": {
+                "document": {
+                    "source": "markitdown",
+                    "filename": input_path.name,
+                },
+                "blocks": [{"type": "text", "text": markdown}],
+            },
+            "metadata": {"parser_backend": "markitdown"},
+        }
+
+    def parse_pdftotext(self, *, input_path: Path) -> dict[str, Any]:
+        completed = subprocess.run(
+            [self.pdftotext_command, "-layout", str(input_path), "-"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=self.parser_timeout_seconds,
+        )
+        if completed.returncode != 0:
+            stderr = completed.stderr.strip() or completed.stdout.strip() or "pdftotext failed"
+            raise RuntimeError(stderr)
+
+        markdown = completed.stdout.strip()
+        if not markdown:
+            msg = "pdftotext returned no extractable text"
+            raise RuntimeError(msg)
+
+        return {
+            "markdown": markdown,
+            "canonical_json": {
+                "document": {
+                    "source": "pdftotext",
+                    "filename": input_path.name,
+                },
+                "blocks": [{"type": "text", "text": markdown}],
+            },
+            "metadata": {"parser_backend": "pdftotext"},
+        }
 
     def parse_pdf(
         self,

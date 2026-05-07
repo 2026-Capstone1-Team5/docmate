@@ -11,7 +11,8 @@ RUN apt-get update && \
         fonts-noto-cjk \
         fonts-noto-core \
         libgl1 \
-        libglib2.0-0 && \
+        libglib2.0-0 \
+        poppler-utils && \
     rm -rf /var/lib/apt/lists/*
 
 RUN python -m pip install --upgrade pip && \
@@ -21,6 +22,7 @@ RUN python -m pip install --upgrade pip && \
         "torchvision==0.21.0" && \
     python -m pip install \
         "fastapi[standard]>=0.115.0" \
+        "markitdown[docx,pdf,pptx,xlsx]>=0.1.0" \
         "mineru[pipeline]==2.7.6" \
         "pillow>=10.0.0" \
         "pymupdf>=1.24.0" \

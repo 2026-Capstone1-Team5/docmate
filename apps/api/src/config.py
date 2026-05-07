@@ -22,8 +22,8 @@ DEFAULT_PARSE_JOB_QUEUE_NAME = "document-agent-api:parse-jobs"
 DEFAULT_WORKER_POLL_TIMEOUT_SECONDS = 5
 DEFAULT_PARSER_TIMEOUT_SECONDS = 300
 DEFAULT_WORKER_TEMP_ROOT = "/tmp/document-agent-api-worker"
-DEFAULT_PDFTOTEXT_COMMAND = "pdftotext"
 DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS = 300
+DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS = 300
 
 
 def normalize_string_list(values: str | list[str]) -> list[str]:
@@ -116,13 +116,14 @@ class Settings(BaseSettings):
     worker_poll_timeout_seconds: int = DEFAULT_WORKER_POLL_TIMEOUT_SECONDS
     parser_timeout_seconds: int = DEFAULT_PARSER_TIMEOUT_SECONDS
     worker_temp_root: str = DEFAULT_WORKER_TEMP_ROOT
-    pdftotext_command: str = DEFAULT_PDFTOTEXT_COMMAND
     enabled_parser_backends: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: list(DEFAULT_ENABLED_PARSER_BACKENDS),
     )
     document_ai_script_path: str | None = None
     document_ai_service_url: str | None = None
     document_ai_service_timeout_seconds: int = DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS
+    parsing_service_url: str | None = None
+    parsing_service_timeout_seconds: int = DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS
 
     @field_validator("database_url", mode="before")
     @classmethod
@@ -199,6 +200,14 @@ class Settings(BaseSettings):
         normalized = value.strip().rstrip("/")
         return normalized or None
 
+    @field_validator("parsing_service_url", mode="before")
+    @classmethod
+    def normalize_parsing_service_url(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip().rstrip("/")
+        return normalized or None
+
     @field_validator("storage_r2_region")
     @classmethod
     def validate_storage_r2_region(cls, value: str) -> str:
@@ -231,15 +240,6 @@ class Settings(BaseSettings):
     def normalize_redis_url(cls, value: str) -> str:
         return value.strip()
 
-    @field_validator("pdftotext_command")
-    @classmethod
-    def validate_pdftotext_command(cls, value: str) -> str:
-        normalized = value.strip()
-        if not normalized:
-            msg = "pdftotext_command must not be empty"
-            raise ValueError(msg)
-        return normalized
-
     @field_validator("worker_poll_timeout_seconds", "parser_timeout_seconds")
     @classmethod
     def validate_positive_worker_timeout(cls, value: int) -> int:
@@ -253,6 +253,14 @@ class Settings(BaseSettings):
     def validate_document_ai_service_timeout(cls, value: int) -> int:
         if value <= 0:
             msg = "document_ai_service_timeout_seconds must be greater than 0"
+            raise ValueError(msg)
+        return value
+
+    @field_validator("parsing_service_timeout_seconds")
+    @classmethod
+    def validate_parsing_service_timeout(cls, value: int) -> int:
+        if value <= 0:
+            msg = "parsing_service_timeout_seconds must be greater than 0"
             raise ValueError(msg)
         return value
 
@@ -300,6 +308,15 @@ class Settings(BaseSettings):
         if self.document_ai_script_path:
             script_path = Path(self.document_ai_script_path).expanduser()
             self.document_ai_script_path = str(script_path.resolve())
+
+        if not self.parsing_service_url and self.document_ai_service_url:
+            self.parsing_service_url = self.document_ai_service_url
+        if (
+            self.parsing_service_timeout_seconds == DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS
+            and self.document_ai_service_timeout_seconds
+            != DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS
+        ):
+            self.parsing_service_timeout_seconds = self.document_ai_service_timeout_seconds
 
         return self
 

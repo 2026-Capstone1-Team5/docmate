@@ -19,6 +19,17 @@ class FakeRuntime:
     def ready(self) -> bool:
         return self.initialized
 
+    def parse_document(
+        self,
+        *,
+        input_path: Path,
+        output_dir: Path,
+        parser_backend: str,
+        language: str,
+    ) -> dict:
+        assert parser_backend == "document_ai"
+        return self.parse_pdf(pdf_path=input_path, output_dir=output_dir, language=language)
+
     def parse_pdf(self, *, pdf_path: Path, output_dir: Path, language: str) -> dict:
         self.ensure_ready()
         self.parse_calls += 1
@@ -73,12 +84,12 @@ def test_parse_initializes_runtime_once_and_returns_payload() -> None:
         first = client.post(
             "/parse",
             files={"file": ("sample.pdf", b"%PDF-1.4\n%%EOF\n", "application/pdf")},
-            data={"language": "en"},
+            data={"language": "en", "parserBackend": "document_ai"},
         )
         second = client.post(
             "/parse",
             files={"file": ("sample.pdf", b"%PDF-1.4\n%%EOF\n", "application/pdf")},
-            data={"language": "ko"},
+            data={"language": "ko", "parserBackend": "document_ai"},
         )
 
         assert first.status_code == 200

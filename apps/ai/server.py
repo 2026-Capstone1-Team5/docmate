@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 from pathlib import Path
 from typing import Annotated, Any
@@ -15,9 +16,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from pydantic import Field
 
-from scripts.document_ai_runtime import DocumentAIRuntime
+from scripts.document_ai_runtime import DocumentAIRuntime, ParserBackend
 from scripts.document_ai_runtime import create_work_dir
-from scripts.document_ai_runtime import runtime
 
 
 class ParseResponse(BaseModel):
@@ -52,16 +52,20 @@ def ready(document_ai_runtime: Annotated[DocumentAIRuntime, Depends(get_runtime)
 async def parse(
     file: Annotated[UploadFile, File()],
     language: Annotated[str, Form()] = "en",
+    parser_backend: Annotated[ParserBackend, Form(alias="parserBackend")] = "document_ai",
     document_ai_runtime: Annotated[DocumentAIRuntime, Depends(get_runtime)] = None,
 ) -> ParseResponse:
     if document_ai_runtime is None:
         document_ai_runtime = runtime
 
-    if file.content_type not in {"application/pdf", "application/octet-stream"}:
-        raise HTTPException(status_code=415, detail="Only PDF uploads are supported.")
+    if parser_backend in {"document_ai", "pdftotext"} and file.content_type not in {
+        "application/pdf",
+        "application/octet-stream",
+    }:
+        raise HTTPException(status_code=415, detail=f"{parser_backend} only supports PDF uploads.")
 
-    safe_filename = Path(file.filename or "document.pdf").name
-    if not safe_filename.lower().endswith(".pdf"):
+    safe_filename = Path(file.filename or "document").name
+    if parser_backend in {"document_ai", "pdftotext"} and not safe_filename.lower().endswith(".pdf"):
         safe_filename = f"{safe_filename}.pdf"
 
     with create_work_dir() as temp_dir:
@@ -70,15 +74,25 @@ async def parse(
         with input_path.open("wb") as output:
             shutil.copyfileobj(file.file, output)
 
-        payload = await run_in_threadpool(
-            document_ai_runtime.parse_pdf,
-            pdf_path=input_path,
-            output_dir=work_dir / "output",
-            language=language,
-        )
+        try:
+            payload = await run_in_threadpool(
+                document_ai_runtime.parse_document,
+                input_path=input_path,
+                output_dir=work_dir / "output",
+                parser_backend=parser_backend,
+                language=language,
+            )
+        except RuntimeError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return ParseResponse(
         markdown=payload["markdown"],
         canonicalJson=payload["canonical_json"],
         metadata=payload["metadata"],
     )
+
+
+runtime = DocumentAIRuntime(
+    pdftotext_command=os.getenv("PDFTOTEXT_COMMAND", "pdftotext"),
+    parser_timeout_seconds=int(os.getenv("PARSER_TIMEOUT_SECONDS", "300")),
+)

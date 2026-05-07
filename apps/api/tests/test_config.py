@@ -66,13 +66,6 @@ def test_blank_redis_url_is_rejected_for_redis_queue() -> None:
     assert "redis_url is required when queue_backend=redis" in str(exc_info.value)
 
 
-def test_pdftotext_command_rejects_whitespace() -> None:
-    with pytest.raises(ValidationError) as exc_info:
-        Settings(auth_secret_key="secret", pdftotext_command="   ")
-
-    assert "pdftotext_command must not be empty" in str(exc_info.value)
-
-
 def test_document_ai_backend_does_not_require_script_path_in_shared_settings() -> None:
     settings = Settings(
         auth_secret_key="secret",
@@ -115,3 +108,28 @@ def test_document_ai_service_timeout_must_be_positive() -> None:
         Settings(auth_secret_key="secret", document_ai_service_timeout_seconds=0)
 
     assert "document_ai_service_timeout_seconds must be greater than 0" in str(exc_info.value)
+
+
+def test_parsing_service_url_normalizes_trailing_slash() -> None:
+    settings = Settings(
+        auth_secret_key="secret",
+        parsing_service_url=" http://127.0.0.1:8001/ ",
+    )
+
+    assert settings.parsing_service_url == "http://127.0.0.1:8001"
+
+
+def test_parsing_service_url_falls_back_to_document_ai_service_url() -> None:
+    settings = Settings(
+        auth_secret_key="secret",
+        document_ai_service_url="http://document-ai:8001",
+    )
+
+    assert settings.parsing_service_url == "http://document-ai:8001"
+
+
+def test_parsing_service_timeout_must_be_positive() -> None:
+    with pytest.raises(ValidationError) as exc_info:
+        Settings(auth_secret_key="secret", parsing_service_timeout_seconds=0)
+
+    assert "parsing_service_timeout_seconds must be greater than 0" in str(exc_info.value)
