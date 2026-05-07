@@ -139,6 +139,39 @@ def test_create_document_batch_rejects_invalid_file_without_enqueueing(
     assert parse_job_queue.messages == []
 
 
+def test_create_document_batch_reports_partial_enqueue_failure(
+    client: TestClient,
+    parse_job_queue: InMemoryParseJobQueue,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    enqueued_count = 0
+
+    def enqueue_parse_job(*, payload):
+        nonlocal enqueued_count
+        enqueued_count += 1
+        if enqueued_count == 2:
+            raise RuntimeError("queue unavailable")
+        parse_job_queue.messages.append(payload)
+
+    monkeypatch.setattr(parse_job_queue, "enqueue_parse_job", enqueue_parse_job)
+
+    response = client.post(
+        "/api/v1/documents/batch",
+        files=[
+            ("files", ("first.pdf", b"%PDF-first", "application/pdf")),
+            ("files", ("second.pdf", b"%PDF-second", "application/pdf")),
+        ],
+    )
+
+    assert response.status_code == 207
+    body = response.json()
+    assert [job["filename"] for job in body["jobs"]] == ["first.pdf"]
+    assert body["errors"][0]["filename"] == "second.pdf"
+    assert body["errors"][0]["code"] == "parse_job_enqueue_failed"
+    assert "could not be enqueued" in body["errors"][0]["message"]
+    assert [message["filename"] for message in parse_job_queue.messages] == ["first.pdf"]
+
+
 def test_create_document_allows_parser_backend_override(
     client: TestClient,
     parse_job_queue: InMemoryParseJobQueue,

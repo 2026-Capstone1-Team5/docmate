@@ -29,5 +29,12 @@ class ParseJobResponse(BaseSchema):
     job: ParseJobSummary
 
 
+class ParseJobBatchError(BaseSchema):
+    filename: str
+    code: str
+    message: str
+
+
 class ParseJobBatchResponse(BaseSchema):
     jobs: list[ParseJobSummary]
+    errors: list[ParseJobBatchError] = Field(default_factory=list)

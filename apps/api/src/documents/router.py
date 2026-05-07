@@ -21,7 +21,7 @@ from src.documents.service import DocumentService
 from src.documents.utils import sanitize_document_filename
 from src.parse_jobs.dependencies import get_parse_job_service
 from src.parse_jobs.exceptions import ParseJobEnqueueError
-from src.parse_jobs.schemas import ParseJobBatchResponse, ParseJobResponse
+from src.parse_jobs.schemas import ParseJobBatchError, ParseJobBatchResponse, ParseJobResponse
 from src.parse_jobs.service import ParseJobService
 from src.parser_backends import DEFAULT_REQUEST_PARSER_BACKEND, ParserBackend
 
@@ -114,7 +114,7 @@ async def create_document_batch(
     settings: Settings = Depends(get_settings),
     current_user: UserModel = Depends(get_current_document_user),
     service: ParseJobService = Depends(get_parse_job_service),
-) -> ParseJobBatchResponse:
+) -> ParseJobBatchResponse | JSONResponse:
     if not files:
         raise ApiError(
             status_code=400,
@@ -132,8 +132,8 @@ async def create_document_batch(
     ]
 
     jobs = []
-    try:
-        for validated in validated_files:
+    for validated in validated_files:
+        try:
             created = service.create_job(
                 owner_user_id=current_user.id,
                 filename=validated.filename,
@@ -142,12 +142,28 @@ async def create_document_batch(
                 file_data=validated.file_bytes,
             )
             jobs.append(created.job)
-    except ParseJobEnqueueError as exc:
-        raise ApiError(
-            status_code=500,
-            code="parse_job_enqueue_failed",
-            message=str(exc),
-        ) from exc
+        except ParseJobEnqueueError as exc:
+            if not jobs:
+                raise ApiError(
+                    status_code=500,
+                    code="parse_job_enqueue_failed",
+                    message=str(exc),
+                ) from exc
+
+            partial_response = ParseJobBatchResponse(
+                jobs=jobs,
+                errors=[
+                    ParseJobBatchError(
+                        filename=validated.filename,
+                        code="parse_job_enqueue_failed",
+                        message=str(exc),
+                    )
+                ],
+            )
+            return JSONResponse(
+                status_code=207,
+                content=partial_response.model_dump(mode="json", by_alias=True),
+            )
 
     return ParseJobBatchResponse(jobs=jobs)
 
