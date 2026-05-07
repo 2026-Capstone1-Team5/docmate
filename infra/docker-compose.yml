@@ -103,15 +103,10 @@ services:
       QUEUE_BACKEND: ${QUEUE_BACKEND:-redis}
       REDIS_URL: ${DOCKER_REDIS_URL:-redis://redis:6379/0}
       PARSE_JOB_QUEUE_NAME: ${PARSE_JOB_QUEUE_NAME:-document-agent-api:parse-jobs}
-      PARSER_TIMEOUT_SECONDS: ${PARSER_TIMEOUT_SECONDS:-300}
-      PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
       ENABLED_PARSER_BACKENDS: ${ENABLED_PARSER_BACKENDS:-markitdown,pdftotext,document_ai}
-      DOCUMENT_AI_SCRIPT_PATH: ${DOCUMENT_AI_SCRIPT_PATH:-/app/apps/ai/scripts/parse_document.py}
       WORKER_TEMP_ROOT: ${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
     ports:
       - "${API_PORT:-8000}:8000"
-    volumes:
-      - ../apps/ai:/app/apps/ai:ro
     healthcheck:
       test:
         [
@@ -135,6 +130,8 @@ services:
       YOLO_CONFIG_DIR: /opt/mineru-cache/ultralytics
       MINERU_MODEL_SOURCE: huggingface
       MINERU_PDF_RENDER_THREADS: "1"
+      PARSER_TIMEOUT_SECONDS: ${PARSER_TIMEOUT_SECONDS:-300}
+      PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
     ports:
       - "${DOCUMENT_AI_PORT:-8001}:8001"
     volumes:
@@ -182,18 +179,12 @@ services:
       REDIS_URL: ${DOCKER_REDIS_URL:-redis://redis:6379/0}
       PARSE_JOB_QUEUE_NAME: ${PARSE_JOB_QUEUE_NAME:-document-agent-api:parse-jobs}
       WORKER_POLL_TIMEOUT_SECONDS: ${WORKER_POLL_TIMEOUT_SECONDS:-5}
-      PARSER_TIMEOUT_SECONDS: ${PARSER_TIMEOUT_SECONDS:-300}
-      PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
       ENABLED_PARSER_BACKENDS: ${ENABLED_PARSER_BACKENDS:-markitdown,pdftotext,document_ai}
-      DOCUMENT_AI_SCRIPT_PATH: ${DOCUMENT_AI_SCRIPT_PATH:-/app/apps/ai/scripts/parse_document.py}
-      DOCUMENT_AI_SERVICE_URL: ${DOCUMENT_AI_SERVICE_URL:-http://document-ai:8001}
-      DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS: ${DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS:-900}
-      MINERU_COMPOSE_FILE: ${MINERU_COMPOSE_FILE:-/app/apps/ai/compose.yaml}
+      PARSING_SERVICE_URL: ${PARSING_SERVICE_URL:-http://document-ai:8001}
+      PARSING_SERVICE_TIMEOUT_SECONDS: ${PARSING_SERVICE_TIMEOUT_SECONDS:-900}
       WORKER_TEMP_ROOT: ${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
       WORKER_HOST_TEMP_ROOT: ${WORKER_HOST_TEMP_ROOT:-/tmp/document-agent-api-worker}
     volumes:
-      - ../apps/ai:/app/apps/ai:ro
-      - /var/run/docker.sock:/var/run/docker.sock
       - ${WORKER_HOST_TEMP_ROOT:-/tmp/document-agent-api-worker}:${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
 
   web:
