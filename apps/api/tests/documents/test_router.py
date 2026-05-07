@@ -92,6 +92,53 @@ def test_create_document_returns_queued_job(
     assert parse_job_queue.messages[0]["parser_backend"] == "markitdown"
 
 
+def test_create_document_batch_returns_queued_jobs(
+    client: TestClient,
+    parse_job_queue: InMemoryParseJobQueue,
+) -> None:
+    response = client.post(
+        "/api/v1/documents/batch",
+        files=[
+            ("files", ("first.pdf", b"%PDF-first", "application/pdf")),
+            (
+                "files",
+                (
+                    "second.docx",
+                    b"docx-bytes",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ),
+            ),
+        ],
+    )
+
+    assert response.status_code == 202
+    body = response.json()
+    assert [job["filename"] for job in body["jobs"]] == ["first.pdf", "second.docx"]
+    assert [job["status"] for job in body["jobs"]] == ["queued", "queued"]
+    assert [job["parserBackend"] for job in body["jobs"]] == ["markitdown", "markitdown"]
+    assert [message["filename"] for message in parse_job_queue.messages] == [
+        "first.pdf",
+        "second.docx",
+    ]
+
+
+def test_create_document_batch_rejects_invalid_file_without_enqueueing(
+    client: TestClient,
+    parse_job_queue: InMemoryParseJobQueue,
+) -> None:
+    response = client.post(
+        "/api/v1/documents/batch",
+        files=[
+            ("files", ("first.pdf", b"%PDF-first", "application/pdf")),
+            ("files", ("malware.exe", b"abc", "application/octet-stream")),
+        ],
+    )
+
+    assert response.status_code == 415
+    assert response.json()["error"]["code"] == "unsupported_file_type"
+    assert parse_job_queue.messages == []
+
+
 def test_create_document_allows_parser_backend_override(
     client: TestClient,
     parse_job_queue: InMemoryParseJobQueue,

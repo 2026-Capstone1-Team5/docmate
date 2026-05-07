@@ -27,3 +27,7 @@ class ParseJobSummary(BaseSchema):
 
 class ParseJobResponse(BaseSchema):
     job: ParseJobSummary
+
+
+class ParseJobBatchResponse(BaseSchema):
+    jobs: list[ParseJobSummary]

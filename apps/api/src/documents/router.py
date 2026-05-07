@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Literal
 from urllib.parse import quote
 from uuid import UUID
@@ -20,7 +21,7 @@ from src.documents.service import DocumentService
 from src.documents.utils import sanitize_document_filename
 from src.parse_jobs.dependencies import get_parse_job_service
 from src.parse_jobs.exceptions import ParseJobEnqueueError
-from src.parse_jobs.schemas import ParseJobResponse
+from src.parse_jobs.schemas import ParseJobBatchResponse, ParseJobResponse
 from src.parse_jobs.service import ParseJobService
 from src.parser_backends import DEFAULT_REQUEST_PARSER_BACKEND, ParserBackend
 
@@ -63,6 +64,13 @@ SOURCE_MEDIA_TYPES_BY_CONTENT_TYPE = {
 }
 
 
+@dataclass(frozen=True, slots=True)
+class ValidatedUpload:
+    filename: str
+    content_type: str
+    file_bytes: bytes
+
+
 @router.post("", response_model=ParseJobResponse, status_code=202)
 async def create_document(
     file: UploadFile = File(...),
@@ -74,55 +82,19 @@ async def create_document(
     current_user: UserModel = Depends(get_current_document_user),
     service: ParseJobService = Depends(get_parse_job_service),
 ) -> ParseJobResponse:
-    filename = file.filename or ""
-    if not filename.strip():
-        raise ApiError(
-            status_code=400,
-            code="missing_filename",
-            message="File name is required.",
-        )
-
-    file_bytes = await file.read()
-    if not file_bytes:
-        raise ApiError(
-            status_code=400,
-            code="empty_file",
-            message="Uploaded file is empty.",
-        )
-
-    if not _is_supported_file(filename=filename, content_type=file.content_type):
-        raise ApiError(
-            status_code=415,
-            code="unsupported_file_type",
-            message="Unsupported file type.",
-            details={"filename": filename},
-        )
-    if parser_backend not in settings.enabled_parser_backends:
-        raise ApiError(
-            status_code=400,
-            code="parser_backend_disabled",
-            message="Selected parser backend is not enabled in this environment.",
-            details={"filename": filename, "parserBackend": parser_backend},
-        )
-    if not _is_parser_backend_supported_for_upload(
-        filename=filename,
-        content_type=file.content_type,
+    validated = await _validate_upload_file(
+        file=file,
         parser_backend=parser_backend,
-    ):
-        raise ApiError(
-            status_code=400,
-            code="unsupported_parser_backend_for_file_type",
-            message="Selected parser backend is not supported for this file type.",
-            details={"filename": filename, "parserBackend": parser_backend},
-        )
+        settings=settings,
+    )
 
     try:
         return service.create_job(
             owner_user_id=current_user.id,
-            filename=filename,
-            content_type=file.content_type or "application/octet-stream",
+            filename=validated.filename,
+            content_type=validated.content_type,
             parser_backend=parser_backend,
-            file_data=file_bytes,
+            file_data=validated.file_bytes,
         )
     except ParseJobEnqueueError as exc:
         raise ApiError(
@@ -130,6 +102,54 @@ async def create_document(
             code="parse_job_enqueue_failed",
             message=str(exc),
         ) from exc
+
+
+@router.post("/batch", response_model=ParseJobBatchResponse, status_code=202)
+async def create_document_batch(
+    files: list[UploadFile] = File(...),
+    parser_backend: ParserBackend = Query(
+        default=DEFAULT_REQUEST_PARSER_BACKEND,
+        alias="parserBackend",
+    ),
+    settings: Settings = Depends(get_settings),
+    current_user: UserModel = Depends(get_current_document_user),
+    service: ParseJobService = Depends(get_parse_job_service),
+) -> ParseJobBatchResponse:
+    if not files:
+        raise ApiError(
+            status_code=400,
+            code="missing_files",
+            message="At least one file is required.",
+        )
+
+    validated_files = [
+        await _validate_upload_file(
+            file=file,
+            parser_backend=parser_backend,
+            settings=settings,
+        )
+        for file in files
+    ]
+
+    jobs = []
+    try:
+        for validated in validated_files:
+            created = service.create_job(
+                owner_user_id=current_user.id,
+                filename=validated.filename,
+                content_type=validated.content_type,
+                parser_backend=parser_backend,
+                file_data=validated.file_bytes,
+            )
+            jobs.append(created.job)
+    except ParseJobEnqueueError as exc:
+        raise ApiError(
+            status_code=500,
+            code="parse_job_enqueue_failed",
+            message=str(exc),
+        ) from exc
+
+    return ParseJobBatchResponse(jobs=jobs)
 
 
 @router.get("", response_model=DocumentListResponse)
@@ -285,6 +305,62 @@ def delete_document(
             message=str(exc),
         ) from exc
     return Response(status_code=204)
+
+
+async def _validate_upload_file(
+    *,
+    file: UploadFile,
+    parser_backend: ParserBackend,
+    settings: Settings,
+) -> ValidatedUpload:
+    filename = file.filename or ""
+    if not filename.strip():
+        raise ApiError(
+            status_code=400,
+            code="missing_filename",
+            message="File name is required.",
+        )
+
+    file_bytes = await file.read()
+    if not file_bytes:
+        raise ApiError(
+            status_code=400,
+            code="empty_file",
+            message="Uploaded file is empty.",
+            details={"filename": filename},
+        )
+
+    if not _is_supported_file(filename=filename, content_type=file.content_type):
+        raise ApiError(
+            status_code=415,
+            code="unsupported_file_type",
+            message="Unsupported file type.",
+            details={"filename": filename},
+        )
+    if parser_backend not in settings.enabled_parser_backends:
+        raise ApiError(
+            status_code=400,
+            code="parser_backend_disabled",
+            message="Selected parser backend is not enabled in this environment.",
+            details={"filename": filename, "parserBackend": parser_backend},
+        )
+    if not _is_parser_backend_supported_for_upload(
+        filename=filename,
+        content_type=file.content_type,
+        parser_backend=parser_backend,
+    ):
+        raise ApiError(
+            status_code=400,
+            code="unsupported_parser_backend_for_file_type",
+            message="Selected parser backend is not supported for this file type.",
+            details={"filename": filename, "parserBackend": parser_backend},
+        )
+
+    return ValidatedUpload(
+        filename=filename,
+        content_type=file.content_type or "application/octet-stream",
+        file_bytes=file_bytes,
+    )
 
 
 def _is_supported_file(*, filename: str, content_type: str | None) -> bool:
