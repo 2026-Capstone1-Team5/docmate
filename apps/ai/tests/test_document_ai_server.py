@@ -59,7 +59,7 @@ def test_ready_returns_not_ready_before_runtime_init() -> None:
         response = client.get("/ready")
 
         assert response.status_code == 503
-        assert response.json() == {"ready": False}
+        assert response.json() == {"ready": False, "state": "runtime_not_initialized"}
     finally:
         server.app.dependency_overrides.clear()
 
@@ -86,6 +86,7 @@ def test_parse_initializes_runtime_once_and_returns_payload() -> None:
         assert first.json()["canonicalJson"]["document"]["source"] == "document_ai_service"
         assert second.status_code == 200
         assert second.json()["canonicalJson"]["document"]["language"] == "ko"
+        assert client.get("/ready").json() == {"ready": True, "state": "runtime_initialized"}
         assert fake_runtime.initialized is True
         assert fake_runtime.parse_calls == 2
     finally:

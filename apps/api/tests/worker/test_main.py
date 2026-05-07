@@ -6,16 +6,18 @@ from src.worker import main as worker_main
 from src.worker.parser import DocumentAIParser
 
 
-def test_build_parsers_requires_document_ai_script_path_when_enabled(monkeypatch) -> None:
+def test_build_parsers_requires_document_ai_route_when_enabled(monkeypatch) -> None:
     class SettingsStub:
         enabled_parser_backends = ["markitdown", "document_ai"]
         pdftotext_command = "pdftotext"
         parser_timeout_seconds = 30
         document_ai_script_path = None
+        document_ai_service_url = None
+        document_ai_service_timeout_seconds = 30
 
     monkeypatch.setattr(worker_main, "get_settings", lambda: SettingsStub())
 
-    with pytest.raises(RuntimeError, match="document_ai_script_path is required"):
+    with pytest.raises(RuntimeError, match="document_ai_script_path or document_ai_service_url"):
         worker_main._build_parsers()
 
 
@@ -28,6 +30,8 @@ def test_build_parsers_includes_document_ai_when_script_path_is_set(monkeypatch,
         pdftotext_command = "pdftotext"
         parser_timeout_seconds = 30
         document_ai_script_path = str(script_path)
+        document_ai_service_url = None
+        document_ai_service_timeout_seconds = 30
 
     monkeypatch.setattr(worker_main, "get_settings", lambda: SettingsStub())
 
@@ -37,3 +41,24 @@ def test_build_parsers_includes_document_ai_when_script_path_is_set(monkeypatch,
     assert "document_ai" in parsers
     assert isinstance(parser, DocumentAIParser)
     assert Path(parser.script_path) == script_path
+
+
+def test_build_parsers_includes_document_ai_with_service_url_without_script_path(
+    monkeypatch,
+) -> None:
+    class SettingsStub:
+        enabled_parser_backends = ["markitdown", "document_ai"]
+        pdftotext_command = "pdftotext"
+        parser_timeout_seconds = 30
+        document_ai_script_path = None
+        document_ai_service_url = "http://document-ai:8001"
+        document_ai_service_timeout_seconds = 45
+
+    monkeypatch.setattr(worker_main, "get_settings", lambda: SettingsStub())
+
+    parsers = worker_main._build_parsers()
+    parser = parsers["document_ai"]
+
+    assert isinstance(parser, DocumentAIParser)
+    assert parser.service_url == "http://document-ai:8001"
+    assert parser.service_timeout_seconds == 45

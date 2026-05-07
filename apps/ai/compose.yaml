@@ -13,6 +13,22 @@ services:
     volumes:
       - mineru-cache:/opt/mineru-cache
       - .:/workspace:ro
+    command: bash
+
+  document-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile.mineru-cpu
+    working_dir: /workspace
+    environment:
+      HF_HOME: /opt/mineru-cache/huggingface
+      MPLCONFIGDIR: /opt/mineru-cache/matplotlib
+      YOLO_CONFIG_DIR: /opt/mineru-cache/ultralytics
+      MINERU_MODEL_SOURCE: huggingface
+      MINERU_PDF_RENDER_THREADS: "1"
+    volumes:
+      - mineru-cache:/opt/mineru-cache
+      - .:/workspace:ro
     ports:
       - "${DOCUMENT_AI_PORT:-8001}:8001"
     healthcheck:

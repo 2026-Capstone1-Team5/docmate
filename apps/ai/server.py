@@ -40,8 +40,11 @@ def health() -> dict[str, str]:
 @app.get("/ready")
 def ready(document_ai_runtime: Annotated[DocumentAIRuntime, Depends(get_runtime)]) -> JSONResponse:
     if not document_ai_runtime.ready:
-        return JSONResponse(status_code=503, content={"ready": False})
-    return JSONResponse(status_code=200, content={"ready": True})
+        return JSONResponse(
+            status_code=503,
+            content={"ready": False, "state": "runtime_not_initialized"},
+        )
+    return JSONResponse(status_code=200, content={"ready": True, "state": "runtime_initialized"})
 
 
 @app.post("/parse", response_model=ParseResponse)
