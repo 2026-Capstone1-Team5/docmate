@@ -1,6 +1,8 @@
-.git
-.venv
-.uv-cache
-.runtime_cache
-.cache
-samples/output
+*
+
+!Dockerfile.mineru-cpu
+!.dockerignore
+!README.md
+!server.py
+!scripts
+!scripts/**
