@@ -29,6 +29,7 @@ import {
   ParserBackend,
   SUPPORTED_UPLOAD_ACCEPT,
   uploadDocument,
+  uploadDocumentsBatch,
 } from "@/lib/document-agent-api";
 
 const POLL_INTERVAL_MS = 1000;
@@ -189,7 +190,7 @@ function UploadConfigPanel({
 }
 
 export default function UploadPage() {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [panelTab, setPanelTab] = useState<PanelTab>("config");
   const [parserBackend, setParserBackend] = useState<ParserBackend>(DEFAULT_PARSER_BACKEND);
@@ -214,42 +215,43 @@ export default function UploadPage() {
     };
   }, []);
 
-  const startUpload = async (selectedFile: File) => {
-    if (!selectedFile) {
+  const startUpload = async (selectedFiles: File[]) => {
+    if (selectedFiles.length === 0) {
       return;
     }
 
-    if (!isSupportedUploadFile(selectedFile)) {
+    const unsupportedFile = selectedFiles.find((selectedFile) => !isSupportedUploadFile(selectedFile));
+    if (unsupportedFile) {
       setErrorMessage("지원하지 않는 파일 형식입니다. PDF, DOCX, PPTX, XLSX, PNG, JPG 파일만 업로드할 수 있습니다.");
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
-      setFile(null);
+      setFiles([]);
       setPanelTab("config");
       return;
     }
 
-    if (parserBackend === "pdftotext" && !isPdfFile(selectedFile)) {
+    if (parserBackend === "pdftotext" && selectedFiles.some((selectedFile) => !isPdfFile(selectedFile))) {
       setErrorMessage("`pdftotext` 파서는 PDF 파일에서만 사용할 수 있습니다. MarkItDown으로 바꾸거나 PDF를 선택해 주세요.");
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
-      setFile(selectedFile);
+      setFiles(selectedFiles);
       setPanelTab("config");
       return;
     }
 
-    if (parserBackend === "document_ai" && !isPdfFile(selectedFile)) {
+    if (parserBackend === "document_ai" && selectedFiles.some((selectedFile) => !isPdfFile(selectedFile))) {
       setErrorMessage("`document_ai` 파서는 PDF 파일에서만 사용할 수 있습니다. PDF를 선택해 주세요.");
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
-      setFile(selectedFile);
+      setFiles(selectedFiles);
       setPanelTab("config");
       return;
     }
 
-    setFile(selectedFile);
+    setFiles(selectedFiles);
     setUploading(true);
     setPanelTab("config");
     setErrorMessage(null);
@@ -258,29 +260,42 @@ export default function UploadPage() {
     setParsedResult(null);
 
     try {
-      const queued = await uploadDocument(selectedFile, { parserBackend });
+      const queuedJobs = selectedFiles.length === 1
+        ? [(await uploadDocument(selectedFiles[0], { parserBackend })).job]
+        : (await uploadDocumentsBatch(selectedFiles, { parserBackend })).jobs;
       const startedAt = Date.now();
 
       while (isActiveRef.current && Date.now() - startedAt < POLL_TIMEOUT_MS) {
-        const current = await getParseJob(queued.job.id);
+        const currentJobs = await Promise.all(
+          queuedJobs.map(async (job) => (await getParseJob(job.id)).job),
+        );
+        const failedJob = currentJobs.find((job) => job.status === "failed");
 
-        if (current.job.status === "failed") {
-          throw new Error(current.job.errorMessage ?? "문서 파싱에 실패했습니다.");
+        if (failedJob) {
+          throw new Error(
+            failedJob.errorMessage ?? `${failedJob.filename} 문서 파싱에 실패했습니다.`,
+          );
         }
 
-        if (current.job.documentId) {
+        const completedJobs = currentJobs.filter((job) => job.documentId);
+        if (completedJobs.length === queuedJobs.length) {
           if (!isActiveRef.current) {
             return;
           }
 
-          const parsed = await getDocumentResult(current.job.documentId);
+          const firstCompletedDocumentId = completedJobs[0].documentId;
+          if (!firstCompletedDocumentId) {
+            return;
+          }
+
+          const parsed = await getDocumentResult(firstCompletedDocumentId);
           if (!isActiveRef.current) {
             return;
           }
           setParsedDocument(parsed.document);
           setParsedResult(parsed.result);
           setPanelTab("result");
-          setSuccessMessage("파싱이 완료되었습니다. 우측 Result 탭에서 결과를 확인해 주세요.");
+          setSuccessMessage(`${completedJobs.length}개 문서 파싱이 완료되었습니다. 첫 번째 결과를 우측 Result 탭에 표시합니다.`);
           return;
         }
 
@@ -288,7 +303,7 @@ export default function UploadPage() {
       }
 
       if (isActiveRef.current) {
-        setErrorMessage("업로드는 완료되었지만 파싱이 아직 진행 중입니다. 문서 목록에서 잠시 후 다시 확인해 주세요.");
+        setErrorMessage("업로드는 완료되었지만 일부 파싱이 아직 진행 중입니다. 문서 목록에서 잠시 후 다시 확인해 주세요.");
       }
     } catch (error) {
       console.error(error);
@@ -307,11 +322,11 @@ export default function UploadPage() {
     }
   };
 
-  const handleFileSelection = (selectedFile: File | null) => {
-    if (!selectedFile || uploading) {
+  const handleFileSelection = (selectedFiles: File[]) => {
+    if (selectedFiles.length === 0 || uploading) {
       return;
     }
-    void startUpload(selectedFile);
+    void startUpload(selectedFiles);
   };
 
   return (
@@ -323,11 +338,12 @@ export default function UploadPage() {
             type="file"
             className="hidden"
             onChange={(e) => {
-              const selectedFile = e.target.files?.[0] || null;
+              const selectedFiles = Array.from(e.target.files ?? []);
               e.currentTarget.value = "";
-              handleFileSelection(selectedFile);
+              handleFileSelection(selectedFiles);
             }}
             accept={SUPPORTED_UPLOAD_ACCEPT}
+            multiple
           />
 
           {!parsedDocument ? (
@@ -341,12 +357,12 @@ export default function UploadPage() {
                   <Upload className="mr-1.5 h-3.5 w-3.5" />
                   Upload
                 </button>
-                {file ? (
-                  <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">1 file</span>
+                {files.length > 0 ? (
+                  <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">{files.length} file{files.length === 1 ? "" : "s"}</span>
                 ) : null}
-                {file ? (
+                {files.length > 0 ? (
                   <div className="inline-flex h-8 items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                    {file.name}
+                    {files.length === 1 ? files[0].name : `${files[0].name} 외 ${files.length - 1}개`}
                   </div>
                 ) : null}
               </div>
@@ -390,12 +406,12 @@ export default function UploadPage() {
                   파일을 끌어 놓거나 클릭해서 선택하세요
                 </p>
                 <p className="mx-auto max-w-lg text-sm leading-6 text-zinc-500 dark:text-zinc-400">
-                  파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 
+                  파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 여러 파일을 한 번에 선택할 수 있습니다.
                 </p>
               </div>
-              {file ? (
+              {files.length > 0 ? (
                 <div className="mt-5 rounded-full border border-[#d8e7a5] dark:border-[#4d5c26] bg-[#f8fcd8] dark:bg-[#1a1e0d] px-4 py-1.5 text-sm font-medium text-[#667226] dark:text-[#a3b84a]">
-                  {file.name}
+                  {files.length === 1 ? files[0].name : `${files.length}개 파일 선택됨`}
                 </div>
               ) : null}
               <p className="mt-10 max-w-md text-xs leading-5 text-zinc-400">
