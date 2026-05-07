@@ -3,9 +3,12 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 
 class WorkerParseError(Exception):
@@ -97,11 +100,31 @@ class PdftotextParser:
 
 
 class DocumentAIParser:
-    def __init__(self, *, script_path: str, timeout_seconds: int) -> None:
+    def __init__(
+        self,
+        *,
+        script_path: str,
+        timeout_seconds: int,
+        service_url: str | None = None,
+        service_timeout_seconds: int | None = None,
+    ) -> None:
         self.script_path = Path(script_path)
         self.timeout_seconds = timeout_seconds
+        self.service_url = service_url.rstrip("/") if service_url else None
+        self.service_timeout_seconds = service_timeout_seconds or timeout_seconds
 
     def parse(self, *, input_path: Path, output_dir: Path) -> ParsedDocumentPayload:
+        if self.service_url:
+            try:
+                return self._parse_with_service(input_path=input_path)
+            except WorkerParseError:
+                if not self.script_path.is_file():
+                    raise
+            except (HTTPError, URLError, TimeoutError) as exc:
+                if not self.script_path.is_file():
+                    msg = "document-ai service failed and subprocess fallback is unavailable"
+                    raise WorkerParseError(msg) from exc
+
         if not self.script_path.is_file():
             msg = f"document-ai script is not available: {self.script_path}"
             raise WorkerParseError(msg)
@@ -177,3 +200,67 @@ class DocumentAIParser:
             ],
         }
         return ParsedDocumentPayload(markdown=markdown, canonical_json=canonical_json)
+
+    def _parse_with_service(self, *, input_path: Path) -> ParsedDocumentPayload:
+        boundary = f"----docmate-{uuid.uuid4().hex}"
+        body = self._build_multipart_body(
+            boundary=boundary,
+            filename=input_path.name,
+            file_bytes=input_path.read_bytes(),
+            language="en",
+        )
+        request = Request(
+            f"{self.service_url}/parse",
+            data=body,
+            headers={
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+                "Content-Length": str(len(body)),
+            },
+            method="POST",
+        )
+
+        try:
+            with urlopen(request, timeout=self.service_timeout_seconds) as response:
+                response_body = response.read()
+        except HTTPError as exc:
+            error_body = exc.read().decode(errors="ignore").strip() if exc.fp else ""
+            msg = error_body or f"document-ai service failed: {exc.code}"
+            raise WorkerParseError(msg) from exc
+
+        try:
+            payload = json.loads(response_body.decode())
+        except json.JSONDecodeError as exc:
+            msg = "document-ai service returned invalid JSON"
+            raise WorkerParseError(msg) from exc
+
+        markdown = payload.get("markdown")
+        canonical_json = payload.get("canonicalJson")
+        if not isinstance(markdown, str) or not markdown.strip() or not isinstance(
+            canonical_json, dict
+        ):
+            msg = "document-ai service returned invalid payload"
+            raise WorkerParseError(msg)
+
+        return ParsedDocumentPayload(markdown=markdown.strip(), canonical_json=canonical_json)
+
+    @staticmethod
+    def _build_multipart_body(
+        *,
+        boundary: str,
+        filename: str,
+        file_bytes: bytes,
+        language: str,
+    ) -> bytes:
+        lines = [
+            f"--{boundary}\r\n".encode(),
+            b'Content-Disposition: form-data; name="language"\r\n\r\n',
+            language.encode(),
+            b"\r\n",
+            f"--{boundary}\r\n".encode(),
+            f'Content-Disposition: form-data; name="file"; filename="{filename}"\r\n'.encode(),
+            b"Content-Type: application/pdf\r\n\r\n",
+            file_bytes,
+            b"\r\n",
+            f"--{boundary}--\r\n".encode(),
+        ]
+        return b"".join(lines)

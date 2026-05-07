@@ -29,6 +29,8 @@ def _build_parsers() -> dict[ParserBackend, WorkerParser]:
         parsers["document_ai"] = DocumentAIParser(
             script_path=settings.document_ai_script_path,
             timeout_seconds=settings.parser_timeout_seconds,
+            service_url=settings.document_ai_service_url,
+            service_timeout_seconds=settings.document_ai_service_timeout_seconds,
         )
     return parsers
 
