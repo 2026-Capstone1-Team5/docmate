@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type DragEvent, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   FileSpreadsheet,
@@ -192,6 +192,7 @@ function UploadConfigPanel({
 export default function UploadPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [panelTab, setPanelTab] = useState<PanelTab>("config");
   const [parserBackend, setParserBackend] = useState<ParserBackend>(DEFAULT_PARSER_BACKEND);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -329,6 +330,19 @@ export default function UploadPage() {
     void startUpload(selectedFiles);
   };
 
+  const handleDrop = (event: DragEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setIsDraggingFiles(false);
+    handleFileSelection(Array.from(event.dataTransfer.files));
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (!uploading) {
+      setIsDraggingFiles(true);
+    }
+  };
+
   return (
     <div className="-m-6 flex h-[calc(100svh-4rem)] min-h-[720px] flex-col overflow-hidden border-y border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 lg:flex-row">
       <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col border-b border-zinc-200 dark:border-zinc-800 lg:basis-1/2 lg:border-b-0 lg:border-r">
@@ -392,7 +406,14 @@ export default function UploadPage() {
             <button
               type="button"
               onClick={() => document.getElementById("upload-file-input")?.click()}
-              className="m-5 flex flex-1 flex-col items-center justify-center rounded-[28px] border border-dashed border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/50 px-10 text-center transition hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900"
+              onDragOver={handleDragOver}
+              onDragLeave={() => setIsDraggingFiles(false)}
+              onDrop={handleDrop}
+              className={`m-5 flex flex-1 flex-col items-center justify-center rounded-[28px] border border-dashed px-10 text-center transition ${
+                isDraggingFiles
+                  ? "border-[#96b24a] bg-[#f8fcd8] dark:border-[#4d5c26] dark:bg-[#1a1e0d]"
+                  : "border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900"
+              }`}
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#d8e7a5] dark:border-[#4d5c26] bg-[#f8fcd8] dark:bg-[#1a1e0d]">
                 {uploading ? (
@@ -403,7 +424,7 @@ export default function UploadPage() {
               </div>
               <div className="mt-6 space-y-2">
                 <p className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-                  파일을 끌어 놓거나 클릭해서 선택하세요
+                  파일들을 끌어 놓거나 클릭해서 선택하세요
                 </p>
                 <p className="mx-auto max-w-lg text-sm leading-6 text-zinc-500 dark:text-zinc-400">
                   파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 여러 파일을 한 번에 선택할 수 있습니다.
