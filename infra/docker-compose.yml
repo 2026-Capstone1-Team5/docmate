@@ -122,6 +122,36 @@ services:
       timeout: 5s
       retries: 5
 
+  document-ai:
+    build:
+      context: ../apps/ai
+      dockerfile: Dockerfile.mineru-cpu
+    container_name: document-agent-document-ai
+    restart: unless-stopped
+    working_dir: /workspace
+    environment:
+      HF_HOME: /opt/mineru-cache/huggingface
+      MPLCONFIGDIR: /opt/mineru-cache/matplotlib
+      YOLO_CONFIG_DIR: /opt/mineru-cache/ultralytics
+      MINERU_MODEL_SOURCE: huggingface
+      MINERU_PDF_RENDER_THREADS: "1"
+    ports:
+      - "${DOCUMENT_AI_PORT:-8001}:8001"
+    volumes:
+      - ../apps/ai:/workspace:ro
+      - mineru-cache:/opt/mineru-cache
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://127.0.0.1:8001/health > /dev/null || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    command:
+      - python -m uvicorn server:app --host 0.0.0.0 --port 8001
+
   worker:
     build:
       context: ../apps/api
@@ -135,6 +165,8 @@ services:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
+      document-ai:
+        condition: service_healthy
     environment:
       DATABASE_URL: ${DOCKER_DATABASE_URL:-postgresql+psycopg://postgres:postgres@postgres:5432/document_agent_api}
       AUTH_SECRET_KEY: ${AUTH_SECRET_KEY:-dev-only-change-this-key}
@@ -154,6 +186,8 @@ services:
       PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
       ENABLED_PARSER_BACKENDS: ${ENABLED_PARSER_BACKENDS:-markitdown,pdftotext,document_ai}
       DOCUMENT_AI_SCRIPT_PATH: ${DOCUMENT_AI_SCRIPT_PATH:-/app/apps/ai/scripts/parse_document.py}
+      DOCUMENT_AI_SERVICE_URL: ${DOCUMENT_AI_SERVICE_URL:-http://document-ai:8001}
+      DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS: ${DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS:-300}
       MINERU_COMPOSE_FILE: ${MINERU_COMPOSE_FILE:-/app/apps/ai/compose.yaml}
       WORKER_TEMP_ROOT: ${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
       WORKER_HOST_TEMP_ROOT: ${WORKER_HOST_TEMP_ROOT:-/tmp/document-agent-api-worker}
@@ -185,3 +219,4 @@ volumes:
   postgres-data:
   redis-data:
   minio-data:
+  mineru-cache:

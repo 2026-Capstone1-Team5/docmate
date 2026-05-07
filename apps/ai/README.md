@@ -15,8 +15,11 @@ For production-like local parsing, run MinerU through the long-lived FastAPI ser
 
 ```bash
 cd apps/ai
-uvicorn server:app --host 127.0.0.1 --port 8001
+docker compose up --build mineru-cpu
 ```
+
+The `mineru-cpu` Compose service starts `server:app` by default and listens on `127.0.0.1:8001`.
+For direct host execution without Docker, run `python3 -m uvicorn server:app --host 127.0.0.1 --port 8001`.
 
 The API worker can call this service when these environment variables are set:
 
@@ -30,6 +33,8 @@ DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS=300
 This service keeps the Python process alive between parse jobs. That is different from the model file cache: downloaded model files avoid network cost, while the warm service avoids repeated Python/MinerU import and model runtime initialization cost.
 
 The old subprocess path remains available. If `DOCUMENT_AI_SERVICE_URL` is unset, the worker runs `scripts/parse_document.py` per job as before.
+
+The full stack Compose file in `infra/docker-compose.yml` starts a `document-ai` service by default and points the worker at `http://document-ai:8001`.
 
 It does three things:
 
