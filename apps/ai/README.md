@@ -9,6 +9,28 @@ The current reusable parser entrypoint is:
 python scripts/parse_document.py <input_pdf> <output_dir> --language en
 ```
 
+## Warm Document AI service
+
+For production-like local parsing, run MinerU through the long-lived FastAPI service:
+
+```bash
+cd apps/ai
+uvicorn server:app --host 127.0.0.1 --port 8001
+```
+
+The API worker can call this service when these environment variables are set:
+
+```bash
+ENABLED_PARSER_BACKENDS=markitdown,pdftotext,document_ai
+DOCUMENT_AI_SCRIPT_PATH=/absolute/path/to/apps/ai/scripts/parse_document.py
+DOCUMENT_AI_SERVICE_URL=http://127.0.0.1:8001
+DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS=300
+```
+
+This service keeps the Python process alive between parse jobs. That is different from the model file cache: downloaded model files avoid network cost, while the warm service avoids repeated Python/MinerU import and model runtime initialization cost.
+
+The old subprocess path remains available. If `DOCUMENT_AI_SERVICE_URL` is unset, the worker runs `scripts/parse_document.py` per job as before.
+
 It does three things:
 
 1. inspects the PDF
