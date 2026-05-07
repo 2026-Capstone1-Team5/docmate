@@ -187,7 +187,7 @@ services:
       ENABLED_PARSER_BACKENDS: ${ENABLED_PARSER_BACKENDS:-markitdown,pdftotext,document_ai}
       DOCUMENT_AI_SCRIPT_PATH: ${DOCUMENT_AI_SCRIPT_PATH:-/app/apps/ai/scripts/parse_document.py}
       DOCUMENT_AI_SERVICE_URL: ${DOCUMENT_AI_SERVICE_URL:-http://document-ai:8001}
-      DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS: ${DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS:-300}
+      DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS: ${DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS:-900}
       MINERU_COMPOSE_FILE: ${MINERU_COMPOSE_FILE:-/app/apps/ai/compose.yaml}
       WORKER_TEMP_ROOT: ${WORKER_TEMP_ROOT:-/tmp/document-agent-api-worker}
       WORKER_HOST_TEMP_ROOT: ${WORKER_HOST_TEMP_ROOT:-/tmp/document-agent-api-worker}

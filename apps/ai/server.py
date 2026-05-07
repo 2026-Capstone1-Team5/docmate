@@ -10,6 +10,7 @@ from fastapi import File
 from fastapi import Form
 from fastapi import HTTPException
 from fastapi import UploadFile
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from pydantic import Field
@@ -69,7 +70,8 @@ async def parse(
         with input_path.open("wb") as output:
             shutil.copyfileobj(file.file, output)
 
-        payload = document_ai_runtime.parse_pdf(
+        payload = await run_in_threadpool(
+            document_ai_runtime.parse_pdf,
             pdf_path=input_path,
             output_dir=work_dir / "output",
             language=language,
