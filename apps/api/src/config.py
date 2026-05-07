@@ -24,6 +24,7 @@ DEFAULT_PARSER_TIMEOUT_SECONDS = 300
 DEFAULT_WORKER_TEMP_ROOT = "/tmp/document-agent-api-worker"
 DEFAULT_PDFTOTEXT_COMMAND = "pdftotext"
 DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS = 300
+DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS = 300
 
 
 def normalize_string_list(values: str | list[str]) -> list[str]:
@@ -123,6 +124,8 @@ class Settings(BaseSettings):
     document_ai_script_path: str | None = None
     document_ai_service_url: str | None = None
     document_ai_service_timeout_seconds: int = DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS
+    parsing_service_url: str | None = None
+    parsing_service_timeout_seconds: int = DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS
 
     @field_validator("database_url", mode="before")
     @classmethod
@@ -199,6 +202,14 @@ class Settings(BaseSettings):
         normalized = value.strip().rstrip("/")
         return normalized or None
 
+    @field_validator("parsing_service_url", mode="before")
+    @classmethod
+    def normalize_parsing_service_url(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip().rstrip("/")
+        return normalized or None
+
     @field_validator("storage_r2_region")
     @classmethod
     def validate_storage_r2_region(cls, value: str) -> str:
@@ -256,6 +267,14 @@ class Settings(BaseSettings):
             raise ValueError(msg)
         return value
 
+    @field_validator("parsing_service_timeout_seconds")
+    @classmethod
+    def validate_parsing_service_timeout(cls, value: int) -> int:
+        if value <= 0:
+            msg = "parsing_service_timeout_seconds must be greater than 0"
+            raise ValueError(msg)
+        return value
+
     @field_validator("worker_temp_root")
     @classmethod
     def validate_worker_temp_root(cls, value: str) -> str:
@@ -300,6 +319,14 @@ class Settings(BaseSettings):
         if self.document_ai_script_path:
             script_path = Path(self.document_ai_script_path).expanduser()
             self.document_ai_script_path = str(script_path.resolve())
+
+        if not self.parsing_service_url and self.document_ai_service_url:
+            self.parsing_service_url = self.document_ai_service_url
+        if (
+            self.parsing_service_timeout_seconds == DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS
+            and self.document_ai_service_timeout_seconds != DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS
+        ):
+            self.parsing_service_timeout_seconds = self.document_ai_service_timeout_seconds
 
         return self
 

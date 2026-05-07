@@ -4,38 +4,24 @@ from src.model_registry import load_model_registry
 from src.parser_backends import ParserBackend
 from src.queueing.dependencies import get_parse_job_queue
 from src.storage.dependencies import get_object_storage
-from src.worker.parser import (
-    DocumentAIParser,
-    MarkItDownParser,
-    PdftotextParser,
-    WorkerParser,
-)
+from src.worker.parser import AIParsingServiceParser, WorkerParser
 from src.worker.runner import WorkerRunner
 
 
 def _build_parsers() -> dict[ParserBackend, WorkerParser]:
     settings = get_settings()
-    parsers: dict[ParserBackend, WorkerParser] = {
-        "markitdown": MarkItDownParser(),
-        "pdftotext": PdftotextParser(
-            command=settings.pdftotext_command,
-            timeout_seconds=settings.parser_timeout_seconds,
-        ),
-    }
-    if "document_ai" in settings.enabled_parser_backends:
-        if not settings.document_ai_service_url and not settings.document_ai_script_path:
-            msg = (
-                "document_ai_script_path or document_ai_service_url is required "
-                "when document_ai backend is enabled"
-            )
-            raise RuntimeError(msg)
-        parsers["document_ai"] = DocumentAIParser(
-            script_path=settings.document_ai_script_path or "",
-            timeout_seconds=settings.parser_timeout_seconds,
-            service_url=settings.document_ai_service_url,
-            service_timeout_seconds=settings.document_ai_service_timeout_seconds,
+    if not settings.parsing_service_url:
+        msg = "parsing_service_url is required when worker parser backends are enabled"
+        raise RuntimeError(msg)
+
+    return {
+        backend: AIParsingServiceParser(
+            parser_backend=backend,
+            service_url=settings.parsing_service_url,
+            timeout_seconds=settings.parsing_service_timeout_seconds,
         )
-    return parsers
+        for backend in settings.enabled_parser_backends
+    }
 
 
 def main() -> None:
