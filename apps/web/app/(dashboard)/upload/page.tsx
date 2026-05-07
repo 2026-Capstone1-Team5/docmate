@@ -40,6 +40,11 @@ const SourcePreviewPanel = dynamic(
   { ssr: false },
 );
 
+type ParsedBatchItem = {
+  document: DocumentSummary;
+  result: ParseResult;
+};
+
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -198,6 +203,8 @@ export default function UploadPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [resultView, setResultView] = useState<"markdown" | "json">("markdown");
+  const [parsedItems, setParsedItems] = useState<ParsedBatchItem[]>([]);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [parsedDocument, setParsedDocument] = useState<DocumentSummary | null>(null);
   const [parsedResult, setParsedResult] = useState<ParseResult | null>(null);
   const isActiveRef = useRef(true);
@@ -227,6 +234,8 @@ export default function UploadPage() {
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
+      setParsedItems([]);
+      setSelectedDocumentId(null);
       setFiles([]);
       setPanelTab("config");
       return;
@@ -237,6 +246,8 @@ export default function UploadPage() {
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
+      setParsedItems([]);
+      setSelectedDocumentId(null);
       setFiles(selectedFiles);
       setPanelTab("config");
       return;
@@ -247,6 +258,8 @@ export default function UploadPage() {
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
+      setParsedItems([]);
+      setSelectedDocumentId(null);
       setFiles(selectedFiles);
       setPanelTab("config");
       return;
@@ -259,6 +272,8 @@ export default function UploadPage() {
     setSuccessMessage(null);
     setParsedDocument(null);
     setParsedResult(null);
+    setParsedItems([]);
+    setSelectedDocumentId(null);
 
     try {
       const queuedJobs = selectedFiles.length === 1
@@ -284,19 +299,28 @@ export default function UploadPage() {
             return;
           }
 
-          const firstCompletedDocumentId = completedJobs[0].documentId;
-          if (!firstCompletedDocumentId) {
-            return;
-          }
-
-          const parsed = await getDocumentResult(firstCompletedDocumentId);
+          const parsed = await Promise.all(
+            completedJobs.map(async (job) => {
+              if (!job.documentId) {
+                throw new Error(`${job.filename} 문서 결과를 찾지 못했습니다.`);
+              }
+              return getDocumentResult(job.documentId);
+            }),
+          );
           if (!isActiveRef.current) {
             return;
           }
-          setParsedDocument(parsed.document);
-          setParsedResult(parsed.result);
+          const nextParsedItems = parsed.map((item) => ({
+            document: item.document,
+            result: item.result,
+          }));
+          const firstParsedItem = nextParsedItems[0];
+          setParsedItems(nextParsedItems);
+          setSelectedDocumentId(firstParsedItem.document.id);
+          setParsedDocument(firstParsedItem.document);
+          setParsedResult(firstParsedItem.result);
           setPanelTab("result");
-          setSuccessMessage(`${completedJobs.length}개 문서 파싱이 완료되었습니다. 첫 번째 결과를 우측 Result 탭에 표시합니다.`);
+          setSuccessMessage(`${completedJobs.length}개 문서 파싱이 완료되었습니다. 파일을 선택해서 결과를 전환할 수 있습니다.`);
           return;
         }
 
@@ -328,6 +352,13 @@ export default function UploadPage() {
       return;
     }
     void startUpload(selectedFiles);
+  };
+
+  const selectParsedItem = (item: ParsedBatchItem) => {
+    setSelectedDocumentId(item.document.id);
+    setParsedDocument(item.document);
+    setParsedResult(item.result);
+    setPanelTab("result");
   };
 
   const handleDrop = (event: DragEvent<HTMLButtonElement>) => {
@@ -384,24 +415,51 @@ export default function UploadPage() {
           ) : null}
 
           {parsedDocument && parsedResult && previewUrl ? (
-            <SourcePreviewPanel
-              key={parsedDocument.id}
-              fileName={parsedDocument.filename}
-              previewUrl={previewUrl}
-              mode={previewMode ?? "embed"}
-              toolbarStart={(
-                <button
-                  type="button"
-                  className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  onClick={() => document.getElementById("upload-file-input")?.click()}
-                >
-                  <Upload className="mr-1.5 h-3.5 w-3.5" />
-                  Upload
-                </button>
-              )}
-              downloadUrl={getSourceUrl(parsedDocument.id, "attachment")}
-              downloadFileName={parsedDocument.filename}
-            />
+            <>
+              {parsedItems.length > 1 ? (
+                <div className="flex min-h-12 items-center gap-2 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 px-4 py-2">
+                  <span className="shrink-0 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                    Results
+                  </span>
+                  {parsedItems.map((item, index) => {
+                    const selected = item.document.id === selectedDocumentId;
+                    return (
+                      <button
+                        key={item.document.id}
+                        type="button"
+                        onClick={() => selectParsedItem(item)}
+                        className={`inline-flex h-8 max-w-[220px] shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition ${
+                          selected
+                            ? "border-[#96b24a] bg-[#f4f8df] text-[#667226] dark:border-[#4d5c26] dark:bg-[#1a1e0d] dark:text-[#a3b84a]"
+                            : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                        }`}
+                      >
+                        <span>{index + 1}</span>
+                        <span className="truncate">{item.document.filename}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+              <SourcePreviewPanel
+                key={parsedDocument.id}
+                fileName={parsedDocument.filename}
+                previewUrl={previewUrl}
+                mode={previewMode ?? "embed"}
+                toolbarStart={(
+                  <button
+                    type="button"
+                    className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    onClick={() => document.getElementById("upload-file-input")?.click()}
+                  >
+                    <Upload className="mr-1.5 h-3.5 w-3.5" />
+                    Upload
+                  </button>
+                )}
+                downloadUrl={getSourceUrl(parsedDocument.id, "attachment")}
+                downloadFileName={parsedDocument.filename}
+              />
+            </>
           ) : (
             <button
               type="button"
