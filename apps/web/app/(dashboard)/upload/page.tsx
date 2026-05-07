@@ -77,14 +77,18 @@ function parserLabel(parserBackend: ParserBackend): string {
 function UploadConfigPanel({
   parserBackend,
   uploading,
+  pendingFileCount,
   onParserBackendChange,
+  onRunParse,
 }: {
   parserBackend: ParserBackend;
   uploading: boolean;
+  pendingFileCount: number;
   onParserBackendChange: (next: ParserBackend) => void;
+  onRunParse: () => void;
 }) {
   return (
-    <div className="space-y-4">
+    <div className="flex min-h-[calc(100svh-13rem)] flex-col space-y-4">
       <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -205,6 +209,34 @@ function UploadConfigPanel({
           </div>
         </div>
       </section>
+
+      <div className="flex-1" />
+
+      <section className="sticky bottom-0 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 p-4 shadow-[0_-18px_45px_rgba(24,24,27,0.08)] backdrop-blur">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Ready to parse</p>
+            <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+              {pendingFileCount > 0
+                ? `${pendingFileCount}개 파일이 선택되었습니다. 버튼을 누르면 parse job을 시작합니다.`
+                : "파일을 먼저 업로드 영역에 추가해 주세요."}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onRunParse}
+            disabled={uploading || pendingFileCount === 0}
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(24,24,27,0.18)] transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:shadow-none dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+          >
+            {uploading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="mr-2 h-4 w-4" />
+            )}
+            Run parse
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
@@ -252,7 +284,7 @@ export default function UploadPage() {
     };
   }, []);
 
-  const startUpload = async (selectedFiles: File[]) => {
+  const stageFiles = (selectedFiles: File[]) => {
     if (selectedFiles.length === 0) {
       return;
     }
@@ -273,6 +305,24 @@ export default function UploadPage() {
       return;
     }
 
+    setFileTabs(nextFileTabs);
+    setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
+    setPanelTab("config");
+    setErrorMessage(null);
+    setSuccessMessage("파일이 추가되었습니다. 우측 Build 탭에서 Run parse를 눌러 파싱을 시작하세요.");
+    setParsedDocument(null);
+    setParsedResult(null);
+    setParsedItems([]);
+    setSelectedDocumentId(null);
+  };
+
+  const runParse = async () => {
+    if (fileTabs.length === 0 || uploading) {
+      return;
+    }
+
+    const selectedFiles = fileTabs.map((item) => item.file);
+
     if (parserBackend === "pdftotext" && selectedFiles.some((selectedFile) => !isPdfFile(selectedFile))) {
       setErrorMessage("`pdftotext` 파서는 PDF 파일에서만 사용할 수 있습니다. MarkItDown으로 바꾸거나 PDF를 선택해 주세요.");
       setSuccessMessage(null);
@@ -280,8 +330,6 @@ export default function UploadPage() {
       setParsedResult(null);
       setParsedItems([]);
       setSelectedDocumentId(null);
-      setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
-      setFileTabs(nextFileTabs);
       setPanelTab("config");
       return;
     }
@@ -293,14 +341,10 @@ export default function UploadPage() {
       setParsedResult(null);
       setParsedItems([]);
       setSelectedDocumentId(null);
-      setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
-      setFileTabs(nextFileTabs);
       setPanelTab("config");
       return;
     }
 
-    setFileTabs(nextFileTabs);
-    setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
     setUploading(true);
     setPanelTab("config");
     setErrorMessage(null);
@@ -394,7 +438,7 @@ export default function UploadPage() {
     if (selectedFiles.length === 0 || uploading) {
       return;
     }
-    void startUpload(selectedFiles);
+    stageFiles(selectedFiles);
   };
 
   const selectParsedItem = (item: ParsedBatchItem) => {
@@ -418,6 +462,7 @@ export default function UploadPage() {
   const activeTabValue = parsedItems.length > 0
     ? selectedDocumentId ?? tabItems[0]?.id ?? ""
     : selectedFileTabId ?? tabItems[0]?.id ?? "";
+  const pendingFileCount = parsedItems.length === 0 ? fileTabs.length : 0;
 
   const handleTabChange = (nextValue: string | number | null) => {
     if (typeof nextValue !== "string") {
@@ -570,7 +615,7 @@ export default function UploadPage() {
                   파일들을 끌어 놓거나 클릭해서 선택하세요
                 </p>
                 <p className="mx-auto max-w-lg text-sm leading-6 text-zinc-500 dark:text-zinc-400">
-                  파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 여러 파일을 한 번에 선택할 수 있습니다.
+                  파일을 선택하면 왼쪽에 대기열로 추가됩니다. 우측 Build 탭의 Run parse 버튼을 눌러야 parse job을 시작합니다.
                 </p>
               </div>
               {fileTabs.length > 0 ? (
@@ -586,7 +631,7 @@ export default function UploadPage() {
 
           {uploading ? (
             <div className="px-5 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-              업로드가 진행 중입니다. 파싱 완료까지 잠시만 기다려 주세요.
+              파싱이 진행 중입니다. 완료까지 잠시만 기다려 주세요.
             </div>
           ) : null}
 
@@ -620,7 +665,9 @@ export default function UploadPage() {
             <UploadConfigPanel
               parserBackend={parserBackend}
               uploading={uploading}
+              pendingFileCount={pendingFileCount}
               onParserBackendChange={setParserBackend}
+              onRunParse={runParse}
             />
           )}
         />
@@ -638,10 +685,12 @@ export default function UploadPage() {
             <UploadConfigPanel
               parserBackend={parserBackend}
               uploading={uploading}
+              pendingFileCount={pendingFileCount}
               onParserBackendChange={setParserBackend}
+              onRunParse={runParse}
             />
           )}
-          emptyMarkdownMessage="아직 결과가 없습니다. 파일 업로드가 완료되면 이 영역에 실제 Markdown 결과가 표시됩니다."
+          emptyMarkdownMessage="아직 결과가 없습니다. 파일을 선택한 뒤 Build 탭의 Run parse 버튼을 누르면 실제 Markdown 결과가 표시됩니다."
         />
       )}
     </div>
