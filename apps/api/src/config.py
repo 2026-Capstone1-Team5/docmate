@@ -22,7 +22,6 @@ DEFAULT_PARSE_JOB_QUEUE_NAME = "document-agent-api:parse-jobs"
 DEFAULT_WORKER_POLL_TIMEOUT_SECONDS = 5
 DEFAULT_PARSER_TIMEOUT_SECONDS = 300
 DEFAULT_WORKER_TEMP_ROOT = "/tmp/document-agent-api-worker"
-DEFAULT_PDFTOTEXT_COMMAND = "pdftotext"
 DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS = 300
 DEFAULT_PARSING_SERVICE_TIMEOUT_SECONDS = 300
 
@@ -117,7 +116,6 @@ class Settings(BaseSettings):
     worker_poll_timeout_seconds: int = DEFAULT_WORKER_POLL_TIMEOUT_SECONDS
     parser_timeout_seconds: int = DEFAULT_PARSER_TIMEOUT_SECONDS
     worker_temp_root: str = DEFAULT_WORKER_TEMP_ROOT
-    pdftotext_command: str = DEFAULT_PDFTOTEXT_COMMAND
     enabled_parser_backends: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: list(DEFAULT_ENABLED_PARSER_BACKENDS),
     )
@@ -241,15 +239,6 @@ class Settings(BaseSettings):
     @classmethod
     def normalize_redis_url(cls, value: str) -> str:
         return value.strip()
-
-    @field_validator("pdftotext_command")
-    @classmethod
-    def validate_pdftotext_command(cls, value: str) -> str:
-        normalized = value.strip()
-        if not normalized:
-            msg = "pdftotext_command must not be empty"
-            raise ValueError(msg)
-        return normalized
 
     @field_validator("worker_poll_timeout_seconds", "parser_timeout_seconds")
     @classmethod

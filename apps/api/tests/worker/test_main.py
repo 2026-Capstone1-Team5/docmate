@@ -9,7 +9,6 @@ from src.worker.parser import AIParsingServiceParser
 def test_build_parsers_requires_parsing_service_url(monkeypatch) -> None:
     class SettingsStub:
         enabled_parser_backends = ["markitdown", "pdftotext", "document_ai"]
-        pdftotext_command = "pdftotext"
         parser_timeout_seconds = 30
         document_ai_script_path = None
         document_ai_service_url = None
@@ -26,7 +25,6 @@ def test_build_parsers_requires_parsing_service_url(monkeypatch) -> None:
 def test_build_parsers_routes_all_enabled_backends_to_ai_service(monkeypatch) -> None:
     class SettingsStub:
         enabled_parser_backends = ["markitdown", "pdftotext", "document_ai"]
-        pdftotext_command = "pdftotext"
         parser_timeout_seconds = 30
         document_ai_script_path = None
         document_ai_service_url = None
@@ -52,7 +50,6 @@ def test_build_parsers_ignores_legacy_document_ai_script_path(monkeypatch, tmp_p
 
     class SettingsStub:
         enabled_parser_backends = ["document_ai"]
-        pdftotext_command = "pdftotext"
         parser_timeout_seconds = 30
         document_ai_script_path = str(script_path)
         document_ai_service_url = None
