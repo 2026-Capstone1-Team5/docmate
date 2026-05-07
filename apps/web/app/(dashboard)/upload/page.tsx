@@ -414,6 +414,7 @@ export default function UploadPage() {
         setParsedDocument(nextSelectedItem?.document ?? null);
         setParsedResult(nextSelectedItem?.result ?? null);
         if (!nextSelectedItem) {
+          setFiles([]);
           setPanelTab("config");
           setSuccessMessage(null);
         }
