@@ -41,6 +41,7 @@ export type ParseJobSummary = {
   id: string;
   filename: string;
   contentType: string;
+  parserBackend: ParserBackend;
   status: "queued" | "processing" | "succeeded" | "failed";
   documentId: string | null;
   errorCode: string | null;
@@ -53,6 +54,17 @@ export type ParseJobSummary = {
 
 export type ParseJobResponse = {
   job: ParseJobSummary;
+};
+
+export type ParseJobBatchError = {
+  filename: string;
+  code: string;
+  message: string;
+};
+
+export type ParseJobBatchResponse = {
+  jobs: ParseJobSummary[];
+  errors?: ParseJobBatchError[];
 };
 
 export type DocumentParseResponse = {
@@ -86,6 +98,31 @@ export async function uploadDocument(
   return requestJson<ParseJobResponse>({
     apiRoot: API_ROOT,
     path: "/",
+    query,
+    init: {
+      method: "POST",
+      body: formData,
+    },
+    fallbackMessage: "API 요청에 실패했습니다.",
+  });
+}
+
+export async function uploadDocumentsBatch(
+  files: File[],
+  options?: {
+    parserBackend?: ParserBackend
+  },
+): Promise<ParseJobBatchResponse> {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("files", file);
+  }
+  const query = new URLSearchParams()
+  query.set("parserBackend", options?.parserBackend ?? DEFAULT_PARSER_BACKEND)
+
+  return requestJson<ParseJobBatchResponse>({
+    apiRoot: API_ROOT,
+    path: "/batch",
     query,
     init: {
       method: "POST",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type DragEvent, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   FileSpreadsheet,
@@ -10,9 +10,11 @@ import {
   Presentation,
   Sparkles,
   Upload,
+  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultViewerPanel } from "@/components/dashboard/result-viewer-panel";
 import {
   DEFAULT_PARSER_BACKEND,
@@ -29,6 +31,7 @@ import {
   ParserBackend,
   SUPPORTED_UPLOAD_ACCEPT,
   uploadDocument,
+  uploadDocumentsBatch,
 } from "@/lib/document-agent-api";
 
 const POLL_INTERVAL_MS = 1000;
@@ -39,8 +42,26 @@ const SourcePreviewPanel = dynamic(
   { ssr: false },
 );
 
+type ParsedBatchItem = {
+  document: DocumentSummary;
+  result: ParseResult;
+};
+
+type UploadFileTab = {
+  id: string;
+  file: File;
+};
+
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function createUploadFileTabs(files: File[]): UploadFileTab[] {
+  const batchId = Date.now();
+  return files.map((file, index) => ({
+    id: `file-${batchId}-${index}-${file.lastModified}-${file.name}`,
+    file,
+  }));
 }
 
 function parserLabel(parserBackend: ParserBackend): string {
@@ -188,14 +209,31 @@ function UploadConfigPanel({
   );
 }
 
+function UploadButton({ className }: { className?: string }) {
+  return (
+    <button
+      type="button"
+      className={className ?? "inline-flex h-8 items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"}
+      onClick={() => document.getElementById("upload-file-input")?.click()}
+    >
+      <Upload className="mr-1.5 h-3.5 w-3.5" />
+      Upload
+    </button>
+  );
+}
+
 export default function UploadPage() {
-  const [file, setFile] = useState<File | null>(null);
+  const [fileTabs, setFileTabs] = useState<UploadFileTab[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [panelTab, setPanelTab] = useState<PanelTab>("config");
   const [parserBackend, setParserBackend] = useState<ParserBackend>(DEFAULT_PARSER_BACKEND);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [resultView, setResultView] = useState<"markdown" | "json">("markdown");
+  const [parsedItems, setParsedItems] = useState<ParsedBatchItem[]>([]);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
+  const [selectedFileTabId, setSelectedFileTabId] = useState<string | null>(null);
   const [parsedDocument, setParsedDocument] = useState<DocumentSummary | null>(null);
   const [parsedResult, setParsedResult] = useState<ParseResult | null>(null);
   const isActiveRef = useRef(true);
@@ -214,73 +252,118 @@ export default function UploadPage() {
     };
   }, []);
 
-  const startUpload = async (selectedFile: File) => {
-    if (!selectedFile) {
+  const startUpload = async (selectedFiles: File[]) => {
+    if (selectedFiles.length === 0) {
       return;
     }
 
-    if (!isSupportedUploadFile(selectedFile)) {
+    const nextFileTabs = createUploadFileTabs(selectedFiles);
+
+    const unsupportedFile = selectedFiles.find((selectedFile) => !isSupportedUploadFile(selectedFile));
+    if (unsupportedFile) {
       setErrorMessage("지원하지 않는 파일 형식입니다. PDF, DOCX, PPTX, XLSX, PNG, JPG 파일만 업로드할 수 있습니다.");
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
-      setFile(null);
+      setParsedItems([]);
+      setSelectedDocumentId(null);
+      setSelectedFileTabId(null);
+      setFileTabs([]);
       setPanelTab("config");
       return;
     }
 
-    if (parserBackend === "pdftotext" && !isPdfFile(selectedFile)) {
+    if (parserBackend === "pdftotext" && selectedFiles.some((selectedFile) => !isPdfFile(selectedFile))) {
       setErrorMessage("`pdftotext` 파서는 PDF 파일에서만 사용할 수 있습니다. MarkItDown으로 바꾸거나 PDF를 선택해 주세요.");
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
-      setFile(selectedFile);
+      setParsedItems([]);
+      setSelectedDocumentId(null);
+      setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
+      setFileTabs(nextFileTabs);
       setPanelTab("config");
       return;
     }
 
-    if (parserBackend === "document_ai" && !isPdfFile(selectedFile)) {
+    if (parserBackend === "document_ai" && selectedFiles.some((selectedFile) => !isPdfFile(selectedFile))) {
       setErrorMessage("`document_ai` 파서는 PDF 파일에서만 사용할 수 있습니다. PDF를 선택해 주세요.");
       setSuccessMessage(null);
       setParsedDocument(null);
       setParsedResult(null);
-      setFile(selectedFile);
+      setParsedItems([]);
+      setSelectedDocumentId(null);
+      setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
+      setFileTabs(nextFileTabs);
       setPanelTab("config");
       return;
     }
 
-    setFile(selectedFile);
+    setFileTabs(nextFileTabs);
+    setSelectedFileTabId(nextFileTabs[0]?.id ?? null);
     setUploading(true);
     setPanelTab("config");
     setErrorMessage(null);
     setSuccessMessage(null);
     setParsedDocument(null);
     setParsedResult(null);
+    setParsedItems([]);
+    setSelectedDocumentId(null);
 
     try {
-      const queued = await uploadDocument(selectedFile, { parserBackend });
+      const batchResponse = selectedFiles.length === 1
+        ? { jobs: [(await uploadDocument(selectedFiles[0], { parserBackend })).job], errors: [] }
+        : await uploadDocumentsBatch(selectedFiles, { parserBackend });
+      const queuedJobs = batchResponse.jobs;
+      if (batchResponse.errors?.length) {
+        const failedFilenames = batchResponse.errors.map((error) => error.filename).join(", ");
+        setErrorMessage(`${failedFilenames} 문서는 파싱 대기열에 추가되지 않았습니다.`);
+      }
+      if (queuedJobs.length === 0) {
+        throw new Error("파싱 대기열에 추가된 문서가 없습니다.");
+      }
       const startedAt = Date.now();
 
       while (isActiveRef.current && Date.now() - startedAt < POLL_TIMEOUT_MS) {
-        const current = await getParseJob(queued.job.id);
+        const currentJobs = await Promise.all(
+          queuedJobs.map(async (job) => (await getParseJob(job.id)).job),
+        );
+        const failedJob = currentJobs.find((job) => job.status === "failed");
 
-        if (current.job.status === "failed") {
-          throw new Error(current.job.errorMessage ?? "문서 파싱에 실패했습니다.");
+        if (failedJob) {
+          throw new Error(
+            failedJob.errorMessage ?? `${failedJob.filename} 문서 파싱에 실패했습니다.`,
+          );
         }
 
-        if (current.job.documentId) {
+        const completedJobs = currentJobs.filter((job) => job.documentId);
+        if (completedJobs.length === queuedJobs.length) {
           if (!isActiveRef.current) {
             return;
           }
 
-          const parsed = await getDocumentResult(current.job.documentId);
+          const parsed = await Promise.all(
+            completedJobs.map(async (job) => {
+              if (!job.documentId) {
+                throw new Error(`${job.filename} 문서 결과를 찾지 못했습니다.`);
+              }
+              return getDocumentResult(job.documentId);
+            }),
+          );
           if (!isActiveRef.current) {
             return;
           }
-          setParsedDocument(parsed.document);
-          setParsedResult(parsed.result);
+          const nextParsedItems = parsed.map((item) => ({
+            document: item.document,
+            result: item.result,
+          }));
+          const firstParsedItem = nextParsedItems[0];
+          setParsedItems(nextParsedItems);
+          setSelectedDocumentId(firstParsedItem.document.id);
+          setParsedDocument(firstParsedItem.document);
+          setParsedResult(firstParsedItem.result);
           setPanelTab("result");
-          setSuccessMessage("파싱이 완료되었습니다. 우측 Result 탭에서 결과를 확인해 주세요.");
+          setSuccessMessage(`${completedJobs.length}개 문서 파싱이 완료되었습니다. 파일을 선택해서 결과를 전환할 수 있습니다.`);
           return;
         }
 
@@ -288,7 +371,7 @@ export default function UploadPage() {
       }
 
       if (isActiveRef.current) {
-        setErrorMessage("업로드는 완료되었지만 파싱이 아직 진행 중입니다. 문서 목록에서 잠시 후 다시 확인해 주세요.");
+        setErrorMessage("업로드는 완료되었지만 일부 파싱이 아직 진행 중입니다. 문서 목록에서 잠시 후 다시 확인해 주세요.");
       }
     } catch (error) {
       console.error(error);
@@ -307,11 +390,90 @@ export default function UploadPage() {
     }
   };
 
-  const handleFileSelection = (selectedFile: File | null) => {
-    if (!selectedFile || uploading) {
+  const handleFileSelection = (selectedFiles: File[]) => {
+    if (selectedFiles.length === 0 || uploading) {
       return;
     }
-    void startUpload(selectedFile);
+    void startUpload(selectedFiles);
+  };
+
+  const selectParsedItem = (item: ParsedBatchItem) => {
+    setSelectedDocumentId(item.document.id);
+    setParsedDocument(item.document);
+    setParsedResult(item.result);
+    setPanelTab("result");
+  };
+
+  const tabItems = parsedItems.length > 0
+    ? parsedItems.map((item) => ({
+        id: item.document.id,
+        filename: item.document.filename,
+        kind: "parsed" as const,
+      }))
+    : fileTabs.map((item) => ({
+        id: item.id,
+        filename: item.file.name,
+        kind: "file" as const,
+      }));
+  const activeTabValue = parsedItems.length > 0
+    ? selectedDocumentId ?? tabItems[0]?.id ?? ""
+    : selectedFileTabId ?? tabItems[0]?.id ?? "";
+
+  const handleTabChange = (nextValue: string | number | null) => {
+    if (typeof nextValue !== "string") {
+      return;
+    }
+    const nextParsedItem = parsedItems.find((item) => item.document.id === nextValue);
+    if (nextParsedItem) {
+      selectParsedItem(nextParsedItem);
+      return;
+    }
+    if (fileTabs.some((item) => item.id === nextValue)) {
+      setSelectedFileTabId(nextValue);
+    }
+  };
+
+  const closeTab = (item: (typeof tabItems)[number]) => {
+    if (item.kind === "file") {
+      setFileTabs((currentItems) => {
+        const nextItems = currentItems.filter((fileTab) => fileTab.id !== item.id);
+        if (selectedFileTabId === item.id || !nextItems.some((fileTab) => fileTab.id === selectedFileTabId)) {
+          setSelectedFileTabId(nextItems[0]?.id ?? null);
+        }
+        return nextItems;
+      });
+      return;
+    }
+
+    setParsedItems((currentItems) => {
+      const nextItems = currentItems.filter((parsedItem) => parsedItem.document.id !== item.id);
+      if (selectedDocumentId === item.id) {
+        const nextSelectedItem = nextItems[0] ?? null;
+        setSelectedDocumentId(nextSelectedItem?.document.id ?? null);
+        setParsedDocument(nextSelectedItem?.document ?? null);
+        setParsedResult(nextSelectedItem?.result ?? null);
+        if (!nextSelectedItem) {
+          setFileTabs([]);
+          setSelectedFileTabId(null);
+          setPanelTab("config");
+          setSuccessMessage(null);
+        }
+      }
+      return nextItems;
+    });
+  };
+
+  const handleDrop = (event: DragEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setIsDraggingFiles(false);
+    handleFileSelection(Array.from(event.dataTransfer.files));
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (!uploading) {
+      setIsDraggingFiles(true);
+    }
   };
 
   return (
@@ -323,60 +485,78 @@ export default function UploadPage() {
             type="file"
             className="hidden"
             onChange={(e) => {
-              const selectedFile = e.target.files?.[0] || null;
+              const selectedFiles = Array.from(e.target.files ?? []);
               e.currentTarget.value = "";
-              handleFileSelection(selectedFile);
+              handleFileSelection(selectedFiles);
             }}
             accept={SUPPORTED_UPLOAD_ACCEPT}
+            multiple
           />
 
-          {!parsedDocument ? (
-            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 px-5 py-3">    
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="inline-flex h-8 items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  onClick={() => document.getElementById("upload-file-input")?.click()}
+          {tabItems.length > 0 ? (
+            <div className="flex min-h-12 items-center gap-3 overflow-x-auto border-b border-zinc-200 bg-white px-5 py-2 dark:border-zinc-800 dark:bg-zinc-950">
+              <UploadButton />
+              <span className="shrink-0 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                {tabItems.length} file{tabItems.length === 1 ? "" : "s"}
+              </span>
+              <Tabs
+                value={activeTabValue}
+                onValueChange={handleTabChange}
+                className="min-w-0 flex-1"
+              >
+                <TabsList
+                  variant="line"
+                  className="h-auto max-w-full justify-start gap-2 overflow-x-auto p-0"
                 >
-                  <Upload className="mr-1.5 h-3.5 w-3.5" />
-                  Upload
-                </button>
-                {file ? (
-                  <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">1 file</span>
-                ) : null}
-                {file ? (
-                  <div className="inline-flex h-8 items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                    {file.name}
-                  </div>
-                ) : null}
-              </div>
+                  {tabItems.map((item) => (
+                    <div key={item.id} className="relative shrink-0">
+                      <TabsTrigger
+                        value={item.id}
+                        className="h-10 max-w-[270px] rounded-lg border border-zinc-200 bg-zinc-50 px-3 pr-8 text-sm font-semibold text-zinc-600 data-active:bg-white data-active:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:data-active:bg-zinc-950 dark:data-active:text-zinc-50"
+                      >
+                        <span className="truncate">{item.filename}</span>
+                      </TabsTrigger>
+                      <button
+                        type="button"
+                        aria-label={`${item.filename} 탭 닫기`}
+                        className="absolute right-2 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-sm text-zinc-500 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:hover:text-zinc-100"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          closeTab(item);
+                        }}
+                      >
+                        <X className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    </div>
+                  ))}
+                </TabsList>
+              </Tabs>
             </div>
           ) : null}
 
           {parsedDocument && parsedResult && previewUrl ? (
-            <SourcePreviewPanel
-              key={parsedDocument.id}
-              fileName={parsedDocument.filename}
-              previewUrl={previewUrl}
-              mode={previewMode ?? "embed"}
-              toolbarStart={(
-                <button
-                  type="button"
-                  className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  onClick={() => document.getElementById("upload-file-input")?.click()}
-                >
-                  <Upload className="mr-1.5 h-3.5 w-3.5" />
-                  Upload
-                </button>
-              )}
-              downloadUrl={getSourceUrl(parsedDocument.id, "attachment")}
-              downloadFileName={parsedDocument.filename}
-            />
+            <>
+              <SourcePreviewPanel
+                key={parsedDocument.id}
+                fileName={parsedDocument.filename}
+                previewUrl={previewUrl}
+                mode={previewMode ?? "embed"}
+                downloadUrl={getSourceUrl(parsedDocument.id, "attachment")}
+                downloadFileName={parsedDocument.filename}
+              />
+            </>
           ) : (
             <button
               type="button"
               onClick={() => document.getElementById("upload-file-input")?.click()}
-              className="m-5 flex flex-1 flex-col items-center justify-center rounded-[28px] border border-dashed border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/50 px-10 text-center transition hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900"
+              onDragOver={handleDragOver}
+              onDragLeave={() => setIsDraggingFiles(false)}
+              onDrop={handleDrop}
+              className={`m-5 flex flex-1 flex-col items-center justify-center rounded-[28px] border border-dashed px-10 text-center transition ${
+                isDraggingFiles
+                  ? "border-[#96b24a] bg-[#f8fcd8] dark:border-[#4d5c26] dark:bg-[#1a1e0d]"
+                  : "border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900"
+              }`}
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#d8e7a5] dark:border-[#4d5c26] bg-[#f8fcd8] dark:bg-[#1a1e0d]">
                 {uploading ? (
@@ -387,15 +567,15 @@ export default function UploadPage() {
               </div>
               <div className="mt-6 space-y-2">
                 <p className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-                  파일을 끌어 놓거나 클릭해서 선택하세요
+                  파일들을 끌어 놓거나 클릭해서 선택하세요
                 </p>
                 <p className="mx-auto max-w-lg text-sm leading-6 text-zinc-500 dark:text-zinc-400">
-                  파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 
+                  파일이 업로드되면 parse job을 만들고, 준비가 끝나면 우측 Results 탭에 구조화 결과를 표시합니다. 여러 파일을 한 번에 선택할 수 있습니다.
                 </p>
               </div>
-              {file ? (
+              {fileTabs.length > 0 ? (
                 <div className="mt-5 rounded-full border border-[#d8e7a5] dark:border-[#4d5c26] bg-[#f8fcd8] dark:bg-[#1a1e0d] px-4 py-1.5 text-sm font-medium text-[#667226] dark:text-[#a3b84a]">
-                  {file.name}
+                  {fileTabs.length === 1 ? fileTabs[0].file.name : `${fileTabs.length}개 파일 선택됨`}
                 </div>
               ) : null}
               <p className="mt-10 max-w-md text-xs leading-5 text-zinc-400">
