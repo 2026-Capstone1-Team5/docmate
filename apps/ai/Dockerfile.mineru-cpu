@@ -19,8 +19,15 @@ RUN python -m pip install --upgrade pip && \
         --index-url https://download.pytorch.org/whl/cpu \
         "torch==2.6.0+cpu" \
         "torchvision==0.21.0" && \
-    python -m pip install "mineru[pipeline]==2.7.6"
+    python -m pip install \
+        "fastapi[standard]>=0.115.0" \
+        "mineru[pipeline]==2.7.6" \
+        "pillow>=10.0.0" \
+        "pymupdf>=1.24.0" \
+        "uvicorn[standard]>=0.30.0"
 
 WORKDIR /workspace
+COPY . /workspace
 
 ENTRYPOINT ["/bin/bash", "-lc"]
+CMD ["python -m uvicorn server:app --host 0.0.0.0 --port 8001"]

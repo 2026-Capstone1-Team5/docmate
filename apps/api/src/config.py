@@ -23,6 +23,7 @@ DEFAULT_WORKER_POLL_TIMEOUT_SECONDS = 5
 DEFAULT_PARSER_TIMEOUT_SECONDS = 300
 DEFAULT_WORKER_TEMP_ROOT = "/tmp/document-agent-api-worker"
 DEFAULT_PDFTOTEXT_COMMAND = "pdftotext"
+DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS = 300
 
 
 def normalize_string_list(values: str | list[str]) -> list[str]:
@@ -120,6 +121,8 @@ class Settings(BaseSettings):
         default_factory=lambda: list(DEFAULT_ENABLED_PARSER_BACKENDS),
     )
     document_ai_script_path: str | None = None
+    document_ai_service_url: str | None = None
+    document_ai_service_timeout_seconds: int = DEFAULT_DOCUMENT_AI_SERVICE_TIMEOUT_SECONDS
 
     @field_validator("database_url", mode="before")
     @classmethod
@@ -188,6 +191,14 @@ class Settings(BaseSettings):
         normalized = value.strip()
         return normalized or None
 
+    @field_validator("document_ai_service_url", mode="before")
+    @classmethod
+    def normalize_document_ai_service_url(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip().rstrip("/")
+        return normalized or None
+
     @field_validator("storage_r2_region")
     @classmethod
     def validate_storage_r2_region(cls, value: str) -> str:
@@ -234,6 +245,14 @@ class Settings(BaseSettings):
     def validate_positive_worker_timeout(cls, value: int) -> int:
         if value <= 0:
             msg = "worker timeouts must be greater than 0"
+            raise ValueError(msg)
+        return value
+
+    @field_validator("document_ai_service_timeout_seconds")
+    @classmethod
+    def validate_document_ai_service_timeout(cls, value: int) -> int:
+        if value <= 0:
+            msg = "document_ai_service_timeout_seconds must be greater than 0"
             raise ValueError(msg)
         return value
 

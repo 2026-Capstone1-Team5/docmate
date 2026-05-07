@@ -93,3 +93,25 @@ def test_document_ai_script_path_is_normalized_when_provided(tmp_path) -> None:
     )
 
     assert settings.document_ai_script_path == str(script_path.resolve())
+
+
+def test_document_ai_service_url_defaults_to_none() -> None:
+    settings = Settings(auth_secret_key="secret")
+
+    assert settings.document_ai_service_url is None
+
+
+def test_document_ai_service_url_normalizes_trailing_slash() -> None:
+    settings = Settings(
+        auth_secret_key="secret",
+        document_ai_service_url=" http://127.0.0.1:8001/ ",
+    )
+
+    assert settings.document_ai_service_url == "http://127.0.0.1:8001"
+
+
+def test_document_ai_service_timeout_must_be_positive() -> None:
+    with pytest.raises(ValidationError) as exc_info:
+        Settings(auth_secret_key="secret", document_ai_service_timeout_seconds=0)
+
+    assert "document_ai_service_timeout_seconds must be greater than 0" in str(exc_info.value)
