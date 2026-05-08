@@ -1,12 +1,17 @@
 from __future__ import annotations
 
-import sys
 import subprocess
+import sys
 import tempfile
 import threading
 from pathlib import Path
 from typing import Any
-from typing import Literal
+
+CONTRACTS_SRC_DIR = Path(__file__).resolve().parents[3] / "packages" / "contracts-python" / "src"
+if str(CONTRACTS_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(CONTRACTS_SRC_DIR))
+
+from docmate_parser_contracts.parser_backends import ParserBackend
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
@@ -18,8 +23,6 @@ from parse_document import find_txt_dir  # noqa: E402
 from parse_document import inspect_pdf  # noqa: E402
 from parse_document import rasterize_pdf  # noqa: E402
 from parse_document import run_mineru  # noqa: E402
-
-ParserBackend = Literal["markitdown", "pdftotext", "document_ai"]
 
 
 class DocumentAIRuntime:

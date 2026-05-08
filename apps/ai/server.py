@@ -2,9 +2,17 @@ from __future__ import annotations
 
 import os
 import shutil
+import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
+CONTRACTS_SRC_DIR = Path(__file__).resolve().parents[2] / "packages" / "contracts-python" / "src"
+if str(CONTRACTS_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(CONTRACTS_SRC_DIR))
+
+from docmate_parser_contracts.parser_backends import ParserBackend
+from docmate_parser_contracts.parser_backends import parser_backend_requires_pdf
+from docmate_parser_contracts.parsing_service import ParsingServiceParseResponse
 from fastapi import Depends
 from fastapi import FastAPI
 from fastapi import File
@@ -13,17 +21,9 @@ from fastapi import HTTPException
 from fastapi import UploadFile
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from pydantic import Field
 
-from scripts.document_ai_runtime import DocumentAIRuntime, ParserBackend
+from scripts.document_ai_runtime import DocumentAIRuntime
 from scripts.document_ai_runtime import create_work_dir
-
-
-class ParseResponse(BaseModel):
-    markdown: str
-    canonical_json: dict[str, Any] = Field(alias="canonicalJson")
-    metadata: dict[str, Any]
 
 
 app = FastAPI(title="DocMate Document AI", version="0.1.0")
@@ -47,25 +47,24 @@ def ready(document_ai_runtime: Annotated[DocumentAIRuntime, Depends(get_runtime)
         )
     return JSONResponse(status_code=200, content={"ready": True, "state": "runtime_initialized"})
 
-
-@app.post("/parse", response_model=ParseResponse)
+@app.post("/parse", response_model=ParsingServiceParseResponse)
 async def parse(
     file: Annotated[UploadFile, File()],
     language: Annotated[str, Form()] = "en",
     parser_backend: Annotated[ParserBackend, Form(alias="parserBackend")] = "document_ai",
     document_ai_runtime: Annotated[DocumentAIRuntime, Depends(get_runtime)] = None,
-) -> ParseResponse:
+) -> ParsingServiceParseResponse:
     if document_ai_runtime is None:
         document_ai_runtime = runtime
 
-    if parser_backend in {"document_ai", "pdftotext"} and file.content_type not in {
+    if parser_backend_requires_pdf(parser_backend) and file.content_type not in {
         "application/pdf",
         "application/octet-stream",
     }:
         raise HTTPException(status_code=415, detail=f"{parser_backend} only supports PDF uploads.")
 
     safe_filename = Path(file.filename or "document").name
-    if parser_backend in {"document_ai", "pdftotext"} and not safe_filename.lower().endswith(".pdf"):
+    if parser_backend_requires_pdf(parser_backend) and not safe_filename.lower().endswith(".pdf"):
         safe_filename = f"{safe_filename}.pdf"
 
     with create_work_dir() as temp_dir:
@@ -85,7 +84,7 @@ async def parse(
         except RuntimeError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
-    return ParseResponse(
+    return ParsingServiceParseResponse(
         markdown=payload["markdown"],
         canonicalJson=payload["canonical_json"],
         metadata=payload["metadata"],
