@@ -1,0 +1,16 @@
+.git
+.DS_Store
+.tmp_pr_review
+.venv
+.pnpm-store
+benchmark_assets
+**/benchmark_assets
+apps/ai/benchmark
+apps/ai/output
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+**/.uv-cache
+**/.venv
+apps/web/.next
+node_modules

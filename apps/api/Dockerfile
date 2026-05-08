@@ -4,7 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV UV_LINK_MODE=copy
 
-WORKDIR /app
+WORKDIR /workspace/apps/api
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl ca-certificates poppler-utils \
@@ -12,17 +12,18 @@ RUN apt-get update \
 
 RUN pip install --no-cache-dir uv
 
-COPY pyproject.toml uv.lock ./
+COPY apps/api/pyproject.toml apps/api/uv.lock ./
+COPY packages/contracts-python /workspace/packages/contracts-python
 
 RUN uv sync --frozen --no-dev
 
-COPY src ./src
-COPY migrations ./migrations
-COPY alembic.ini ./
-COPY docker-entrypoint.sh ./docker-entrypoint.sh
+COPY apps/api/src ./src
+COPY apps/api/migrations ./migrations
+COPY apps/api/alembic.ini ./
+COPY apps/api/docker-entrypoint.sh ./docker-entrypoint.sh
 
-RUN chmod +x /app/docker-entrypoint.sh
+RUN chmod +x /workspace/apps/api/docker-entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["/app/docker-entrypoint.sh"]
+CMD ["/workspace/apps/api/docker-entrypoint.sh"]
