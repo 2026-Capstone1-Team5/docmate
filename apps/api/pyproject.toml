@@ -5,12 +5,16 @@ description = "Document Agent API built with FastAPI"
 requires-python = ">=3.11"
 dependencies = [
     "boto3>=1.40.39",
+    "docmate-parser-contracts",
     "fastapi[standard]>=0.135.1",
     "psycopg[binary]>=3.3.3",
     "pydantic-settings>=2.13.1",
     "sqlalchemy>=2.0.48",
     "uvicorn[standard]>=0.41.0",
 ]
+
+[tool.uv.sources]
+docmate-parser-contracts = { path = "../../packages/contracts-python", editable = true }
 
 [dependency-groups]
 dev = [

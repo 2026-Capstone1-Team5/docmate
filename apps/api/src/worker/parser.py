@@ -8,6 +8,13 @@ from typing import Protocol
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from docmate_parser_contracts.parsing_service import (
+    DEFAULT_PARSE_LANGUAGE,
+    ParsingServiceParseRequest,
+    ParsingServiceParseResponse,
+)
+from pydantic import ValidationError
+
 from src.parser_backends import ParserBackend
 
 
@@ -39,13 +46,16 @@ class AIParsingServiceParser:
 
     def parse(self, *, input_path: Path, output_dir: Path) -> ParsedDocumentPayload:
         del output_dir
+        request_data = ParsingServiceParseRequest(
+            parserBackend=self.parser_backend,
+            language=DEFAULT_PARSE_LANGUAGE,
+        )
         boundary = f"----docmate-{uuid.uuid4().hex}"
         body = self._build_multipart_body(
             boundary=boundary,
             filename=input_path.name,
             file_bytes=input_path.read_bytes(),
-            parser_backend=self.parser_backend,
-            language="en",
+            request_data=request_data,
         )
         request = Request(
             f"{self.service_url}/parse",
@@ -69,20 +79,22 @@ class AIParsingServiceParser:
             raise WorkerParseError(msg) from exc
 
         try:
-            payload = json.loads(response_body.decode())
-        except json.JSONDecodeError as exc:
+            payload = ParsingServiceParseResponse.model_validate_json(response_body)
+        except ValidationError as exc:
+            msg = "parsing service returned invalid payload"
+            raise WorkerParseError(msg) from exc
+        except (json.JSONDecodeError, ValueError) as exc:
             msg = "parsing service returned invalid JSON"
             raise WorkerParseError(msg) from exc
 
-        markdown = payload.get("markdown")
-        canonical_json = payload.get("canonicalJson")
-        if not isinstance(markdown, str) or not markdown.strip() or not isinstance(
-            canonical_json, dict
-        ):
+        if not payload.markdown.strip():
             msg = "parsing service returned invalid payload"
             raise WorkerParseError(msg)
 
-        return ParsedDocumentPayload(markdown=markdown.strip(), canonical_json=canonical_json)
+        return ParsedDocumentPayload(
+            markdown=payload.markdown.strip(),
+            canonical_json=payload.canonical_json,
+        )
 
     @staticmethod
     def _build_multipart_body(
@@ -90,17 +102,16 @@ class AIParsingServiceParser:
         boundary: str,
         filename: str,
         file_bytes: bytes,
-        parser_backend: ParserBackend,
-        language: str,
+        request_data: ParsingServiceParseRequest,
     ) -> bytes:
         lines = [
             f"--{boundary}\r\n".encode(),
             b'Content-Disposition: form-data; name="parserBackend"\r\n\r\n',
-            parser_backend.encode(),
+            request_data.parser_backend.encode(),
             b"\r\n",
             f"--{boundary}\r\n".encode(),
             b'Content-Disposition: form-data; name="language"\r\n\r\n',
-            language.encode(),
+            request_data.language.encode(),
             b"\r\n",
             f"--{boundary}\r\n".encode(),
             f'Content-Disposition: form-data; name="file"; filename="{filename}"\r\n'.encode(),
