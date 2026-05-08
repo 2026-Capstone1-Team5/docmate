@@ -76,8 +76,8 @@ services:
 
   api:
     build:
-      context: ../apps/api
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: apps/api/Dockerfile
     container_name: document-agent-api
     restart: unless-stopped
     depends_on:
@@ -119,11 +119,11 @@ services:
 
   document-ai:
     build:
-      context: ../apps/ai
-      dockerfile: Dockerfile.mineru-cpu
+      context: ..
+      dockerfile: apps/ai/Dockerfile.mineru-cpu
     container_name: document-agent-document-ai
     restart: unless-stopped
-    working_dir: /workspace
+    working_dir: /workspace/apps/ai
     environment:
       HF_HOME: /opt/mineru-cache/huggingface
       MPLCONFIGDIR: /opt/mineru-cache/matplotlib
@@ -135,7 +135,7 @@ services:
     ports:
       - "${DOCUMENT_AI_PORT:-8001}:8001"
     volumes:
-      - ../apps/ai:/workspace:ro
+      - ..:/workspace:ro
       - mineru-cache:/opt/mineru-cache
     healthcheck:
       test:
@@ -151,8 +151,8 @@ services:
 
   worker:
     build:
-      context: ../apps/api
-      dockerfile: Dockerfile.worker
+      context: ..
+      dockerfile: apps/api/Dockerfile.worker
     container_name: document-agent-worker
     restart: unless-stopped
     depends_on:

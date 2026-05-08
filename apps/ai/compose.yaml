@@ -1,9 +1,9 @@
 services:
   mineru-cpu:
     build:
-      context: .
-      dockerfile: Dockerfile.mineru-cpu
-    working_dir: /workspace
+      context: ../..
+      dockerfile: apps/ai/Dockerfile.mineru-cpu
+    working_dir: /workspace/apps/ai
     environment:
       HF_HOME: /opt/mineru-cache/huggingface
       MPLCONFIGDIR: /opt/mineru-cache/matplotlib
@@ -14,14 +14,14 @@ services:
       PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
     volumes:
       - mineru-cache:/opt/mineru-cache
-      - .:/workspace:ro
+      - ../..:/workspace:ro
     command: bash
 
   document-ai:
     build:
-      context: .
-      dockerfile: Dockerfile.mineru-cpu
-    working_dir: /workspace
+      context: ../..
+      dockerfile: apps/ai/Dockerfile.mineru-cpu
+    working_dir: /workspace/apps/ai
     environment:
       HF_HOME: /opt/mineru-cache/huggingface
       MPLCONFIGDIR: /opt/mineru-cache/matplotlib
@@ -32,7 +32,7 @@ services:
       PDFTOTEXT_COMMAND: ${PDFTOTEXT_COMMAND:-pdftotext}
     volumes:
       - mineru-cache:/opt/mineru-cache
-      - .:/workspace:ro
+      - ../..:/workspace:ro
     ports:
       - "${DOCUMENT_AI_PORT:-8001}:8001"
     healthcheck:
